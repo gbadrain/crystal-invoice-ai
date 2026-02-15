@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { FileText } from 'lucide-react'
+import { AIGenerator } from '@/components/invoice/AIGenerator'
 import { LogoUploader } from '@/components/invoice/LogoUploader'
 import { ClientInfo } from '@/components/invoice/ClientInfo'
 import { InvoiceMetadata } from '@/components/invoice/InvoiceMetadata'
@@ -16,6 +17,7 @@ import type {
   InvoiceMetadata as InvoiceMetadataType,
   LineItem,
 } from '@/utils/invoice-types'
+import type { ParsedInvoice } from '@/utils/ai-parser'
 
 function todayISO(): string {
   return new Date().toISOString().split('T')[0]
@@ -62,6 +64,16 @@ export function NewInvoicePage() {
     [lineItems, taxRate, discountRate]
   )
 
+  function handleAIGenerate(parsed: ParsedInvoice) {
+    setClient(parsed.client)
+    setMetadata(parsed.metadata)
+    setLineItems(parsed.lineItems)
+    setTaxRate(parsed.taxRate)
+    setDiscountRate(parsed.discountRate)
+    setNotes(parsed.notes)
+    // Logo is intentionally NOT overwritten
+  }
+
   function handleSaveDraft() {
     const invoice = {
       logo,
@@ -97,6 +109,9 @@ export function NewInvoicePage() {
 
       {/* Form sections */}
       <div className="space-y-6">
+        {/* AI Generator */}
+        <AIGenerator onGenerate={handleAIGenerate} />
+
         {/* Logo uploader */}
         <LogoUploader logo={logo} onChange={setLogo} />
 
