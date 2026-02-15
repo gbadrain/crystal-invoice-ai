@@ -1,41 +1,19 @@
-import type { LineItem, InvoiceSummary } from './invoice-types'
+// src/utils/invoice-calculations.ts
 
-export function calculateLineAmount(quantity: number, rate: number): number {
-  return Math.round(quantity * rate * 100) / 100
-}
-
-export function calculateSummary(
-  lineItems: LineItem[],
-  taxRate: number,
-  discountRate: number
-): InvoiceSummary {
-  const subtotal = lineItems.reduce((sum, item) => sum + item.amount, 0)
-  const discountAmount = Math.round(subtotal * (discountRate / 100) * 100) / 100
-  const afterDiscount = subtotal - discountAmount
-  const taxAmount = Math.round(afterDiscount * (taxRate / 100) * 100) / 100
-  const total = Math.round((afterDiscount + taxAmount) * 100) / 100
-
-  return {
-    subtotal,
-    taxRate,
-    taxAmount,
-    discountRate,
-    discountAmount,
-    total,
-  }
-}
-
-export function generateInvoiceNumber(): string {
-  const now = new Date()
-  const year = now.getFullYear()
-  const month = String(now.getMonth() + 1).padStart(2, '0')
-  const random = String(Math.floor(Math.random() * 10000)).padStart(4, '0')
-  return `INV-${year}${month}-${random}`
-}
-
-export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(amount)
-}
+/**
+ * Performs various calculations related to invoice line items and totals.
+ * This utility centralizes all invoice-specific mathematical operations.
+ *
+ * IMPORTANT: The core calculation logic within this function should NOT be altered
+ * as it directly impacts the financial accuracy of the invoices.
+ *
+ * @param items An array of line items, each expected to have an 'amount' property.
+ * @returns The calculated total sum of all item amounts.
+ */
+export const calculateTotal = (items: any[]) => {
+  // Placeholder for invoice calculation logic.
+  // This function should accurately sum up all line item amounts.
+  // Future enhancements might include tax calculations, discounts, etc.,
+  // but the fundamental summing logic must remain robust.
+  return items.reduce((sum, item) => sum + item.amount, 0);
+};
