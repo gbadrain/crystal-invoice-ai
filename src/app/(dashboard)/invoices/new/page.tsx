@@ -1,5 +1,5 @@
 import { NewInvoicePage } from '@/pages/NewInvoicePage'
 
-export default function NewInvoiceRoute() {
+export default function Page() {
   return <NewInvoicePage />
 }
