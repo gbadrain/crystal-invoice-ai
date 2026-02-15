@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react'
 import { FileText } from 'lucide-react'
 import { AIGenerator } from '@/components/invoice/AIGenerator'
+import { PDFDownloadButton } from '@/components/invoice/PDFDownloadButton'
 import { LogoUploader } from '@/components/invoice/LogoUploader'
 import { ClientInfo } from '@/components/invoice/ClientInfo'
 import { InvoiceMetadata } from '@/components/invoice/InvoiceMetadata'
@@ -16,6 +17,7 @@ import type {
   ClientInfo as ClientInfoType,
   InvoiceMetadata as InvoiceMetadataType,
   LineItem,
+  Invoice,
 } from '@/utils/invoice-types'
 import type { ParsedInvoice } from '@/utils/ai-parser'
 
@@ -74,17 +76,18 @@ export function NewInvoicePage() {
     // Logo is intentionally NOT overwritten
   }
 
+  const currentInvoice: Invoice = useMemo(() => ({
+    logo,
+    client,
+    metadata,
+    lineItems,
+    summary,
+    notes,
+  }), [logo, client, metadata, lineItems, summary, notes])
+
   function handleSaveDraft() {
-    const invoice = {
-      logo,
-      client,
-      metadata,
-      lineItems,
-      summary,
-      notes,
-    }
     // TODO: Send to API
-    console.log('Invoice draft:', invoice)
+    console.log('Invoice draft:', currentInvoice)
   }
 
   return (
@@ -97,14 +100,17 @@ export function NewInvoicePage() {
             Create a new invoice for your client
           </p>
         </div>
-        <button
-          type="button"
-          onClick={handleSaveDraft}
-          className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-crystal-600 text-white text-sm font-medium hover:bg-crystal-700 transition-colors shadow-lg shadow-crystal-600/20"
-        >
-          <FileText className="w-4 h-4" />
-          Save Draft
-        </button>
+        <div className="flex items-center gap-3">
+          <PDFDownloadButton invoice={currentInvoice} />
+          <button
+            type="button"
+            onClick={handleSaveDraft}
+            className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-crystal-600 text-white text-sm font-medium hover:bg-crystal-700 transition-colors shadow-lg shadow-crystal-600/20"
+          >
+            <FileText className="w-4 h-4" />
+            Save Draft
+          </button>
+        </div>
       </div>
 
       {/* Form sections */}
