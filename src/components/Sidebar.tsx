@@ -2,13 +2,14 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, FilePlus, FileText } from 'lucide-react' // Import FileText
+import { LayoutDashboard, FilePlus, FileText, HelpCircle, X, Trash } from 'lucide-react'
 import { cn } from '@/utils/cn'
 
 const navItems = [
   { label: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { label: 'Invoices', href: '/invoices', icon: FileText }, // New navigation item
+  { label: 'Invoices', href: '/invoices', icon: FileText },
   { label: 'New Invoice', href: '/invoices/new', icon: FilePlus },
+  { label: 'Trash', href: '/trash', icon: Trash },
 ]
 
 export function Sidebar() {

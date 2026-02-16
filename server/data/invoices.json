@@ -1,67 +1,7 @@
 [
   {
-    "logo": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAADL1t+KAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAB9KADAAQAAAABAAAB9AAAAAB3bs6AAABAAElEQVR4Aey9B6BlVXU3vs7tr783vTAzzAwdpCjFgEQFEVuwYxKNnynGSCKafMby+SViYor/+EWjJhoTjTGgIhZAY0GJICpYCE1AyszQhmHKm5nXbz//3zr3rTdr1uy9z713njGae3RY7bfWPnff/e46ux4ic8VxHPE/oyaXTmPS7BrLvA/PepfNpdMx0+wa2yu/V/++9sJ6l82l020qza6xvfbXa3++9sJ6l82l020qza6xvfb3P7T9pTWSNLtuRIztBB9qdBK3k3i98nv130l76bU//49e7++vVQOdtKfe70/v96eT9nLYvz+hwqxNZKG+P3BrF5yLhrDWJrJQiZcmC85Fra/GWJvIQgWbJgvORa2vxlibyEIFmyYLzkWtr8ZYm8hCBZsmC85Fra/GWJvIQgWbJgvORa2vxlibyEIFmyYLzkWtr8ZYm8hCBZsmC85Fra/GWJvIQgWbJgvORa2vxlibyEIFmyYLzkWtr8ZYm8hCBZsmC85Fra/GWJvIQgWbJgvORa2vxlibyEIFmyYLzkWtr8ZYm8hCBZsmC85Fra/GWJvIQgWbJgvORa2vxlibyEIFa2XRe4fDGcBOPsd29D7MQuHzZWhZ873ye/Xva0Pt6H0Y28a0rPle++u1P18bakfvw9g2pmXN99pfr/352tBB+oME1YJ8eoFou+bZbmWXT0gXiuHys+VZ2eUT0vXK93+Hrnqz9W1ll09I16v/Xv372pCr3VislV0+IV2v/fXan68NudqNxVrZ5RPSHW77k9hOqm9O8+0U6gwIpY3jw9kyrJ+VQ3G0rRM/jdW8vTcdP423cUJ4jdV8r/zO2pGuY1uP2mZ5jdV8r/579W/bg207PrkTP43VfK/99dqfbQ++9ubVdxvA+lnZW6AxLJbfYsUxt+cVbXlW9joaw2L5LVYcc3te0ZZnZa+jMSyW32LFMbfnFW15VvY6GsNi+S1WHHN7XtGWZ2WvozEslt9ixTG35xVteVb2OhrDYvktVhxze17Rlmdlr6MxLJbfYsUxt+cVbXlW9joaQ0d+Gmx5LZsyvL1t62PlUByNZV7LIT9tsz5W1ljmtd3yWg75aZv1sbLGMq/tltdyyE/brI+VNZZ5bbe8lkN+2mZ9rKyxzGu75bUc8tM262NljWVe2y2v5ZCftlkfK2ss89pueS2H/LTN+lhZY5nXdstrOeSnbdbHyhrLvLZbXsshP22zPlbWWOa13fJaDvlpm/WxssYyr+2W13LIT9usj5U1lnltt7yWQ37aZn2srLHMa7vltRzy0zbrY2WNZV7bLa/lkJ+2WR8rayzz2m55LYf8DgoSBFrjIslt3+gilWfD9Mo/9NwBqaNQ3QjmcGmojJDtcMsV/1AZIZv4Hy4NlRGyHW654h8qI2QT/8OloTJCtsMtV/xDZYRs4n+4NFRGyHa45Yp/qIyQTfwPl4bKCNkOt1zxD5URson/4dJQGSFb2+W6gmid5tsN2omPC6t1mu+V314NdFJnLqzWab690g9+8kzzccXXOs2nxRJ7Jz4urNZpXuKn0U58XFit03xauWLvxMeF1TrNS/w02omPC6t1mk8rV+yd+LiwWqd5iZ9GO/FxYbVO82nlir0THxdW6zQv8dNoJz4urNZpPq1csXfi48JqneYlfhrtxMeF1TrNp5V7kN3l6NId5ARBYzRvcWmyy9els3E0RvMWlya7fF06G0djNG9xabLL16WzcTRG8xaXJrt8XTobR2M0b3FpssvXpbNxNEbzFpcmu3xdOhtHYzRvcWmyy9els3E0RvMWlya7f... [truncated]",
-    "client": {
-      "name": "Gurpreet Badrain",
-      "email": "gbadrain@gmail.com",
-      "address": "CA",
-      "phone": ""
-    },
-    "metadata": {
-      "invoiceNumber": "INV-D0960B-6C3E",
-      "issueDate": "2026-02-16",
-      "dueDate": "2026-03-18",
-      "status": "draft"
-    },
-    "lineItems": [
-      {
-        "id": "cb879314-5bd1-40be-868f-c5cf627effea",
-        "description": "Mackbook Updation",
-        "quantity": 1,
-        "rate": 125,
-        "amount": 125
-      },
-      {
-        "id": "694631df-46ea-4192-b638-f217ee1a2ac0",
-        "description": "Printer ",
-        "quantity": 1,
-        "rate": 50,
-        "amount": 50
-      }
-    ],
-    "summary": {
-      "subtotal": 175,
-      "taxRate": 2.5,
-      "taxAmount": 4.16,
-      "discountRate": 5,
-      "discountAmount": 8.75,
-      "total": 170.41
-    },
-    "notes": "Looking for more discount",
-    "_id": "d351859a-5405-41b2-adef-70e29f64f1ad"
-  },
-  {
-    "_id": "f9a8f8d2-4b3f-4b9f-8b3a-9b0c6d5e4f1a",
-    "client": {
-      "name": "Acme Inc.",
-      "email": "contact@acme.com",
-      "address": "123 Main St, Anytown, USA",
-      "phone": "555-1234"
-    },
-    "metadata": {
-      "invoiceNumber": "INV-2026-001",
-      "issueDate": "2026-01-15",
-      "dueDate": "2026-02-14",
-      "status": "paid"
-    },
-    "lineItems": [
-      { "id": "1", "description": "Web Development", "quantity": 1, "rate": 2500, "amount": 2500 }
-    ],
-    "summary": { "subtotal": 2500, "taxRate": 8, "taxAmount": 200, "discountRate": 0, "discountAmount": 0, "total": 2700 },
-    "notes": "Thank you for your business."
-  },
-  {
     "_id": "b4b2c3a1-1b1b-4c1c-8c1c-1b1b1b1b1b1b",
+    "deletedAt": null,
     "client": {
       "name": "Innovate LLC",
       "email": "hello@innovate.io",
@@ -75,14 +15,34 @@
       "status": "pending"
     },
     "lineItems": [
-      { "id": "1", "description": "UI/UX Design", "quantity": 1, "rate": 1800, "amount": 1800 },
-      { "id": "2", "description": "Logo Design", "quantity": 1, "rate": 500, "amount": 500 }
+      {
+        "id": "1",
+        "description": "UI/UX Design",
+        "quantity": 1,
+        "rate": 1800,
+        "amount": 1800
+      },
+      {
+        "id": "2",
+        "description": "Logo Design",
+        "quantity": 1,
+        "rate": 500,
+        "amount": 500
+      }
     ],
-    "summary": { "subtotal": 2300, "taxRate": 0, "taxAmount": 0, "discountRate": 10, "discountAmount": 230, "total": 2070 },
+    "summary": {
+      "subtotal": 2300,
+      "taxRate": 0,
+      "taxAmount": 0,
+      "discountRate": 10,
+      "discountAmount": 230,
+      "total": 2070
+    },
     "notes": ""
   },
   {
     "_id": "c3c2b1a1-2c2c-3d3d-9d9d-2c2c2c2c2c2c",
+    "deletedAt": null,
     "client": {
       "name": "Synergy Corp",
       "email": "accounts@synergy.org",
@@ -96,13 +56,27 @@
       "status": "overdue"
     },
     "lineItems": [
-      { "id": "1", "description": "Consulting Services", "quantity": 10, "rate": 150, "amount": 1500 }
+      {
+        "id": "1",
+        "description": "Consulting Services",
+        "quantity": 10,
+        "rate": 150,
+        "amount": 1500
+      }
     ],
-    "summary": { "subtotal": 1500, "taxRate": 5, "taxAmount": 75, "discountRate": 0, "discountAmount": 0, "total": 1575 },
+    "summary": {
+      "subtotal": 1500,
+      "taxRate": 5,
+      "taxAmount": 75,
+      "discountRate": 0,
+      "discountAmount": 0,
+      "total": 1575
+    },
     "notes": "Payment is overdue. Please remit payment as soon as possible."
   },
   {
     "_id": "d2d1c0b0-3d3d-4e4e-ae4e-3d3d3d3d3d3d",
+    "deletedAt": null,
     "client": {
       "name": "Quantum Solutions",
       "email": "billing@quantum.dev",
@@ -116,13 +90,27 @@
       "status": "draft"
     },
     "lineItems": [
-      { "id": "1", "description": "Backend API Development", "quantity": 1, "rate": 3200, "amount": 3200 }
+      {
+        "id": "1",
+        "description": "Backend API Development",
+        "quantity": 1,
+        "rate": 3200,
+        "amount": 3200
+      }
     ],
-    "summary": { "subtotal": 3200, "taxRate": 0, "taxAmount": 0, "discountRate": 0, "discountAmount": 0, "total": 3200 },
+    "summary": {
+      "subtotal": 3200,
+      "taxRate": 0,
+      "taxAmount": 0,
+      "discountRate": 0,
+      "discountAmount": 0,
+      "total": 3200
+    },
     "notes": "Initial draft."
   },
   {
     "_id": "e1e0d-4e4e-5f5f-bf5f-4e4e4e4e4e4e",
+    "deletedAt": null,
     "client": {
       "name": "Apex Enterprises",
       "email": "finance@apex.com",
@@ -136,13 +124,27 @@
       "status": "pending"
     },
     "lineItems": [
-      { "id": "1", "description": "Cloud Migration", "quantity": 1, "rate": 4500, "amount": 4500 }
+      {
+        "id": "1",
+        "description": "Cloud Migration",
+        "quantity": 1,
+        "rate": 4500,
+        "amount": 4500
+      }
     ],
-    "summary": { "subtotal": 4500, "taxRate": 10, "taxAmount": 450, "discountRate": 0, "discountAmount": 0, "total": 4950 },
+    "summary": {
+      "subtotal": 4500,
+      "taxRate": 10,
+      "taxAmount": 450,
+      "discountRate": 0,
+      "discountAmount": 0,
+      "total": 4950
+    },
     "notes": ""
   },
   {
     "_id": "f0f-5f5f-6g6g-cg6g-5f5f5f5f5f5f",
+    "deletedAt": null,
     "client": {
       "name": "Starlight Studios",
       "email": "creative@starlight.com",
@@ -156,13 +158,27 @@
       "status": "paid"
     },
     "lineItems": [
-      { "id": "1", "description": "Video Production", "quantity": 1, "rate": 5000, "amount": 5000 }
+      {
+        "id": "1",
+        "description": "Video Production",
+        "quantity": 1,
+        "rate": 5000,
+        "amount": 5000
+      }
     ],
-    "summary": { "subtotal": 5000, "taxRate": 0, "taxAmount": 0, "discountRate": 0, "discountAmount": 0, "total": 5000 },
+    "summary": {
+      "subtotal": 5000,
+      "taxRate": 0,
+      "taxAmount": 0,
+      "discountRate": 0,
+      "discountAmount": 0,
+      "total": 5000
+    },
     "notes": "Paid in full. Thank you!"
   },
   {
     "_id": "g-6g6g-7h7h-dh7h-6g6g6g6g6g6g",
+    "deletedAt": null,
     "client": {
       "name": "Momentum Movers",
       "email": "logistics@momentum.co",
@@ -176,13 +192,27 @@
       "status": "overdue"
     },
     "lineItems": [
-      { "id": "1", "description": "Logistics Software License", "quantity": 1, "rate": 1200, "amount": 1200 }
+      {
+        "id": "1",
+        "description": "Logistics Software License",
+        "quantity": 1,
+        "rate": 1200,
+        "amount": 1200
+      }
     ],
-    "summary": { "subtotal": 1200, "taxRate": 0, "taxAmount": 0, "discountRate": 0, "discountAmount": 0, "total": 1200 },
+    "summary": {
+      "subtotal": 1200,
+      "taxRate": 0,
+      "taxAmount": 0,
+      "discountRate": 0,
+      "discountAmount": 0,
+      "total": 1200
+    },
     "notes": "Overdue notice: 30 days past due."
   },
   {
     "_id": "h-7h7h-8i8i-ei8i-7h7h7h7h7h7h",
+    "deletedAt": null,
     "client": {
       "name": "Evergreen Goods",
       "email": "sales@evergreen.com",
@@ -196,13 +226,27 @@
       "status": "pending"
     },
     "lineItems": [
-      { "id": "1", "description": "Organic SEO Package", "quantity": 1, "rate": 750, "amount": 750 }
+      {
+        "id": "1",
+        "description": "Organic SEO Package",
+        "quantity": 1,
+        "rate": 750,
+        "amount": 750
+      }
     ],
-    "summary": { "subtotal": 750, "taxRate": 0, "taxAmount": 0, "discountRate": 0, "discountAmount": 0, "total": 750 },
+    "summary": {
+      "subtotal": 750,
+      "taxRate": 0,
+      "taxAmount": 0,
+      "discountRate": 0,
+      "discountAmount": 0,
+      "total": 750
+    },
     "notes": ""
   },
   {
     "_id": "i-8i8i-9j9j-fj9j-8i8i8i8i8i8i",
+    "deletedAt": null,
     "client": {
       "name": "Acme Inc.",
       "email": "contact@acme.com",
@@ -216,13 +260,27 @@
       "status": "draft"
     },
     "lineItems": [
-      { "id": "1", "description": "Monthly Retainer", "quantity": 1, "rate": 1500, "amount": 1500 }
+      {
+        "id": "1",
+        "description": "Monthly Retainer",
+        "quantity": 1,
+        "rate": 1500,
+        "amount": 1500
+      }
     ],
-    "summary": { "subtotal": 1500, "taxRate": 0, "taxAmount": 0, "discountRate": 0, "discountAmount": 0, "total": 1500 },
+    "summary": {
+      "subtotal": 1500,
+      "taxRate": 0,
+      "taxAmount": 0,
+      "discountRate": 0,
+      "discountAmount": 0,
+      "total": 1500
+    },
     "notes": "For upcoming marketing campaign."
   },
   {
     "_id": "j-9j9j-0k0k-gk0k-9j9j9j9j9j9j",
+    "deletedAt": null,
     "client": {
       "name": "Innovate LLC",
       "email": "hello@innovate.io",
@@ -236,13 +294,27 @@
       "status": "paid"
     },
     "lineItems": [
-      { "id": "1", "description": "Prototyping", "quantity": 1, "rate": 1000, "amount": 1000 }
+      {
+        "id": "1",
+        "description": "Prototyping",
+        "quantity": 1,
+        "rate": 1000,
+        "amount": 1000
+      }
     ],
-    "summary": { "subtotal": 1000, "taxRate": 0, "taxAmount": 0, "discountRate": 0, "discountAmount": 0, "total": 1000 },
+    "summary": {
+      "subtotal": 1000,
+      "taxRate": 0,
+      "taxAmount": 0,
+      "discountRate": 0,
+      "discountAmount": 0,
+      "total": 1000
+    },
     "notes": "Payment received, thank you."
   },
   {
     "_id": "k-0k0k-1l1l-hl1l-0k0k0k0k0k0k",
+    "deletedAt": null,
     "client": {
       "name": "Synergy Corp",
       "email": "accounts@synergy.org",
@@ -256,13 +328,27 @@
       "status": "pending"
     },
     "lineItems": [
-      { "id": "1", "description": "Strategic Planning Session", "quantity": 4, "rate": 250, "amount": 1000 }
+      {
+        "id": "1",
+        "description": "Strategic Planning Session",
+        "quantity": 4,
+        "rate": 250,
+        "amount": 1000
+      }
     ],
-    "summary": { "subtotal": 1000, "taxRate": 5, "taxAmount": 50, "discountRate": 0, "discountAmount": 0, "total": 1050 },
+    "summary": {
+      "subtotal": 1000,
+      "taxRate": 5,
+      "taxAmount": 50,
+      "discountRate": 0,
+      "discountAmount": 0,
+      "total": 1050
+    },
     "notes": ""
   },
   {
     "_id": "l-1l1l-2m2m-im2m-1l1l1l1l1l1l",
+    "deletedAt": null,
     "client": {
       "name": "Quantum Solutions",
       "email": "billing@quantum.dev",
@@ -276,13 +362,27 @@
       "status": "overdue"
     },
     "lineItems": [
-      { "id": "1", "description": "Quantum Computing Consultation", "quantity": 1, "rate": 5000, "amount": 5000 }
+      {
+        "id": "1",
+        "description": "Quantum Computing Consultation",
+        "quantity": 1,
+        "rate": 5000,
+        "amount": 5000
+      }
     ],
-    "summary": { "subtotal": 5000, "taxRate": 0, "taxAmount": 0, "discountRate": 0, "discountAmount": 0, "total": 5000 },
+    "summary": {
+      "subtotal": 5000,
+      "taxRate": 0,
+      "taxAmount": 0,
+      "discountRate": 0,
+      "discountAmount": 0,
+      "total": 5000
+    },
     "notes": "URGENT: Payment is 60 days overdue."
   },
   {
     "_id": "m-2m2m-3n3n-jn3n-2m2m2m2m2m2m",
+    "deletedAt": null,
     "client": {
       "name": "Apex Enterprises",
       "email": "finance@apex.com",
@@ -296,13 +396,27 @@
       "status": "draft"
     },
     "lineItems": [
-      { "id": "1", "description": "Server Maintenance", "quantity": 1, "rate": 400, "amount": 400 }
+      {
+        "id": "1",
+        "description": "Server Maintenance",
+        "quantity": 1,
+        "rate": 400,
+        "amount": 400
+      }
     ],
-    "summary": { "subtotal": 400, "taxRate": 10, "taxAmount": 40, "discountRate": 0, "discountAmount": 0, "total": 440 },
+    "summary": {
+      "subtotal": 400,
+      "taxRate": 10,
+      "taxAmount": 40,
+      "discountRate": 0,
+      "discountAmount": 0,
+      "total": 440
+    },
     "notes": "Pending final review."
   },
   {
     "_id": "n-3n3n-4o4o-ko4o-3n3n3n3n3n3n",
+    "deletedAt": null,
     "client": {
       "name": "Starlight Studios",
       "email": "creative@starlight.com",
@@ -316,13 +430,27 @@
       "status": "pending"
     },
     "lineItems": [
-      { "id": "1", "description": "Sound Design", "quantity": 1, "rate": 1200, "amount": 1200 }
+      {
+        "id": "1",
+        "description": "Sound Design",
+        "quantity": 1,
+        "rate": 1200,
+        "amount": 1200
+      }
     ],
-    "summary": { "subtotal": 1200, "taxRate": 0, "taxAmount": 0, "discountRate": 0, "discountAmount": 0, "total": 1200 },
+    "summary": {
+      "subtotal": 1200,
+      "taxRate": 0,
+      "taxAmount": 0,
+      "discountRate": 0,
+      "discountAmount": 0,
+      "total": 1200
+    },
     "notes": ""
   },
   {
     "_id": "o-4o4o-5p5p-lp5p-4o4o4o4o4o4o",
+    "deletedAt": null,
     "client": {
       "name": "Momentum Movers",
       "email": "logistics@momentum.co",
@@ -336,9 +464,22 @@
       "status": "paid"
     },
     "lineItems": [
-      { "id": "1", "description": "Fleet Tracking System", "quantity": 1, "rate": 3500, "amount": 3500 }
+      {
+        "id": "1",
+        "description": "Fleet Tracking System",
+        "quantity": 1,
+        "rate": 3500,
+        "amount": 3500
+      }
     ],
-    "summary": { "subtotal": 3500, "taxRate": 0, "taxAmount": 0, "discountRate": 0, "discountAmount": 0, "total": 3500 },
+    "summary": {
+      "subtotal": 3500,
+      "taxRate": 0,
+      "taxAmount": 0,
+      "discountRate": 0,
+      "discountAmount": 0,
+      "total": 3500
+    },
     "notes": "Thank you!"
   }
 ]

@@ -17,7 +17,8 @@ export interface InvoiceMetadata {
   invoiceNumber: string
   issueDate: string
   dueDate: string
-  status: 'draft' | 'pending' | 'paid' | 'overdue'
+  status: 'draft' | 'pending' | 'paid' | 'overdue' | 'trashed'
+  originalStatus?: 'draft' | 'pending' | 'paid' | 'overdue'
 }
 
 export interface InvoiceSummary {
@@ -31,6 +32,7 @@ export interface InvoiceSummary {
 
 export interface Invoice {
   _id?: string // Added for mock database compatibility
+  deletedAt?: string | null
   logo?: string
   client: ClientInfo
   metadata: InvoiceMetadata

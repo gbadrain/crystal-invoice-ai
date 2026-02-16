@@ -1,13 +1,22 @@
 import { Router, type Request, type Response } from 'express'
-import { getAllInvoices, getInvoiceById, addInvoice, updateInvoice, deleteInvoice, markAsPaid } from '../lib/mock-db'
+import { 
+  getAllInvoices, 
+  getInvoiceById, 
+  addInvoice, 
+  updateInvoice, 
+  softDeleteInvoice,
+  restoreInvoice,
+  permanentDeleteInvoice
+} from '../lib/mock-db'
 
 export const invoiceRoutes = Router()
 
-// GET /api/invoices — list all invoices
-invoiceRoutes.get('/', async (_req: Request, res: Response) => {
+// GET /api/invoices — list invoices (excluding trashed by default)
+invoiceRoutes.get('/', async (req: Request, res: Response) => {
   try {
-    const invoices = await getAllInvoices()
-    res.json({ total: invoices.length, invoices })
+    const includeTrashed = req.query.status === 'trashed';
+    const invoices = await getAllInvoices(includeTrashed);
+    res.json({ total: invoices.length, invoices });
   } catch (error) {
     console.error('[invoices] GET / error:', error)
     res.status(500).json({ error: 'Failed to fetch invoices' })
@@ -56,32 +65,50 @@ invoiceRoutes.put('/:id', async (req: Request, res: Response) => {
   }
 })
 
-// DELETE /api/invoices/:id — delete invoice
+// DELETE /api/invoices/:id — soft or permanent delete
 invoiceRoutes.delete('/:id', async (req: Request, res: Response) => {
-  try {
-    const deleted = await deleteInvoice(req.params.id)
-    if (deleted) {
-      res.status(204).send()
-    } else {
-      res.status(404).json({ error: 'Invoice not found' })
-    }
-  } catch (error) {
-    console.error('[invoices] DELETE /:id error:', error)
-    res.status(500).json({ error: 'Failed to delete invoice' })
-  }
-})
+  const { force } = req.query;
 
-// POST /api/invoices/:id/pay — mark invoice as paid
-invoiceRoutes.post('/:id/pay', async (req: Request, res: Response) => {
+  if (force === 'true') {
+    // Permanent delete
     try {
-        const updatedInvoice = await markAsPaid(req.params.id);
-        if (updatedInvoice) {
-            res.json({ success: true, invoice: updatedInvoice });
+      const deleted = await permanentDeleteInvoice(req.params.id);
+      if (deleted) {
+        res.status(204).send();
+      } else {
+        res.status(404).json({ error: 'Invoice not found for permanent deletion.' });
+      }
+    } catch (error) {
+      console.error('[invoices] PERMANENT DELETE /:id error:', error);
+      res.status(500).json({ error: 'Failed to permanently delete invoice.' });
+    }
+  } else {
+    // Soft delete
+    try {
+      const trashedInvoice = await softDeleteInvoice(req.params.id);
+      if (trashedInvoice) {
+        res.json({ success: true, invoice: trashedInvoice });
+      } else {
+        res.status(404).json({ error: 'Invoice not found to move to trash.' });
+      }
+    } catch (error) {
+      console.error('[invoices] SOFT DELETE /:id error:', error);
+      res.status(500).json({ error: 'Failed to move invoice to trash.' });
+    }
+  }
+});
+
+// POST /api/invoices/:id/restore — restore a soft-deleted invoice
+invoiceRoutes.post('/:id/restore', async (req: Request, res: Response) => {
+    try {
+        const restoredInvoice = await restoreInvoice(req.params.id);
+        if (restoredInvoice) {
+            res.json({ success: true, invoice: restoredInvoice });
         } else {
-            res.status(404).json({ error: 'Invoice not found or cannot be marked as paid.' });
+            res.status(404).json({ error: 'Invoice not found in trash or cannot be restored.' });
         }
     } catch (error) {
-        console.error('[invoices] POST /:id/pay error:', error);
-        res.status(500).json({ error: 'Failed to mark invoice as paid.' });
+        console.error('[invoices] POST /:id/restore error:', error);
+        res.status(500).json({ error: 'Failed to restore invoice.' });
     }
 });

@@ -63,6 +63,7 @@ export default function InvoicesPage() {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+      // Remove the deleted invoice from the state (it's now in trash)
       setInvoices(prevInvoices => prevInvoices.filter(invoice => invoice._id !== id));
     } catch (err) {
       setError('Failed to delete invoice.');
