@@ -30,13 +30,37 @@ async function writeInvoices(): Promise<void> {
 // Initialize on startup
 readInvoices()
 
+// Automatically update status of pending invoices to overdue if due date has passed
+async function updateOverdueStatus() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Compare dates only
+
+    let changed = false;
+    invoices.forEach(invoice => {
+        if (invoice.metadata.status === 'pending') {
+            const dueDate = new Date(invoice.metadata.dueDate);
+            if (dueDate < today) {
+                invoice.metadata.status = 'overdue';
+                changed = true;
+            }
+        }
+    });
+
+    if (changed) {
+        await writeInvoices();
+    }
+}
+
 export async function getAllInvoices(): Promise<Invoice[]> {
   await readInvoices()
+  await updateOverdueStatus();
   return invoices
 }
 
 export async function getInvoiceById(id: string): Promise<Invoice | undefined> {
   await readInvoices()
+  // Also update status when fetching a single invoice
+  await updateOverdueStatus();
   return invoices.find(inv => inv._id === id)
 }
 
@@ -52,10 +76,34 @@ export async function updateInvoice(id: string, updates: Partial<Invoice>): Prom
   await readInvoices()
   const index = invoices.findIndex(inv => inv._id === id)
   if (index === -1) return undefined
-  invoices[index] = { ...invoices[index], ...updates, _id: id }
+
+  const originalInvoice = invoices[index];
+  
+  // Status transition: Draft -> Pending
+  if (originalInvoice.metadata.status === 'draft' && updates.metadata?.status !== 'draft') {
+    updates.metadata = { ...updates.metadata, status: 'pending' };
+  }
+
+  invoices[index] = { ...originalInvoice, ...updates, _id: id }
+  
   await writeInvoices()
   return invoices[index]
 }
+
+export async function markAsPaid(id: string): Promise<Invoice | undefined> {
+    await readInvoices();
+    const index = invoices.findIndex(inv => inv._id === id);
+    if (index === -1) return undefined;
+
+    if (invoices[index].metadata.status === 'pending' || invoices[index].metadata.status === 'overdue') {
+        invoices[index].metadata.status = 'paid';
+        await writeInvoices();
+        return invoices[index];
+    }
+    // If it's already paid or a draft, do nothing, just return the invoice
+    return invoices[index];
+}
+
 
 export async function deleteInvoice(id: string): Promise<boolean> {
   await readInvoices()

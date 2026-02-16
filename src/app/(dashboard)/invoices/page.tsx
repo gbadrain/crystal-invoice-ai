@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
@@ -11,6 +12,7 @@ const API_BASE = process.env.NEXT_PUBLIC_APP_URL
 
 type SortKey = 'metadata.issueDate' | 'summary.total' | 'metadata.status';
 type SortDirection = 'asc' | 'desc';
+const PAGE_SIZE = 10;
 
 export default function InvoicesPage() {
   const [invoices, setInvoices] = useState<Invoice[]>([])
@@ -18,11 +20,14 @@ export default function InvoicesPage() {
   const [error, setError] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
-  // New state for filtering, searching, and sorting
+  // State for filtering, searching, and sorting
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortKey, setSortKey] = useState<SortKey>('metadata.issueDate');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  
+  // State for pagination
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     fetchInvoices()
@@ -90,6 +95,13 @@ export default function InvoicesPage() {
 
     return result;
   }, [invoices, searchTerm, statusFilter, sortKey, sortDirection]);
+  
+  // Pagination logic
+  const totalPages = Math.ceil(filteredAndSortedInvoices.length / PAGE_SIZE);
+  const paginatedInvoices = filteredAndSortedInvoices.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
 
   function getNestedValue(obj: any, path: string) {
     return path.split('.').reduce((acc, part) => acc && acc[part], obj);
@@ -185,7 +197,7 @@ export default function InvoicesPage() {
         </div>
       </div>
 
-      {filteredAndSortedInvoices.length === 0 ? (
+      {paginatedInvoices.length === 0 ? (
         <div className="glass-panel p-8 text-center text-white/50">
           <p className="text-lg">No invoices match your criteria.</p>
           <p className="mt-2">Try adjusting your search or filters.</p>
@@ -210,10 +222,12 @@ export default function InvoicesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
-              {filteredAndSortedInvoices.map((invoice) => (
+              {paginatedInvoices.map((invoice) => (
                 <tr key={invoice._id?.toString()}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
-                    {invoice.metadata?.invoiceNumber || 'N/A'}
+                     <Link href={`/invoices/${invoice._id}/view`} className="hover:underline">
+                        {invoice.metadata?.invoiceNumber || 'N/A'}
+                     </Link>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-white/70">
                     {invoice.client?.name || 'N/A'}
@@ -254,6 +268,29 @@ export default function InvoicesPage() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+      
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between mt-6">
+          <button
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="px-4 py-2 text-sm rounded-md bg-white/10 text-white disabled:opacity-50 hover:bg-white/20"
+          >
+            Previous
+          </button>
+          <span className="text-sm text-white/50">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 text-sm rounded-md bg-white/10 text-white disabled:opacity-50 hover:bg-white/20"
+          >
+            Next
+          </button>
         </div>
       )}
     </div>

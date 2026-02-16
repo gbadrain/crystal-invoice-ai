@@ -1,5 +1,5 @@
 import { Router, type Request, type Response } from 'express'
-import { getAllInvoices, getInvoiceById, addInvoice, updateInvoice, deleteInvoice } from '../lib/mock-db'
+import { getAllInvoices, getInvoiceById, addInvoice, updateInvoice, deleteInvoice, markAsPaid } from '../lib/mock-db'
 
 export const invoiceRoutes = Router()
 
@@ -70,3 +70,18 @@ invoiceRoutes.delete('/:id', async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to delete invoice' })
   }
 })
+
+// POST /api/invoices/:id/pay — mark invoice as paid
+invoiceRoutes.post('/:id/pay', async (req: Request, res: Response) => {
+    try {
+        const updatedInvoice = await markAsPaid(req.params.id);
+        if (updatedInvoice) {
+            res.json({ success: true, invoice: updatedInvoice });
+        } else {
+            res.status(404).json({ error: 'Invoice not found or cannot be marked as paid.' });
+        }
+    } catch (error) {
+        console.error('[invoices] POST /:id/pay error:', error);
+        res.status(500).json({ error: 'Failed to mark invoice as paid.' });
+    }
+});
