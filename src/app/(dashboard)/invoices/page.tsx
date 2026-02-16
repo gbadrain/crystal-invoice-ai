@@ -1,19 +1,28 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
-import { PlusCircle, Edit, Trash2, Loader2, AlertCircle } from 'lucide-react'
-import type { Invoice } from '@/utils/invoice-types' // Assuming Invoice type is defined here
+import { PlusCircle, Edit, Trash2, Loader2, AlertCircle, Search, ChevronDown, ArrowUp, ArrowDown } from 'lucide-react'
+import type { Invoice } from '@/utils/invoice-types'
 
 const API_BASE = process.env.NEXT_PUBLIC_APP_URL
   ? process.env.NEXT_PUBLIC_APP_URL.replace(':3000', ':3001')
   : 'http://localhost:3001'
+
+type SortKey = 'metadata.issueDate' | 'summary.total' | 'metadata.status';
+type SortDirection = 'asc' | 'desc';
 
 export default function InvoicesPage() {
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+
+  // New state for filtering, searching, and sorting
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [sortKey, setSortKey] = useState<SortKey>('metadata.issueDate');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
   useEffect(() => {
     fetchInvoices()
@@ -28,7 +37,7 @@ export default function InvoicesPage() {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
       const data = await response.json()
-      setInvoices(data.invoices) // Assuming API returns { totalInvoices: number, invoices: Invoice[] }
+      setInvoices(data.invoices || [])
     } catch (err) {
       setError('Failed to fetch invoices.')
       console.error('Error fetching invoices:', err)
@@ -49,8 +58,6 @@ export default function InvoicesPage() {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-      // Remove the deleted invoice from the state
       setInvoices(prevInvoices => prevInvoices.filter(invoice => invoice._id !== id));
     } catch (err) {
       setError('Failed to delete invoice.');
@@ -59,6 +66,59 @@ export default function InvoicesPage() {
       setDeletingId(null);
     }
   }
+
+  const filteredAndSortedInvoices = useMemo(() => {
+    let result = invoices
+      .filter(invoice => {
+        const searchTermLower = searchTerm.toLowerCase();
+        const clientName = invoice.client?.name?.toLowerCase() || '';
+        const invoiceNumber = invoice.metadata?.invoiceNumber?.toLowerCase() || '';
+        return clientName.includes(searchTermLower) || invoiceNumber.includes(searchTermLower);
+      })
+      .filter(invoice => {
+        return statusFilter === 'all' || invoice.metadata?.status === statusFilter;
+      });
+
+    result.sort((a, b) => {
+      const aValue = getNestedValue(a, sortKey);
+      const bValue = getNestedValue(b, sortKey);
+
+      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return result;
+  }, [invoices, searchTerm, statusFilter, sortKey, sortDirection]);
+
+  function getNestedValue(obj: any, path: string) {
+    return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+  }
+
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortKey(key);
+      setSortDirection('desc');
+    }
+  };
+
+  const SortableHeader = ({ title, sortKey: key }: { title: string, sortKey: SortKey }) => (
+    <th
+      className="px-6 py-3 text-left text-xs font-medium text-white/50 uppercase tracking-wider cursor-pointer hover:text-white"
+      onClick={() => handleSort(key)}
+    >
+      <div className="flex items-center">
+        {title}
+        {sortKey === key && (
+          <span className="ml-2">
+            {sortDirection === 'desc' ? <ArrowDown className="w-3 h-3" /> : <ArrowUp className="w-3 h-3" />}
+          </span>
+        )}
+      </div>
+    </th>
+  );
 
   if (isLoading) {
     return (
@@ -97,10 +157,38 @@ export default function InvoicesPage() {
         </Link>
       </div>
 
-      {invoices.length === 0 ? (
+      {/* Filter and Search Controls */}
+      <div className="flex items-center justify-between mb-6 gap-4 glass-panel p-4">
+        <div className="relative flex-grow">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+          <input
+            type="text"
+            placeholder="Search by client or invoice #"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-crystal-500"
+          />
+        </div>
+        <div className="relative">
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="appearance-none w-full bg-white/5 border border-white/10 rounded-lg pl-4 pr-10 py-2 text-white focus:outline-none focus:ring-2 focus:ring-crystal-500"
+          >
+            <option value="all">All Statuses</option>
+            <option value="draft">Draft</option>
+            <option value="pending">Pending</option>
+            <option value="paid">Paid</option>
+            <option value="overdue">Overdue</option>
+          </select>
+          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+        </div>
+      </div>
+
+      {filteredAndSortedInvoices.length === 0 ? (
         <div className="glass-panel p-8 text-center text-white/50">
-          <p className="text-lg">No invoices found.</p>
-          <p className="mt-2">Start by creating a <Link href="/invoices/new" className="text-crystal-400 hover:underline">new invoice</Link>.</p>
+          <p className="text-lg">No invoices match your criteria.</p>
+          <p className="mt-2">Try adjusting your search or filters.</p>
         </div>
       ) : (
         <div className="glass-panel">
@@ -113,25 +201,16 @@ export default function InvoicesPage() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-white/50 uppercase tracking-wider">
                   Client
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white/50 uppercase tracking-wider">
-                  Issue Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white/50 uppercase tracking-wider">
-                  Due Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white/50 uppercase tracking-wider">
-                  Total
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-white/50 uppercase tracking-wider">
-                  Status
-                </th>
+                <SortableHeader title="Issue Date" sortKey="metadata.issueDate" />
+                <SortableHeader title="Total" sortKey="summary.total" />
+                <SortableHeader title="Status" sortKey="metadata.status" />
                 <th className="relative px-6 py-3">
-                  <span className="sr-only">Edit</span>
+                  <span className="sr-only">Actions</span>
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
-              {invoices.map((invoice) => (
+              {filteredAndSortedInvoices.map((invoice) => (
                 <tr key={invoice._id?.toString()}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
                     {invoice.metadata?.invoiceNumber || 'N/A'}
@@ -142,18 +221,15 @@ export default function InvoicesPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-white/70">
                     {invoice.metadata?.issueDate || 'N/A'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-white/70">
-                    {invoice.metadata?.dueDate || 'N/A'}
-                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
-                    {invoice.summary?.total ? `$${invoice.summary.total.toFixed(2)}` : '$0.00'}
+                    {invoice.summary?.total != null ? `$${invoice.summary.total.toFixed(2)}` : '$0.00'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                      ${invoice.metadata?.status === 'paid' ? 'bg-green-100 text-green-800' : ''}
-                      ${invoice.metadata?.status === 'sent' ? 'bg-blue-100 text-blue-800' : ''}
-                      ${invoice.metadata?.status === 'draft' ? 'bg-gray-100 text-gray-800' : ''}
-                      ${invoice.metadata?.status === 'overdue' ? 'bg-red-100 text-red-800' : ''}
+                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full capitalize
+                      ${invoice.metadata?.status === 'paid' ? 'bg-green-200 text-green-900' : ''}
+                      ${invoice.metadata?.status === 'pending' ? 'bg-yellow-200 text-yellow-900' : ''}
+                      ${invoice.metadata?.status === 'draft' ? 'bg-gray-300 text-gray-900' : ''}
+                      ${invoice.metadata?.status === 'overdue' ? 'bg-red-200 text-red-900' : ''}
                     `}>
                       {invoice.metadata?.status || 'draft'}
                     </span>
@@ -165,7 +241,7 @@ export default function InvoicesPage() {
                     <button
                       onClick={() => handleDelete(invoice._id?.toString() || '')}
                       disabled={deletingId === invoice._id?.toString()}
-                      className="text-red-400 hover:text-red-600"
+                      className="text-red-400 hover:text-red-600 disabled:opacity-50"
                     >
                       {deletingId === invoice._id?.toString() ? (
                         <Loader2 className="w-5 h-5 animate-spin inline-block" />

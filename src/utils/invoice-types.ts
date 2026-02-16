@@ -17,7 +17,7 @@ export interface InvoiceMetadata {
   invoiceNumber: string
   issueDate: string
   dueDate: string
-  status: 'draft' | 'sent' | 'paid' | 'overdue'
+  status: 'draft' | 'pending' | 'paid' | 'overdue'
 }
 
 export interface InvoiceSummary {
