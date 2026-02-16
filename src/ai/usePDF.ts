@@ -8,11 +8,8 @@ const API_BASE = process.env.NEXT_PUBLIC_APP_URL
   : 'http://localhost:3001'
 
 interface UsePDFReturn {
-  /** Generate PDF and trigger browser download */
   generatePDF: (invoice: Invoice) => Promise<void>
-  /** True while PDF is being generated */
   isLoading: boolean
-  /** Error message from the last failed request, or null */
   error: string | null
 }
 
@@ -25,6 +22,7 @@ export function usePDF(): UsePDFReturn {
     setError(null)
 
     try {
+      // Step 1: POST invoice data → server generates PDF and returns a download URL
       const response = await fetch(`${API_BASE}/api/pdf/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -32,34 +30,32 @@ export function usePDF(): UsePDFReturn {
       })
 
       if (!response.ok) {
-        // Try to read JSON error, fall back to status text
         let message: string
-        try {
+        const ct = response.headers.get('content-type') || ''
+        if (ct.includes('application/json')) {
           const body = await response.json()
           message = body.error || `PDF generation failed (${response.status})`
-        } catch {
-          message = `PDF generation failed (${response.status})`
+        } else {
+          message = response.status === 413
+            ? 'Invoice data too large. Try removing or reducing the logo image.'
+            : `PDF generation failed (${response.status})`
         }
         setError(message)
         setIsLoading(false)
         return
       }
 
-      // Receive the PDF as a blob
-      const blob = await response.blob()
-      const url = URL.createObjectURL(blob)
+      const { downloadUrl, error: serverError } = await response.json()
 
-      // Trigger browser download
-      const filename = `invoice-${invoice.metadata?.invoiceNumber || 'draft'}.pdf`
-      const link = document.createElement('a')
-      link.href = url
-      link.download = filename
-      document.body.appendChild(link)
-      link.click()
+      if (serverError || !downloadUrl) {
+        setError(serverError || 'Server did not return a download URL.')
+        setIsLoading(false)
+        return
+      }
 
-      // Cleanup
-      document.body.removeChild(link)
-      URL.revokeObjectURL(url)
+      // Step 2: Open the download URL directly — the browser handles the PDF natively
+      // This is the same mechanism that works when you visit /api/pdf/test in Safari
+      window.open(`${API_BASE}${downloadUrl}`, '_blank')
 
       setIsLoading(false)
     } catch (err: unknown) {
