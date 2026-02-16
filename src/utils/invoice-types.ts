@@ -30,6 +30,7 @@ export interface InvoiceSummary {
 }
 
 export interface Invoice {
+  _id?: string // Added for mock database compatibility
   logo?: string
   client: ClientInfo
   metadata: InvoiceMetadata

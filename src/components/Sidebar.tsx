@@ -2,11 +2,12 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, FilePlus } from 'lucide-react'
+import { LayoutDashboard, FilePlus, FileText } from 'lucide-react' // Import FileText
 import { cn } from '@/utils/cn'
 
 const navItems = [
   { label: 'Dashboard', href: '/', icon: LayoutDashboard },
+  { label: 'Invoices', href: '/invoices', icon: FileText }, // New navigation item
   { label: 'New Invoice', href: '/invoices/new', icon: FilePlus },
 ]
 

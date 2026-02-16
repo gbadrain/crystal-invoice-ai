@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { FileText, Loader2, AlertCircle } from 'lucide-react'
 import { AIGenerator } from '@/components/invoice/AIGenerator'
@@ -36,22 +36,29 @@ function dueDateISO(): string {
   return d.toISOString().split('T')[0]
 }
 
-export function NewInvoicePage() {
-  const router = useRouter()
+interface EditInvoicePageProps {
+  params: { id: string }
+}
 
-  const initialClientState: ClientInfoType = {
+export default function EditInvoicePage({ params }: EditInvoicePageProps) {
+  const router = useRouter()
+  const { id } = params
+
+  const [client, setClient] = useState<ClientInfoType>({
     name: '',
     email: '',
     address: '',
     phone: '',
-  }
-  const initialMetadataState: InvoiceMetadataType = {
+  })
+
+  const [metadata, setMetadata] = useState<InvoiceMetadataType>({
     invoiceNumber: generateInvoiceNumber(),
     issueDate: todayISO(),
     dueDate: dueDateISO(),
     status: 'draft',
-  }
-  const initialLineItemsState: LineItem[] = [
+  })
+
+  const [lineItems, setLineItems] = useState<LineItem[]>([
     {
       id: crypto.randomUUID(),
       description: '',
@@ -59,18 +66,49 @@ export function NewInvoicePage() {
       rate: 0,
       amount: 0,
     },
-  ]
+  ])
 
-  const [client, setClient] = useState<ClientInfoType>(initialClientState)
-  const [metadata, setMetadata] = useState<InvoiceMetadataType>(initialMetadataState)
-  const [lineItems, setLineItems] = useState<LineItem[]>(initialLineItemsState)
   const [logo, setLogo] = useState<string | undefined>(undefined)
   const [taxRate, setTaxRate] = useState(0)
   const [discountRate, setDiscountRate] = useState(0)
   const [notes, setNotes] = useState('')
 
-  const [isSaving, setIsSaving] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [fetchError, setFetchError] = useState<string | null>(null)
   const [saveError, setSaveError] = useState<string | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
+
+  useEffect(() => {
+    async function fetchInvoice() {
+      try {
+        const response = await fetch(`${API_BASE}/api/invoices/${id}`)
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const data: Invoice = await response.json()
+
+        setClient(data.client || client)
+        setMetadata(data.metadata || metadata)
+        setLineItems(data.lineItems || lineItems)
+        setLogo(data.logo)
+        setTaxRate(data.summary?.taxRate || 0)
+        setDiscountRate(data.summary?.discountRate || 0)
+        setNotes(data.notes || '')
+      } catch (err) {
+        setFetchError('Failed to load invoice.')
+        console.error('Error fetching invoice:', err)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    if (id) {
+      fetchInvoice()
+    } else {
+      setIsLoading(false)
+      setFetchError('No invoice ID provided.')
+    }
+  }, [id])
 
   const summary = useMemo(
     () => calculateSummary(lineItems, taxRate, discountRate),
@@ -88,39 +126,30 @@ export function NewInvoicePage() {
   }
 
   const currentInvoice: Invoice = useMemo(() => ({
+    _id: id, // Include ID for update
     logo,
     client,
     metadata,
     lineItems,
     summary,
     notes,
-  }), [logo, client, metadata, lineItems, summary, notes])
+  }), [id, logo, client, metadata, lineItems, summary, notes])
 
-  async function handleSaveDraft() {
+  async function handleSaveInvoice() {
     setIsSaving(true)
     setSaveError(null)
     try {
-      const response = await fetch(`${API_BASE}/api/invoices`, {
-        method: 'POST',
+      const response = await fetch(`${API_BASE}/api/invoices/${id}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(currentInvoice),
       })
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
+        const errorData = await response.json()
         throw new Error(errorData.error || `HTTP error! status: ${response.status}`)
       }
 
-      const { invoice: saved } = await response.json()
-      alert(`Invoice ${saved?.metadata?.invoiceNumber || ''} saved successfully!`)
-      // Clear form fields after successful save
-      setClient(initialClientState)
-      setMetadata({ ...initialMetadataState, invoiceNumber: generateInvoiceNumber() }) // Generate new invoice number
-      setLineItems(initialLineItemsState)
-      setLogo(undefined)
-      setTaxRate(0)
-      setDiscountRate(0)
-      setNotes('')
       router.push('/invoices') // Redirect to invoice list after saving
     } catch (err: any) {
       setSaveError(err.message || 'Failed to save invoice.')
@@ -130,21 +159,39 @@ export function NewInvoicePage() {
     }
   }
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[calc(100vh-10rem)]">
+        <Loader2 className="w-8 h-8 animate-spin text-crystal-400" />
+        <p className="ml-3 text-lg text-white/70">Loading invoice...</p>
+      </div>
+    )
+  }
+
+  if (fetchError) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)]">
+        <AlertCircle className="w-8 h-8 text-red-400" />
+        <p className="ml-3 text-lg text-red-400 mt-3">{fetchError}</p>
+      </div>
+    )
+  }
+
   return (
     <div>
       {/* Page header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold mb-1">New Invoice</h1>
+          <h1 className="text-3xl font-bold mb-1">Edit Invoice</h1>
           <p className="text-white/50 text-sm">
-            Create a new invoice for your client
+            Modify an existing invoice
           </p>
         </div>
         <div className="flex items-center gap-3">
           <PDFDownloadButton invoice={currentInvoice} />
           <button
             type="button"
-            onClick={handleSaveDraft}
+            onClick={handleSaveInvoice}
             disabled={isSaving}
             className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-crystal-600 text-white text-sm font-medium hover:bg-crystal-700 transition-colors shadow-lg shadow-crystal-600/20 disabled:opacity-40 disabled:cursor-not-allowed"
           >
@@ -156,7 +203,7 @@ export function NewInvoicePage() {
             ) : (
               <>
                 <FileText className="w-4 h-4" />
-                Save Draft
+                Save Changes
               </>
             )}
           </button>
