@@ -1,0 +1,65 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum InvoiceStatus {
+  draft
+  pending
+  paid
+  overdue
+  trashed
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  createdAt     DateTime  @default(now())
+  invoices      Invoice[] // Relation to Invoice model
+
+  @@map("users") // Map model to 'users' table in DB
+}
+
+model Invoice {
+  id             String        @id @default(cuid())
+  userId         String
+  user           User          @relation(fields: [userId], references: [id])
+  
+  // Client Info (simplified from mock-db for direct storage)
+  clientName     String
+  clientEmail    String?
+  clientAddress  String?
+  clientPhone    String?
+
+  // Invoice Metadata
+  invoiceNumber  String
+  issueDate      String // Stored as ISO date string "YYYY-MM-DD"
+  dueDate        String // Stored as ISO date string "YYYY-MM-DD"
+  status         InvoiceStatus
+  originalStatus InvoiceStatus? // Used for soft delete restore
+  deletedAt      DateTime?     // For soft delete
+
+  // Line Items (JSON type for flexibility)
+  lineItems      Json
+
+  // Summary
+  subtotal       Float
+  taxRate        Float
+  taxAmount      Float
+  discountRate   Float
+  discountAmount Float
+  total          Float
+
+  notes          String?
+
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@map("invoices") // Map model to 'invoices' table in DB
+}
