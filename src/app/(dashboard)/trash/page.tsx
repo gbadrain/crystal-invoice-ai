@@ -68,6 +68,7 @@ export default function TrashPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [actioningId, setActioningId] = useState<string | null>(null)
+  const [bulkActioning, setBulkActioning] = useState(false)
   
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -99,11 +100,14 @@ export default function TrashPage() {
     fetchTrashedInvoices()
   }, [fetchTrashedInvoices])
 
+  const notifyTrashUpdated = () => window.dispatchEvent(new Event('trash-updated'))
+
   const handleRestore = async (id: string) => {
     setActioningId(id)
     try {
       await fetch(`${API_BASE}/api/invoices/${id}/restore`, { method: 'POST' })
       setTrashedInvoices(prev => prev.filter(inv => inv._id !== id))
+      notifyTrashUpdated()
     } catch (err) {
       alert('Failed to restore invoice.')
     } finally {
@@ -117,19 +121,58 @@ export default function TrashPage() {
       await fetch(`${API_BASE}/api/invoices/${id}?force=true`, { method: 'DELETE' })
       setTrashedInvoices(prev => prev.filter(inv => inv._id !== id))
       setIsModalOpen(false)
+      notifyTrashUpdated()
     } catch (err) {
       alert('Failed to permanently delete invoice.')
     } finally {
       setActioningId(null)
     }
   }
-  
+
+  const handleEmptyTrash = async () => {
+    setBulkActioning(true)
+    try {
+      await fetch(`${API_BASE}/api/invoices?forceAll=true`, { method: 'DELETE' })
+      setTrashedInvoices([])
+      setIsModalOpen(false)
+      notifyTrashUpdated()
+    } catch (err) {
+      alert('Failed to empty trash.')
+    } finally {
+      setBulkActioning(false)
+    }
+  }
+
+  const handleRestoreAll = async () => {
+    setBulkActioning(true)
+    try {
+      await fetch(`${API_BASE}/api/invoices/restoreAll`, { method: 'POST' })
+      setTrashedInvoices([])
+      notifyTrashUpdated()
+    } catch (err) {
+      alert('Failed to restore all.')
+    } finally {
+      setBulkActioning(false)
+    }
+  }
+
   const openConfirmationModal = (id: string) => {
     setModalConfig({
       onConfirm: () => handlePermanentDelete(id),
       title: 'Permanent Delete',
       message: 'Are you sure you want to permanently delete this invoice? This action cannot be undone.',
       confirmText: 'Yes, Delete',
+      isDestructive: true,
+    })
+    setIsModalOpen(true)
+  }
+
+  const openEmptyTrashModal = () => {
+    setModalConfig({
+      onConfirm: handleEmptyTrash,
+      title: 'Empty Trash',
+      message: `Are you sure you want to permanently delete all ${trashedInvoices.length} trashed invoice(s)? This action cannot be undone.`,
+      confirmText: 'Yes, Empty Trash',
       isDestructive: true,
     })
     setIsModalOpen(true)
@@ -179,6 +222,26 @@ export default function TrashPage() {
           <h1 className="text-3xl font-bold mb-1">Trash Bin</h1>
           <p className="text-white/50 text-sm">Invoices here will be permanently deleted after 30 days.</p>
         </div>
+        {trashedInvoices.length > 0 && (
+          <div className="flex gap-3">
+            <button
+              onClick={handleRestoreAll}
+              disabled={bulkActioning}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors disabled:opacity-50"
+            >
+              {bulkActioning ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCw className="w-4 h-4" />}
+              Restore All
+            </button>
+            <button
+              onClick={openEmptyTrashModal}
+              disabled={bulkActioning}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 text-white text-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
+            >
+              {bulkActioning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+              Empty Trash
+            </button>
+          </div>
+        )}
       </div>
 
       {trashedInvoices.length === 0 ? (

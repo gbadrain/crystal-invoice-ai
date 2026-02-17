@@ -1,12 +1,14 @@
 import { Router, type Request, type Response } from 'express'
-import { 
-  getAllInvoices, 
-  getInvoiceById, 
-  addInvoice, 
-  updateInvoice, 
+import {
+  getAllInvoices,
+  getInvoiceById,
+  addInvoice,
+  updateInvoice,
   softDeleteInvoice,
   restoreInvoice,
-  permanentDeleteInvoice
+  permanentDeleteInvoice,
+  permanentDeleteAllTrashed,
+  restoreAllTrashed
 } from '../lib/mock-db'
 
 export const invoiceRoutes = Router()
@@ -37,6 +39,31 @@ invoiceRoutes.get('/:id', async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to fetch invoice' })
   }
 })
+
+// DELETE /api/invoices?forceAll=true — permanently delete all trashed invoices
+invoiceRoutes.delete('/', async (req: Request, res: Response) => {
+  if (req.query.forceAll !== 'true') {
+    return res.status(400).json({ error: 'Missing ?forceAll=true query parameter.' });
+  }
+  try {
+    const count = await permanentDeleteAllTrashed();
+    res.json({ success: true, deleted: count });
+  } catch (error) {
+    console.error('[invoices] DELETE / (forceAll) error:', error);
+    res.status(500).json({ error: 'Failed to empty trash.' });
+  }
+});
+
+// POST /api/invoices/restoreAll — restore all trashed invoices
+invoiceRoutes.post('/restoreAll', async (req: Request, res: Response) => {
+  try {
+    const count = await restoreAllTrashed();
+    res.json({ success: true, restored: count });
+  } catch (error) {
+    console.error('[invoices] POST /restoreAll error:', error);
+    res.status(500).json({ error: 'Failed to restore all.' });
+  }
+});
 
 // POST /api/invoices — create new invoice
 invoiceRoutes.post('/', async (req: Request, res: Response) => {

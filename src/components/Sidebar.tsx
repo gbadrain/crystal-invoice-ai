@@ -1,9 +1,14 @@
 'use client'
 
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, FilePlus, FileText, HelpCircle, X, Trash } from 'lucide-react'
+import { LayoutDashboard, FilePlus, FileText, Trash } from 'lucide-react'
 import { cn } from '@/utils/cn'
+
+const API_BASE = process.env.NEXT_PUBLIC_APP_URL
+  ? process.env.NEXT_PUBLIC_APP_URL.replace(':3000', ':3001')
+  : 'http://localhost:3001'
 
 const navItems = [
   { label: 'Dashboard', href: '/', icon: LayoutDashboard },
@@ -14,6 +19,33 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname()
+  const [trashCount, setTrashCount] = useState(0)
+
+  const fetchTrashCount = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/invoices?status=trashed`, { cache: 'no-store' })
+      if (res.ok) {
+        const data = await res.json()
+        setTrashCount(data.total ?? 0)
+      }
+    } catch {
+      // Silently fail — badge just won't show
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchTrashCount()
+    // Poll every 5 seconds to keep badge fresh
+    const interval = setInterval(fetchTrashCount, 5000)
+    return () => clearInterval(interval)
+  }, [fetchTrashCount])
+
+  // Listen for custom event so pages can trigger instant refresh
+  useEffect(() => {
+    const handler = () => fetchTrashCount()
+    window.addEventListener('trash-updated', handler)
+    return () => window.removeEventListener('trash-updated', handler)
+  }, [fetchTrashCount])
 
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 glass-panel-solid border-r border-white/10 flex flex-col">
@@ -43,6 +75,11 @@ export function Sidebar() {
             >
               <item.icon className="w-4 h-4" />
               {item.label}
+              {item.href === '/trash' && trashCount > 0 && (
+                <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  {trashCount}
+                </span>
+              )}
             </Link>
           )
         })}

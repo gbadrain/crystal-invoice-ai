@@ -216,3 +216,33 @@ export async function permanentDeleteInvoice(id: string): Promise<boolean> {
   }
   return false
 }
+
+// Bulk: permanently delete all trashed invoices
+export async function permanentDeleteAllTrashed(): Promise<number> {
+  await readInvoices()
+  const before = invoices.length
+  invoices = invoices.filter(inv => inv.metadata.status !== 'trashed')
+  const deleted = before - invoices.length
+  if (deleted > 0) {
+    await writeInvoices()
+  }
+  return deleted
+}
+
+// Bulk: restore all trashed invoices
+export async function restoreAllTrashed(): Promise<number> {
+  await readInvoices()
+  let count = 0
+  invoices.forEach(inv => {
+    if (inv.metadata.status === 'trashed') {
+      inv.metadata.status = inv.metadata.originalStatus || 'draft'
+      inv.metadata.originalStatus = undefined
+      inv.deletedAt = null
+      count++
+    }
+  })
+  if (count > 0) {
+    await writeInvoices()
+  }
+  return count
+}

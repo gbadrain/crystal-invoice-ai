@@ -65,6 +65,7 @@ export default function InvoicesPage() {
       }
       // Remove the deleted invoice from the state (it's now in trash)
       setInvoices(prevInvoices => prevInvoices.filter(invoice => invoice._id !== id));
+      window.dispatchEvent(new Event('trash-updated'));
     } catch (err) {
       setError('Failed to delete invoice.');
       console.error('Error deleting invoice:', err);
