@@ -17,17 +17,27 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
+        // Normalize email the same way registration does, so Touch ID autofill
+        // and any capitalisation variant still resolves to the stored account.
+        const email = credentials.email.toLowerCase().trim();
+
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
+          where: { email },
         });
 
-        if (!user || !(await bcrypt.compare(credentials.password, user.passwordHash))) {
+        if (!user) {
+          return null;
+        }
+
+        const passwordMatch = await bcrypt.compare(credentials.password, user.passwordHash);
+        if (!passwordMatch) {
           return null;
         }
 
         return {
           id: user.id,
           email: user.email,
+          name: user.email, // satisfies NextAuth User type; no name column in schema
         };
       },
     }),

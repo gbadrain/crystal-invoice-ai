@@ -117,7 +117,11 @@ export function NewInvoicePage() {
       setTaxRate(0)
       setDiscountRate(0)
       setNotes('')
-      router.push('/invoices') // Redirect to invoice list after saving
+      // router.refresh() invalidates the Next.js 14 Router Cache so the
+      // /invoices Server Component re-fetches from the DB instead of serving
+      // the stale cached RSC payload (which would still show 0 invoices).
+      router.refresh()
+      router.push('/invoices')
     } catch (err: any) {
       setSaveError(err.message || 'Failed to save invoice.')
       console.error('Error saving invoice:', err)
