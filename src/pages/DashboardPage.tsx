@@ -5,10 +5,6 @@ import Link from 'next/link'
 import { FileText, PlusCircle, DollarSign, Clock, AlertCircle, CheckCircle, XCircle } from 'lucide-react'
 import type { Invoice } from '@/utils/invoice-types'
 
-const API_BASE = process.env.NEXT_PUBLIC_APP_URL
-  ? process.env.NEXT_PUBLIC_APP_URL.replace(':3000', ':3001')
-  : 'http://localhost:3001'
-
 export function DashboardPage() {
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -17,7 +13,7 @@ export function DashboardPage() {
   useEffect(() => {
     async function fetchInvoices() {
       try {
-        const response = await fetch(`${API_BASE}/api/invoices`)
+        const response = await fetch(`/api/invoices`)
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }

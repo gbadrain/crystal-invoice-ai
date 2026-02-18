@@ -28,6 +28,54 @@ export async function GET(request: Request, context: RouteContext) {
   }
 }
 
+// PUT /api/invoices/[id] — update invoice
+export async function PUT(request: Request, context: RouteContext) {
+  const result = await getAuthUserId()
+  if (result instanceof NextResponse) return result
+  const userId = result
+  const { id } = await context.params
+
+  try {
+    const existing = await prisma.invoice.findFirst({
+      where: { id, userId },
+    })
+
+    if (!existing) {
+      return NextResponse.json({ error: 'Invoice not found' }, { status: 404 })
+    }
+
+    const body = await request.json()
+    const { client, metadata, lineItems, summary, notes } = body
+
+    const updated = await prisma.invoice.update({
+      where: { id },
+      data: {
+        clientName: client.name,
+        clientEmail: client.email || null,
+        clientAddress: client.address || null,
+        clientPhone: client.phone || null,
+        invoiceNumber: metadata.invoiceNumber,
+        issueDate: metadata.issueDate,
+        dueDate: metadata.dueDate,
+        status: (metadata.status || existing.status) as InvoiceStatus,
+        lineItems: lineItems,
+        subtotal: summary.subtotal,
+        taxRate: summary.taxRate,
+        taxAmount: summary.taxAmount,
+        discountRate: summary.discountRate,
+        discountAmount: summary.discountAmount,
+        total: summary.total,
+        notes: notes || null,
+      },
+    })
+
+    return NextResponse.json({ success: true, invoice: formatInvoice(updated) })
+  } catch (error) {
+    console.error('Error updating invoice:', error)
+    return new NextResponse('Internal Server Error', { status: 500 })
+  }
+}
+
 // DELETE /api/invoices/[id] — soft delete (move to trash)
 export async function DELETE(request: Request, context: RouteContext) {
   const result = await getAuthUserId()

@@ -22,10 +22,6 @@ import type {
 } from '@/utils/invoice-types'
 import type { ParsedInvoice } from '@/utils/ai-parser'
 
-const API_BASE = process.env.NEXT_PUBLIC_APP_URL
-  ? process.env.NEXT_PUBLIC_APP_URL.replace(':3000', ':3001')
-  : 'http://localhost:3001'
-
 function todayISO(): string {
   return new Date().toISOString().split('T')[0]
 }
@@ -100,7 +96,7 @@ export function NewInvoicePage() {
     setIsSaving(true)
     setSaveError(null)
     try {
-      const response = await fetch(`${API_BASE}/api/invoices`, {
+      const response = await fetch(`/api/invoices`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(currentInvoice),

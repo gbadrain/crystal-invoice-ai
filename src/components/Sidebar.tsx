@@ -6,10 +6,6 @@ import { usePathname } from 'next/navigation'
 import { LayoutDashboard, FilePlus, FileText, Trash } from 'lucide-react'
 import { cn } from '@/utils/cn'
 
-const API_BASE = process.env.NEXT_PUBLIC_APP_URL
-  ? process.env.NEXT_PUBLIC_APP_URL.replace(':3000', ':3001')
-  : 'http://localhost:3001'
-
 const navItems = [
   { label: 'Dashboard', href: '/', icon: LayoutDashboard },
   { label: 'Invoices', href: '/invoices', icon: FileText },
@@ -23,7 +19,7 @@ export function Sidebar() {
 
   const fetchTrashCount = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE}/api/invoices?status=trashed`, { cache: 'no-store' })
+      const res = await fetch(`/api/invoices?status=trashed`, { cache: 'no-store' })
       if (res.ok) {
         const data = await res.json()
         setTrashCount(data.total ?? 0)

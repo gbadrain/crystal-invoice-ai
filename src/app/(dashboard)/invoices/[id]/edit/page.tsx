@@ -22,10 +22,6 @@ import type {
 } from '@/utils/invoice-types'
 import type { ParsedInvoice } from '@/utils/ai-parser'
 
-const API_BASE = process.env.NEXT_PUBLIC_APP_URL
-  ? process.env.NEXT_PUBLIC_APP_URL.replace(':3000', ':3001')
-  : 'http://localhost:3001'
-
 function todayISO(): string {
   return new Date().toISOString().split('T')[0]
 }
@@ -81,7 +77,7 @@ export default function EditInvoicePage({ params }: EditInvoicePageProps) {
   useEffect(() => {
     async function fetchInvoice() {
       try {
-        const response = await fetch(`${API_BASE}/api/invoices/${id}`)
+        const response = await fetch(`/api/invoices/${id}`)
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }
@@ -139,7 +135,7 @@ export default function EditInvoicePage({ params }: EditInvoicePageProps) {
     setIsSaving(true)
     setSaveError(null)
     try {
-      const response = await fetch(`${API_BASE}/api/invoices/${id}`, {
+      const response = await fetch(`/api/invoices/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(currentInvoice),

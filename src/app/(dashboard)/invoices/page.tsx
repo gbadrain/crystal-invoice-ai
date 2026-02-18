@@ -1,10 +1,8 @@
 // src/app/(dashboard)/invoices/page.tsx
 import { requireUser } from '@/lib/requireUser';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import { InvoiceList } from '@/components/invoice/InvoiceList';
 import type { Invoice } from '@/utils/invoice-types';
-
-const prisma = new PrismaClient();
 
 async function getInvoices(userId: string): Promise<Invoice[]> {
   try {

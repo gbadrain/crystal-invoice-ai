@@ -9,6 +9,8 @@ const app = express()
 app.use(cors({ origin: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000' }))
 app.use(express.json({ limit: '10mb' }))
 
+app.get('/health', (_req, res) => res.json({ ok: true }))
+
 app.use('/api/invoices', invoiceRoutes)
 app.use('/api/ai', aiRoutes)
 app.use('/api/pdf', pdfRoutes)

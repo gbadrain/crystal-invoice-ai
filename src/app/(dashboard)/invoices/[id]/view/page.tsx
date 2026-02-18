@@ -7,10 +7,6 @@ import { ArrowLeft, Loader2, AlertCircle, FileText, Calendar, Hash, User, Mail, 
 import type { Invoice } from '@/utils/invoice-types'
 import { PDFDownloadButton } from '@/components/invoice/PDFDownloadButton'
 
-const API_BASE = process.env.NEXT_PUBLIC_APP_URL
-  ? process.env.NEXT_PUBLIC_APP_URL.replace(':3000', ':3001')
-  : 'http://localhost:3001'
-
 export default function ViewInvoicePage() {
   const [invoice, setInvoice] = useState<Invoice | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -29,7 +25,7 @@ export default function ViewInvoicePage() {
     setIsLoading(true)
     setError(null)
     try {
-      const response = await fetch(`${API_BASE}/api/invoices/${id}`)
+      const response = await fetch(`/api/invoices/${id}`)
       if (!response.ok) {
         if (response.status === 404) {
           setError('Invoice not found.')
@@ -51,7 +47,7 @@ export default function ViewInvoicePage() {
   const handleMarkAsPaid = async () => {
     if (!invoice) return;
     try {
-      const response = await fetch(`${API_BASE}/api/invoices/${id}/pay`, {
+      const response = await fetch(`/api/invoices/${id}/pay`, {
         method: 'POST',
       });
       if (!response.ok) {

@@ -6,10 +6,6 @@ import { Loader2, AlertCircle, Trash2, RotateCw, ShieldAlert } from 'lucide-reac
 import type { Invoice } from '@/utils/invoice-types'
 import { cn } from '@/utils/cn'
 
-const API_BASE = process.env.NEXT_PUBLIC_APP_URL
-  ? process.env.NEXT_PUBLIC_APP_URL.replace(':3000', ':3001')
-  : 'http://localhost:3001'
-
 // Confirmation Modal Component
 const ConfirmationModal = ({
   isOpen,
@@ -84,7 +80,7 @@ export default function TrashPage() {
     setIsLoading(true)
     setError(null)
     try {
-      const response = await fetch(`${API_BASE}/api/invoices?status=trashed`)
+      const response = await fetch(`/api/invoices?status=trashed`)
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
       const data = await response.json()
       setTrashedInvoices(data.invoices || [])
@@ -105,7 +101,7 @@ export default function TrashPage() {
   const handleRestore = async (id: string) => {
     setActioningId(id)
     try {
-      await fetch(`${API_BASE}/api/invoices/${id}/restore`, { method: 'POST' })
+      await fetch(`/api/invoices/${id}/restore`, { method: 'POST' })
       setTrashedInvoices(prev => prev.filter(inv => inv._id !== id))
       notifyTrashUpdated()
     } catch (err) {
@@ -118,7 +114,7 @@ export default function TrashPage() {
   const handlePermanentDelete = async (id: string) => {
     setActioningId(id)
     try {
-      await fetch(`${API_BASE}/api/invoices/${id}?force=true`, { method: 'DELETE' })
+      await fetch(`/api/invoices/${id}?force=true`, { method: 'DELETE' })
       setTrashedInvoices(prev => prev.filter(inv => inv._id !== id))
       setIsModalOpen(false)
       notifyTrashUpdated()
@@ -132,7 +128,7 @@ export default function TrashPage() {
   const handleEmptyTrash = async () => {
     setBulkActioning(true)
     try {
-      await fetch(`${API_BASE}/api/invoices?forceAll=true`, { method: 'DELETE' })
+      await fetch(`/api/invoices?forceAll=true`, { method: 'DELETE' })
       setTrashedInvoices([])
       setIsModalOpen(false)
       notifyTrashUpdated()
@@ -146,7 +142,7 @@ export default function TrashPage() {
   const handleRestoreAll = async () => {
     setBulkActioning(true)
     try {
-      await fetch(`${API_BASE}/api/invoices/restoreAll`, { method: 'POST' })
+      await fetch(`/api/invoices/restoreAll`, { method: 'POST' })
       setTrashedInvoices([])
       notifyTrashUpdated()
     } catch (err) {
