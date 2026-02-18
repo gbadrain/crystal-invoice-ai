@@ -27,7 +27,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ total: formatted.length, invoices: formatted })
   } catch (error) {
     console.error('Error fetching invoices:', error)
-    return new NextResponse('Internal Server Error', { status: 500 })
+    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 })
   }
 }
 
@@ -66,7 +66,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, invoice: formatInvoice(invoice) }, { status: 201 })
   } catch (error) {
     console.error('Error creating invoice:', error)
-    return new NextResponse('Internal Server Error', { status: 500 })
+    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 })
   }
 }
 
@@ -89,6 +89,6 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ success: true, deleted: count })
   } catch (error) {
     console.error('Error emptying trash:', error)
-    return new NextResponse('Internal Server Error', { status: 500 })
+    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 })
   }
 }

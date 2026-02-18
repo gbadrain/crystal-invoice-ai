@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, FilePlus, FileText, Trash } from 'lucide-react'
+import { LayoutDashboard, FilePlus, FileText, Trash, Settings } from 'lucide-react'
 import { cn } from '@/utils/cn'
 
 const navItems = [
@@ -11,6 +11,7 @@ const navItems = [
   { label: 'Invoices', href: '/invoices', icon: FileText },
   { label: 'New Invoice', href: '/invoices/new', icon: FilePlus },
   { label: 'Trash', href: '/trash', icon: Trash },
+  { label: 'Settings', href: '/settings/password', icon: Settings },
 ]
 
 export function Sidebar() {
@@ -57,7 +58,9 @@ export function Sidebar() {
       {/* Navigation */}
       <nav className="flex-1 px-3 py-4 space-y-1">
         {navItems.map((item) => {
-          const isActive = pathname === item.href
+          const isActive = item.href === '/settings/password'
+            ? (pathname ?? '').startsWith('/settings')
+            : pathname === item.href
           return (
             <Link
               key={item.href}

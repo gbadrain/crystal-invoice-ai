@@ -53,6 +53,7 @@ export default function ViewInvoicePage() {
       if (!response.ok) {
         throw new Error('Failed to mark as paid');
       }
+      router.refresh()
       fetchInvoice(); // Refetch to show updated status
     } catch (err) {
       console.error(err);

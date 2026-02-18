@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Loader2, AlertCircle, Trash2, RotateCw, ShieldAlert } from 'lucide-react'
 import type { Invoice } from '@/utils/invoice-types'
@@ -60,6 +61,7 @@ const ConfirmationModal = ({
 
 
 export default function TrashPage() {
+  const router = useRouter()
   const [trashedInvoices, setTrashedInvoices] = useState<Invoice[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -103,6 +105,7 @@ export default function TrashPage() {
     try {
       await fetch(`/api/invoices/${id}/restore`, { method: 'POST' })
       setTrashedInvoices(prev => prev.filter(inv => inv._id !== id))
+      router.refresh()
       notifyTrashUpdated()
     } catch (err) {
       alert('Failed to restore invoice.')
@@ -117,6 +120,7 @@ export default function TrashPage() {
       await fetch(`/api/invoices/${id}?force=true`, { method: 'DELETE' })
       setTrashedInvoices(prev => prev.filter(inv => inv._id !== id))
       setIsModalOpen(false)
+      router.refresh()
       notifyTrashUpdated()
     } catch (err) {
       alert('Failed to permanently delete invoice.')
@@ -131,6 +135,7 @@ export default function TrashPage() {
       await fetch(`/api/invoices?forceAll=true`, { method: 'DELETE' })
       setTrashedInvoices([])
       setIsModalOpen(false)
+      router.refresh()
       notifyTrashUpdated()
     } catch (err) {
       alert('Failed to empty trash.')
@@ -144,6 +149,7 @@ export default function TrashPage() {
     try {
       await fetch(`/api/invoices/restoreAll`, { method: 'POST' })
       setTrashedInvoices([])
+      router.refresh()
       notifyTrashUpdated()
     } catch (err) {
       alert('Failed to restore all.')

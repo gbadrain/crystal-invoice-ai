@@ -34,6 +34,6 @@ export async function POST() {
     return NextResponse.json({ success: true, restored: trashed.length })
   } catch (error) {
     console.error('Error restoring all:', error)
-    return new NextResponse('Internal Server Error', { status: 500 })
+    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 })
   }
 }

@@ -106,6 +106,23 @@ export function DashboardPage() {
         />
       </div>
 
+      {!isLoading && !error && invoices.length === 0 && (
+        <div className="mt-8 glass-panel p-12 flex flex-col items-center justify-center text-center gap-4">
+          <FileText className="w-12 h-12 text-white/20" />
+          <div>
+            <p className="text-white/60 font-medium">No invoices yet</p>
+            <p className="text-white/30 text-sm mt-1">Create your first invoice to get started.</p>
+          </div>
+          <Link
+            href="/invoices/new"
+            className="mt-2 flex items-center gap-2 px-5 py-2 rounded-lg bg-crystal-600 text-white text-sm font-medium hover:bg-crystal-700 transition-colors"
+          >
+            <PlusCircle className="w-4 h-4" />
+            New Invoice
+          </Link>
+        </div>
+      )}
+
       {!isLoading && invoices.length > 0 && (
         <div className="mt-8">
           <div className="flex items-center justify-between mb-4">

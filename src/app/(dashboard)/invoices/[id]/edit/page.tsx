@@ -146,6 +146,7 @@ export default function EditInvoicePage({ params }: EditInvoicePageProps) {
         throw new Error(errorData.error || `HTTP error! status: ${response.status}`)
       }
 
+      router.refresh()
       router.push('/invoices') // Redirect to invoice list after saving
     } catch (err: any) {
       setSaveError(err.message || 'Failed to save invoice.')
