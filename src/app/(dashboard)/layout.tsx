@@ -1,18 +1,17 @@
-import { Sidebar } from '@/components/Sidebar'
-import { Header } from '@/components/Header'
+import { requireUser } from '@/lib/requireUser'
+import { DashboardShell } from '@/components/DashboardShell'
 
-export default function DashboardLayout({
+/**
+ * Auth gate for all /invoices, /trash, etc. sub-routes.
+ * requireUser() redirects to /auth/signin?callbackUrl=<current-path>
+ * if no session is present, so no page inside (dashboard)/ can be
+ * accessed without authentication.
+ */
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-      <div className="flex-1 ml-64">
-        <Header />
-        <main className="p-8 pt-24">{children}</main>
-      </div>
-    </div>
-  )
+  await requireUser()
+  return <DashboardShell>{children}</DashboardShell>
 }

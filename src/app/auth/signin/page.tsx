@@ -1,22 +1,40 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { Suspense, useState, useRef, FormEvent } from 'react'
 import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
-export default function SignInPage() {
+// Inner component must be separate so useSearchParams() can be wrapped in Suspense
+function SignInForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  // Honour any ?callbackUrl= passed by requireUser redirects; default to '/'
+  const callbackUrl = searchParams.get('callbackUrl') || '/'
+  const justRegistered = searchParams.get('success') === '1'
+  const resetSuccess = searchParams.get('resetSuccess') === '1'
+
+  // Refs let us read the real DOM value at submit time.
+  // Safari Touch ID and most password managers write directly to the DOM node
+  // without firing React's synthetic onChange, so React state stays empty.
+  // Falling back to ref.current.value captures those autofilled values.
+  const emailRef = useRef<HTMLInputElement>(null)
+  const passwordRef = useRef<HTMLInputElement>(null)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError(null)
 
-    if (!email || !password) {
+    // Prefer React state; fall back to DOM value for autofill (Touch ID, password managers)
+    const emailVal = email || emailRef.current?.value || ''
+    const passwordVal = password || passwordRef.current?.value || ''
+
+    if (!emailVal || !passwordVal) {
       setError('Email and password are required.')
       return
     }
@@ -25,12 +43,17 @@ export default function SignInPage() {
     try {
       const result = await signIn('credentials', {
         redirect: false,
-        email,
-        password,
+        email: emailVal,
+        password: passwordVal,
       })
 
       if (result?.ok) {
-        router.push('/invoices')
+        // router.refresh() flushes the Next.js 14 Router Cache so the
+        // very next navigation sees the fresh session cookie on the server.
+        // Without this, the server component at the target route may still
+        // read a stale (unauthenticated) RSC payload and redirect away.
+        router.refresh()
+        router.push(callbackUrl)
       } else {
         setError(result?.error || 'Invalid email or password.')
       }
@@ -53,6 +76,18 @@ export default function SignInPage() {
           <p className="text-sm text-white/40">Sign in to your account</p>
         </div>
 
+        {justRegistered && (
+          <div className="text-sm text-green-400 bg-green-500/10 border border-green-500/20 rounded-lg px-3 py-2">
+            Account created! Please sign in below.
+          </div>
+        )}
+
+        {resetSuccess && (
+          <div className="text-sm text-green-400 bg-green-500/10 border border-green-500/20 rounded-lg px-3 py-2">
+            Password updated! Sign in with your new password.
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label
@@ -62,6 +97,7 @@ export default function SignInPage() {
               Email address
             </label>
             <input
+              ref={emailRef}
               id="email"
               name="email"
               type="email"
@@ -75,13 +111,22 @@ export default function SignInPage() {
           </div>
 
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-white/70 mb-1.5"
-            >
-              Password
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-white/70"
+              >
+                Password
+              </label>
+              <Link
+                href="/auth/reset-request"
+                className="text-xs text-white/35 hover:text-crystal-400 transition-colors"
+              >
+                Forgot password?
+              </Link>
+            </div>
             <input
+              ref={passwordRef}
               id="password"
               name="password"
               type="password"
@@ -120,5 +165,13 @@ export default function SignInPage() {
         </p>
       </div>
     </div>
+  )
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense>
+      <SignInForm />
+    </Suspense>
   )
 }

@@ -26,6 +26,16 @@ model User {
   @@map("users") // Map model to 'users' table in DB
 }
 
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  email     String
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("password_reset_tokens")
+}
+
 model Invoice {
   id             String        @id @default(cuid())
   userId         String
