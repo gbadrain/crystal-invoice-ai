@@ -3,9 +3,11 @@
 import { useState, useCallback } from 'react'
 import { parseAIResponse, type ParsedInvoice } from '@/utils/ai-parser'
 
-const API_BASE = process.env.NEXT_PUBLIC_APP_URL
-  ? process.env.NEXT_PUBLIC_APP_URL.replace(':3000', ':3001')
-  : 'http://localhost:3001'
+const API_BASE =
+  process.env.NEXT_PUBLIC_EXPRESS_URL ??
+  (process.env.NEXT_PUBLIC_APP_URL
+    ? process.env.NEXT_PUBLIC_APP_URL.replace(':3000', ':3001')
+    : 'http://localhost:3001')
 
 interface UseInvoiceAIReturn {
   /** Call this with natural language to generate an invoice */

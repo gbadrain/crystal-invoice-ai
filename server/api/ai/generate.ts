@@ -1,11 +1,7 @@
 import { Router, type Request, type Response } from 'express'
-import OpenAI from 'openai'
+import Anthropic from '@anthropic-ai/sdk'
 
 export const aiRoutes = Router()
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || '',
-})
 
 const SYSTEM_PROMPT = `You are an invoice data extraction engine for a commercial invoicing SaaS product.
 Your job is to extract structured invoice data from natural language input.
@@ -65,56 +61,60 @@ aiRoutes.post('/generate', async (req: Request, res: Response) => {
       return
     }
 
-    if (!process.env.OPENAI_API_KEY) {
-      res.status(500).json({ error: 'AI service not configured. Set OPENAI_API_KEY in your environment.' })
+    if (!process.env.ANTHROPIC_API_KEY) {
+      res.status(500).json({ error: 'AI service not configured. Add ANTHROPIC_API_KEY to your .env file.' })
       return
     }
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      temperature: 0.1,
+    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+
+    const response = await client.messages.create({
+      model: 'claude-haiku-4-5-20251001',
       max_tokens: 2000,
-      response_format: { type: 'json_object' },
+      system: SYSTEM_PROMPT,
       messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: text },
+        { role: 'assistant', content: '{' }, // prefill forces valid JSON output
       ],
     })
 
-    const content = completion.choices[0]?.message?.content
-    if (!content) {
-      res.status(502).json({ error: 'AI returned an empty response.' })
+    const block = response.content[0]
+    if (block.type !== 'text') {
+      res.status(502).json({ error: 'AI returned an unexpected response type.' })
       return
     }
 
+    // Prepend the prefilled '{' character back
+    const raw = '{' + block.text
+
     let parsed: unknown
     try {
-      parsed = JSON.parse(content)
+      parsed = JSON.parse(raw)
     } catch {
       res.status(502).json({ error: 'AI returned invalid JSON.' })
       return
     }
 
-    // Return raw parsed data — the client-side ai-parser will sanitize and validate
+    console.log(`[AI] Generated invoice for: ${text.slice(0, 80)}...`)
     res.json({ data: parsed })
+
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unknown error'
 
-    // Surface OpenAI-specific errors clearly
-    if (message.includes('401') || message.includes('Incorrect API key')) {
-      res.status(401).json({ error: 'Invalid OpenAI API key.' })
+    if (message.includes('401') || message.includes('authentication')) {
+      res.status(401).json({ error: 'Invalid Anthropic API key.' })
       return
     }
-    if (message.includes('429')) {
+    if (message.includes('429') || message.includes('rate_limit')) {
       res.status(429).json({ error: 'AI rate limit reached. Please wait and try again.' })
       return
     }
-    if (message.includes('insufficient_quota')) {
-      res.status(402).json({ error: 'OpenAI quota exceeded. Check your billing.' })
+    if (message.includes('overloaded')) {
+      res.status(503).json({ error: 'AI service is temporarily overloaded. Try again in a moment.' })
       return
     }
 
-    console.error('AI generation error:', message)
+    console.error('[AI] Generation error:', message)
     res.status(500).json({ error: 'Failed to generate invoice. Please try again.' })
   }
 })

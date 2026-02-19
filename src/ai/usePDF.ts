@@ -3,9 +3,11 @@
 import { useState, useCallback } from 'react'
 import type { Invoice } from '@/utils/invoice-types'
 
-const API_BASE = process.env.NEXT_PUBLIC_APP_URL
-  ? process.env.NEXT_PUBLIC_APP_URL.replace(':3000', ':3001')
-  : 'http://localhost:3001'
+const API_BASE =
+  process.env.NEXT_PUBLIC_EXPRESS_URL ??
+  (process.env.NEXT_PUBLIC_APP_URL
+    ? process.env.NEXT_PUBLIC_APP_URL.replace(':3000', ':3001')
+    : 'http://localhost:3001')
 
 interface UsePDFReturn {
   generatePDF: (invoice: Invoice) => Promise<void>

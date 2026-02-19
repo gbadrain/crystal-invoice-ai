@@ -104,10 +104,17 @@ export function NewInvoicePage() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
+        // 402 = free limit reached — surface a friendly upgrade message
+        if (response.status === 402) {
+          setSaveError(errorData.error || 'Free invoice limit reached. Upgrade to Pro for unlimited invoices.')
+          return
+        }
         throw new Error(errorData.error || `HTTP error! status: ${response.status}`)
       }
 
       const { invoice: saved } = await response.json()
+      // Notify sidebar to refresh usage count
+      window.dispatchEvent(new Event('invoice-saved'))
       alert(`Invoice ${saved?.metadata?.invoiceNumber || ''} saved successfully!`)
       // Clear form fields after successful save
       setClient(initialClientState)

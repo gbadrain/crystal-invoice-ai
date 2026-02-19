@@ -3,14 +3,16 @@
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, FilePlus, FileText, Trash, Settings } from 'lucide-react'
+import { LayoutDashboard, FilePlus, FileText, Trash, Settings, CreditCard } from 'lucide-react'
 import { cn } from '@/utils/cn'
+import { UsageBanner } from '@/components/UsageBanner'
 
 const navItems = [
   { label: 'Dashboard', href: '/', icon: LayoutDashboard },
   { label: 'Invoices', href: '/invoices', icon: FileText },
   { label: 'New Invoice', href: '/invoices/new', icon: FilePlus },
   { label: 'Trash', href: '/trash', icon: Trash },
+  { label: 'Billing', href: '/billing', icon: CreditCard },
   { label: 'Settings', href: '/settings/password', icon: Settings },
 ]
 
@@ -56,10 +58,12 @@ export function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 space-y-1">
+      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
         {navItems.map((item) => {
           const isActive = item.href === '/settings/password'
             ? (pathname ?? '').startsWith('/settings')
+            : item.href === '/billing'
+            ? (pathname ?? '').startsWith('/billing')
             : pathname === item.href
           return (
             <Link
@@ -83,6 +87,9 @@ export function Sidebar() {
           )
         })}
       </nav>
+
+      {/* Usage / upgrade banner */}
+      <UsageBanner />
     </aside>
   )
 }

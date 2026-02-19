@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Loader2, AlertCircle, FileText, Calendar, Hash, User, Mail, Phone, MapPin, DollarSign } from 'lucide-react'
+import { ArrowLeft, Loader2, AlertCircle, FileText, Calendar, Hash, User, Mail, Phone, MapPin, DollarSign, Send } from 'lucide-react'
 import type { Invoice } from '@/utils/invoice-types'
 import { PDFDownloadButton } from '@/components/invoice/PDFDownloadButton'
 import { StatusBadge } from '@/components/StatusBadge'
@@ -12,6 +12,8 @@ export default function ViewInvoicePage() {
   const [invoice, setInvoice] = useState<Invoice | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [sendState, setSendState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const [sendError, setSendError] = useState<string | null>(null)
   const params = useParams()
   const router = useRouter()
   const { id } = params
@@ -45,6 +47,25 @@ export default function ViewInvoicePage() {
     }
   }
   
+  const handleSendToClient = async () => {
+    setSendState('sending')
+    setSendError(null)
+    try {
+      const res = await fetch(`/api/invoices/${id}/send`, { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) {
+        setSendError(data.error ?? 'Failed to send email.')
+        setSendState('error')
+      } else {
+        setSendState('sent')
+        fetchInvoice() // refresh status if draft → pending
+      }
+    } catch {
+      setSendError('Network error. Please try again.')
+      setSendState('error')
+    }
+  }
+
   const handleMarkAsPaid = async () => {
     if (!invoice) return;
     try {
@@ -97,16 +118,29 @@ export default function ViewInvoicePage() {
           <ArrowLeft className="w-5 h-5" />
           Back to Invoices
         </Link>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 flex-wrap">
+          {sendError && (
+            <span className="text-xs text-red-400">{sendError}</span>
+          )}
+          {/* Send to client */}
+          <button
+            onClick={handleSendToClient}
+            disabled={sendState === 'sending' || sendState === 'sent'}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition-colors disabled:opacity-60"
+          >
+            <Send className="w-4 h-4" />
+            {sendState === 'sending' ? 'Sending…' : sendState === 'sent' ? 'Sent ✓' : 'Send to Client'}
+          </button>
+
           {metadata.status === 'pending' && (
             <button onClick={handleMarkAsPaid} className="px-4 py-2 rounded-xl bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors">
               Mark as Paid
             </button>
           )}
           <PDFDownloadButton invoice={invoice} />
-           <Link href={`/invoices/${id}/edit`} className="px-4 py-2 rounded-xl bg-crystal-600 text-white text-sm font-medium hover:bg-crystal-700 transition-colors">
-              Edit Invoice
-            </Link>
+          <Link href={`/invoices/${id}/edit`} className="px-4 py-2 rounded-xl bg-crystal-600 text-white text-sm font-medium hover:bg-crystal-700 transition-colors">
+            Edit Invoice
+          </Link>
         </div>
       </div>
 

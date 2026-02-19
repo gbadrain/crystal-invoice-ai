@@ -17,11 +17,16 @@ enum InvoiceStatus {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  passwordHash  String
-  createdAt     DateTime  @default(now())
-  invoices      Invoice[] // Relation to Invoice model
+  id                   String    @id @default(cuid())
+  email                String    @unique
+  passwordHash         String
+  createdAt            DateTime  @default(now())
+  invoices             Invoice[] // Relation to Invoice model
+
+  // Stripe / subscription
+  isPro                Boolean   @default(false)
+  stripeCustomerId     String?   @unique
+  stripeSubscriptionId String?   @unique
 
   @@map("users") // Map model to 'users' table in DB
 }

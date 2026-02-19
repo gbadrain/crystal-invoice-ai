@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { InvoiceStatus } from '@prisma/client'
 import { getAuthUserId, formatInvoice } from './_helpers'
+import { FREE_INVOICE_LIMIT } from '@/lib/plans'
 
 // GET /api/invoices — list invoices (excludes trashed unless ?status=trashed)
 export async function GET(request: Request) {
@@ -38,6 +39,25 @@ export async function POST(request: Request) {
   const userId = result
 
   try {
+    // Enforce free tier limit (Pro users are exempt)
+    const user = await prisma.user.findUnique({ where: { id: userId }, select: { isPro: true } })
+    if (!user?.isPro) {
+      const invoiceCount = await prisma.invoice.count({
+        where: { userId, status: { not: InvoiceStatus.trashed } },
+      })
+      if (invoiceCount >= FREE_INVOICE_LIMIT) {
+        return NextResponse.json(
+          {
+            error: `You've reached your free limit of ${FREE_INVOICE_LIMIT} invoices. Upgrade to Pro for unlimited invoices.`,
+            code: 'LIMIT_REACHED',
+            limit: FREE_INVOICE_LIMIT,
+            count: invoiceCount,
+          },
+          { status: 402 }
+        )
+      }
+    }
+
     const body = await request.json()
     const { client, metadata, lineItems, summary, notes } = body
 
