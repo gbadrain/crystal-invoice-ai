@@ -18,6 +18,7 @@ const config: Config = {
           700: '#4263eb',
           800: '#3b5bdb',
           900: '#364fc7',
+          950: '#2a3aaa',
         },
       },
       backdropBlur: {

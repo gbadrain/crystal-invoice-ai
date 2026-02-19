@@ -9,17 +9,12 @@ import { prisma } from '@/lib/prisma'
  * Always returns { ok: true } regardless of whether the email exists —
  * this prevents user enumeration (an attacker cannot tell which emails are registered).
  *
- * If the email IS registered:
- *   - A one-time token is created (SHA-256 hash stored; raw token only in URL)
- *   - In production: email is sent via Resend (RESEND_API_KEY must be set in .env)
- *   - In development: the reset URL is also returned in the response as `devResetUrl`
- *     so you can test the flow without a real inbox.
- *
- * Setup (production):
- *   1. Sign up at https://resend.com (free: 3000 emails/month)
- *   2. Add a verified sending domain
- *   3. Create an API key → set RESEND_API_KEY in .env
- *   4. Set RESEND_FROM in .env  e.g. "Crystal Invoice <noreply@yourdomain.com>"
+ * Email sending priority (first configured wins):
+ *   1. Gmail SMTP  — set EMAIL_USER + EMAIL_PASS (Gmail App Password) in .env
+ *                    Works immediately, no domain verification needed.
+ *   2. Resend      — set RESEND_API_KEY + a verified domain in .env
+ *                    onboarding@resend.dev only delivers to your Resend account email.
+ *   3. Dev fallback — amber on-screen link (no email sent, dev only)
  */
 
 function buildResetEmail(email: string, resetUrl: string): string {
@@ -103,6 +98,50 @@ function buildResetEmail(email: string, resetUrl: string): string {
   `.trim()
 }
 
+async function sendEmail(to: string, resetUrl: string): Promise<void> {
+  const subject = 'Reset your Crystal Invoice password'
+  const html = buildResetEmail(to, resetUrl)
+
+  // ── Option 1: Gmail SMTP (works with any Gmail, no domain needed) ──────────
+  if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+    const nodemailer = await import('nodemailer')
+    const transporter = nodemailer.default.createTransport({
+      host: process.env.EMAIL_HOST ?? 'smtp.gmail.com',
+      port: Number(process.env.EMAIL_PORT ?? 587),
+      secure: false, // STARTTLS
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS, // Gmail App Password (not your login password)
+      },
+    })
+    await transporter.sendMail({
+      from: process.env.EMAIL_FROM ?? `Crystal Invoice <${process.env.EMAIL_USER}>`,
+      to,
+      subject,
+      html,
+    })
+    console.log(`[Crystal Invoice] Reset email sent via Gmail SMTP to ${to}`)
+    return
+  }
+
+  // ── Option 2: Resend (requires a verified domain — onboarding@resend.dev  ──
+  // only delivers to the Resend account owner's own email address)           ──
+  if (process.env.RESEND_API_KEY) {
+    const { Resend } = await import('resend')
+    const resend = new Resend(process.env.RESEND_API_KEY)
+    await resend.emails.send({
+      from: process.env.RESEND_FROM ?? 'Crystal Invoice <onboarding@resend.dev>',
+      to,
+      subject,
+      html,
+    })
+    console.log(`[Crystal Invoice] Reset email sent via Resend to ${to}`)
+    return
+  }
+
+  console.warn('[Crystal Invoice] No email provider configured — set EMAIL_USER+EMAIL_PASS or RESEND_API_KEY in .env')
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json()
@@ -129,26 +168,16 @@ export async function POST(request: Request) {
 
       const resetUrl = `${process.env.NEXTAUTH_URL}/auth/reset/${rawToken}`
 
-      if (process.env.NODE_ENV === 'production') {
-        // ── Send the real email via Resend ───────────────────────────────────
-        // Instantiated lazily so a missing RESEND_API_KEY in dev never crashes
-        // the module at import time.
-        try {
-          const { Resend } = await import('resend')
-          const resend = new Resend(process.env.RESEND_API_KEY)
-          await resend.emails.send({
-            from: process.env.RESEND_FROM ?? 'Crystal Invoice <onboarding@resend.dev>',
-            to: email,
-            subject: 'Reset your Crystal Invoice password',
-            html: buildResetEmail(email, resetUrl),
-          })
-        } catch (emailError) {
-          // Log the send failure but don't expose it to the client
-          console.error('[Crystal Invoice] Failed to send reset email:', emailError)
-        }
-      } else {
-        // Development: log to console and include in response for easy testing
-        console.log(`\n[Crystal Invoice] Password reset link for ${email}:\n  ${resetUrl}\n`)
+      // Always log to server console
+      console.log(`\n[Crystal Invoice] Password reset link for ${email}:\n  ${resetUrl}\n`)
+
+      // Attempt real email delivery (silently fails — never exposed to client)
+      sendEmail(email, resetUrl).catch((err) =>
+        console.error('[Crystal Invoice] Failed to send reset email:', err.message)
+      )
+
+      // Dev: also return the link in the response so the amber panel works
+      if (process.env.NODE_ENV !== 'production') {
         return NextResponse.json({ ok: true, devResetUrl: resetUrl })
       }
     }
