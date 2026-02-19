@@ -3,8 +3,6 @@ import { stripe } from '@/lib/stripe'
 import { prisma } from '@/lib/prisma'
 import type Stripe from 'stripe'
 
-// Must disable body parsing — Stripe needs the raw body to verify signature
-export const config = { api: { bodyParser: false } }
 
 async function setUserPro(customerId: string, isPro: boolean, subscriptionId?: string) {
   await prisma.user.update({
