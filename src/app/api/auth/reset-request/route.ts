@@ -176,10 +176,6 @@ export async function POST(request: Request) {
         console.error('[Crystal Invoice] Failed to send reset email:', err.message)
       )
 
-      // Dev: also return the link in the response so the amber panel works
-      if (process.env.NODE_ENV !== 'production') {
-        return NextResponse.json({ ok: true, devResetUrl: resetUrl })
-      }
     }
 
     // Always respond with ok:true — never reveal whether the email was registered

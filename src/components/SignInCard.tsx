@@ -68,7 +68,7 @@ export function SignInCard() {
         // returns the Dashboard RSC payload, done.
         window.location.href = '/'
       } else {
-        setError(result?.error || 'Invalid email or password.')
+        setError('Incorrect email or password. Please try again.')
       }
     } catch {
       setError('An unexpected error occurred.')

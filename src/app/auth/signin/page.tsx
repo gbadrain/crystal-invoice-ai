@@ -55,7 +55,7 @@ function SignInForm() {
         router.refresh()
         router.push(callbackUrl)
       } else {
-        setError(result?.error || 'Invalid email or password.')
+        setError('Incorrect email or password. Please try again.')
       }
     } catch {
       setError('An unexpected error occurred.')
@@ -155,12 +155,12 @@ function SignInForm() {
         </form>
 
         <p className="text-sm text-center text-white/40">
-          Don&apos;t have an account?{' '}
+          No account yet?{' '}
           <Link
             href="/auth/signup"
             className="text-crystal-400 hover:text-crystal-300 font-medium transition-colors"
           >
-            Sign Up
+            Create one free →
           </Link>
         </p>
       </div>

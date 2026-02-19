@@ -8,7 +8,6 @@ export default function ResetRequestPage() {
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
-  const [devResetUrl, setDevResetUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -33,11 +32,6 @@ export default function ResetRequestPage() {
       // Always show the "check email" screen — even if the address isn't registered.
       // This prevents user enumeration (attacker can't probe which emails exist).
       setSubmitted(true)
-
-      // Dev only: API echoes the link so we can click it without a real inbox
-      if (data.devResetUrl) {
-        setDevResetUrl(data.devResetUrl)
-      }
     } catch {
       setError('Unable to reach the server. Please check your connection.')
     } finally {
@@ -68,21 +62,6 @@ export default function ResetRequestPage() {
             </div>
           </div>
 
-          {/* Dev helper — NOT shown in production */}
-          {devResetUrl && (
-            <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 space-y-2">
-              <p className="text-xs font-semibold text-amber-400 uppercase tracking-wide">
-                Dev mode — reset link
-              </p>
-              <a
-                href={devResetUrl}
-                className="text-xs text-amber-300 break-all hover:text-amber-200 underline"
-              >
-                {devResetUrl}
-              </a>
-            </div>
-          )}
-
           {/* "Didn't get it?" tips */}
           <div className="bg-white/[0.04] border border-white/10 rounded-xl p-4 space-y-3">
             <p className="text-xs font-semibold text-white/40 uppercase tracking-wider">
@@ -109,7 +88,6 @@ export default function ResetRequestPage() {
             <button
               onClick={() => {
                 setSubmitted(false)
-                setDevResetUrl(null)
                 setEmail('')
               }}
               className="w-full py-2.5 bg-white/[0.07] hover:bg-white/[0.11] border border-white/10 text-white/70 hover:text-white text-sm font-medium rounded-lg transition-colors"
