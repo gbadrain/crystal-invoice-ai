@@ -28,7 +28,7 @@ invoiceRoutes.get('/', async (req: Request, res: Response) => {
 // GET /api/invoices/:id — single invoice
 invoiceRoutes.get('/:id', async (req: Request, res: Response) => {
   try {
-    const invoice = await getInvoiceById(req.params.id)
+    const invoice = await getInvoiceById(req.params.id as string)
     if (invoice) {
       res.json(invoice)
     } else {
@@ -80,7 +80,7 @@ invoiceRoutes.post('/', async (req: Request, res: Response) => {
 // PUT /api/invoices/:id — update invoice
 invoiceRoutes.put('/:id', async (req: Request, res: Response) => {
   try {
-    const updated = await updateInvoice(req.params.id, req.body)
+    const updated = await updateInvoice(req.params.id as string, req.body)
     if (updated) {
       res.json({ success: true, invoice: updated })
     } else {
@@ -99,7 +99,7 @@ invoiceRoutes.delete('/:id', async (req: Request, res: Response) => {
   if (force === 'true') {
     // Permanent delete
     try {
-      const deleted = await permanentDeleteInvoice(req.params.id);
+      const deleted = await permanentDeleteInvoice(req.params.id as string);
       if (deleted) {
         res.status(204).send();
       } else {
@@ -112,7 +112,7 @@ invoiceRoutes.delete('/:id', async (req: Request, res: Response) => {
   } else {
     // Soft delete
     try {
-      const trashedInvoice = await softDeleteInvoice(req.params.id);
+      const trashedInvoice = await softDeleteInvoice(req.params.id as string);
       if (trashedInvoice) {
         res.json({ success: true, invoice: trashedInvoice });
       } else {
@@ -128,7 +128,7 @@ invoiceRoutes.delete('/:id', async (req: Request, res: Response) => {
 // POST /api/invoices/:id/restore — restore a soft-deleted invoice
 invoiceRoutes.post('/:id/restore', async (req: Request, res: Response) => {
     try {
-        const restoredInvoice = await restoreInvoice(req.params.id);
+        const restoredInvoice = await restoreInvoice(req.params.id as string);
         if (restoredInvoice) {
             res.json({ success: true, invoice: restoredInvoice });
         } else {
