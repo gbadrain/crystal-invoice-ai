@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { Sparkles, Loader2, AlertCircle } from 'lucide-react'
+import { useState, useRef } from 'react'
+import { Sparkles, Loader2, AlertCircle, Mic, MicOff } from 'lucide-react'
 import { useInvoiceAI } from '@/ai/useInvoiceAI'
 import type { ParsedInvoice } from '@/utils/ai-parser'
 
@@ -13,15 +13,53 @@ const PLACEHOLDER = `Example: "I cleaned 3 HVAC units at $150 each for John Smit
 
 export function AIGenerator({ onGenerate }: AIGeneratorProps) {
   const [text, setText] = useState('')
+  const [isListening, setIsListening] = useState(false)
+  const recognitionRef = useRef<SpeechRecognition | null>(null)
   const { generateInvoiceFromText, isLoading, error } = useInvoiceAI()
 
-  async function handleGenerate() {
-    if (!text.trim() || isLoading) return
-
-    const result = await generateInvoiceFromText(text.trim())
-    if (result) {
-      onGenerate(result)
+  function toggleListening() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+    if (!SR) {
+      alert('Speech recognition is not supported in this browser. Try Chrome or Edge.')
+      return
     }
+
+    if (isListening) {
+      recognitionRef.current?.stop()
+      setIsListening(false)
+      return
+    }
+
+    const recognition: SpeechRecognition = new SR()
+    recognition.continuous = true
+    recognition.interimResults = true
+    recognition.lang = 'en-US'
+
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
+      let transcript = ''
+      for (let i = 0; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript
+      }
+      setText(transcript)
+    }
+
+    recognition.onend = () => setIsListening(false)
+    recognition.onerror = () => setIsListening(false)
+
+    recognitionRef.current = recognition
+    recognition.start()
+    setIsListening(true)
+  }
+
+  async function handleGenerate() {
+    if (isListening) {
+      recognitionRef.current?.stop()
+      setIsListening(false)
+    }
+    if (!text.trim() || isLoading) return
+    const result = await generateInvoiceFromText(text.trim())
+    if (result) onGenerate(result)
   }
 
   function handleKeyDown(e: React.KeyboardEvent) {
@@ -39,18 +77,42 @@ export function AIGenerator({ onGenerate }: AIGeneratorProps) {
       </div>
 
       <p className="text-sm text-white/40 mb-3">
-        Describe your invoice in plain English and let AI fill in the form.
+        Describe your invoice in plain English — or use the mic to speak.
       </p>
 
-      <textarea
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder={PLACEHOLDER}
-        rows={3}
-        disabled={isLoading}
-        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-crystal-500/50 focus:ring-1 focus:ring-crystal-500/30 transition-colors resize-none disabled:opacity-50"
-      />
+      {/* Textarea with mic button inside */}
+      <div className="relative">
+        <textarea
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={PLACEHOLDER}
+          rows={3}
+          disabled={isLoading}
+          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-12 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-crystal-500/50 focus:ring-1 focus:ring-crystal-500/30 transition-colors resize-none disabled:opacity-50"
+        />
+        <button
+          type="button"
+          onClick={toggleListening}
+          disabled={isLoading}
+          title={isListening ? 'Stop recording' : 'Speak your invoice'}
+          className={`absolute bottom-3 right-3 p-2 rounded-lg transition-all ${
+            isListening
+              ? 'bg-red-500/25 text-red-400 border border-red-500/50 shadow-lg shadow-red-500/20 animate-pulse'
+              : 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 shadow-lg shadow-cyan-500/25 hover:bg-cyan-500/30 hover:shadow-cyan-500/40'
+          } disabled:opacity-30 disabled:cursor-not-allowed`}
+        >
+          {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-5 h-5" />}
+        </button>
+      </div>
+
+      {/* Listening indicator */}
+      {isListening && (
+        <p className="text-xs text-red-400 mt-2 flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse inline-block" />
+          Listening… speak now, click mic to stop
+        </p>
+      )}
 
       {/* Error message */}
       {error && (

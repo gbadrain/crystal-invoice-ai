@@ -6,10 +6,21 @@ import type { Invoice } from '@/utils/invoice-types'
 
 interface PDFDownloadButtonProps {
   invoice: Invoice
+  locked?: boolean
 }
 
-export function PDFDownloadButton({ invoice }: PDFDownloadButtonProps) {
+export function PDFDownloadButton({ invoice, locked = false }: PDFDownloadButtonProps) {
   const { generatePDF, isLoading, error } = usePDF()
+
+  if (locked) {
+    return (
+      <div className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-sm font-medium cursor-not-allowed" title="Upgrade to Pro to download PDFs">
+        <Download className="w-4 h-4 opacity-50" />
+        <span>Download PDF</span>
+        <span className="text-xs bg-amber-500/20 px-1.5 py-0.5 rounded font-semibold">Pro</span>
+      </div>
+    )
+  }
 
   return (
     <div className="flex items-center gap-3">

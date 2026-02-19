@@ -23,6 +23,9 @@ model User {
   createdAt            DateTime  @default(now())
   invoices             Invoice[] // Relation to Invoice model
 
+  // Profile
+  avatarUrl            String?   // base64 data URL or external URL
+
   // Stripe / subscription
   isPro                Boolean   @default(false)
   stripeCustomerId     String?   @unique

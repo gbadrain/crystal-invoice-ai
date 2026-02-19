@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { FileText, Loader2, AlertCircle } from 'lucide-react'
 import { AIGenerator } from '@/components/invoice/AIGenerator'
@@ -67,6 +67,14 @@ export function NewInvoicePage() {
 
   const [isSaving, setIsSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
+  const [isAtLimit, setIsAtLimit] = useState(false)
+
+  useEffect(() => {
+    fetch('/api/invoices/usage')
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => { if (data?.isAtLimit) setIsAtLimit(true) })
+      .catch(() => {})
+  }, [])
 
   const summary = useMemo(
     () => calculateSummary(lineItems, taxRate, discountRate),
@@ -148,11 +156,11 @@ export function NewInvoicePage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <PDFDownloadButton invoice={currentInvoice} />
+          <PDFDownloadButton invoice={currentInvoice} locked={isAtLimit} />
           <button
             type="button"
             onClick={handleSaveDraft}
-            disabled={isSaving}
+            disabled={isSaving || isAtLimit}
             className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-crystal-600 text-white text-sm font-medium hover:bg-crystal-700 transition-colors shadow-lg shadow-crystal-600/20 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {isSaving ? (
@@ -169,6 +177,13 @@ export function NewInvoicePage() {
           </button>
         </div>
       </div>
+
+      {isAtLimit && (
+        <div className="flex items-start gap-2 mb-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+          <AlertCircle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+          <p className="text-sm text-amber-300">You&apos;ve reached your free limit of 3 invoices. Upgrade to Pro for unlimited invoices and PDF downloads.</p>
+        </div>
+      )}
 
       {saveError && (
         <div className="flex items-start gap-2 mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20">
