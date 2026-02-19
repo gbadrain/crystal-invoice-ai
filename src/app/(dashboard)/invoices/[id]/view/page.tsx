@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { ArrowLeft, Loader2, AlertCircle, FileText, Calendar, Hash, User, Mail, Phone, MapPin, DollarSign } from 'lucide-react'
 import type { Invoice } from '@/utils/invoice-types'
 import { PDFDownloadButton } from '@/components/invoice/PDFDownloadButton'
+import { StatusBadge } from '@/components/StatusBadge'
 
 export default function ViewInvoicePage() {
   const [invoice, setInvoice] = useState<Invoice | null>(null)
@@ -88,17 +89,6 @@ export default function ViewInvoicePage() {
   }
 
   const { client, metadata, lineItems, summary, notes } = invoice;
-
-  const StatusBadge = ({ status }: { status: string }) => (
-    <span className={`px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full capitalize
-      ${status === 'paid' ? 'bg-green-200 text-green-900' : ''}
-      ${status === 'pending' ? 'bg-yellow-200 text-yellow-900' : ''}
-      ${status === 'draft' ? 'bg-gray-300 text-gray-900' : ''}
-      ${status === 'overdue' ? 'bg-red-200 text-red-900' : ''}
-    `}>
-      {status}
-    </span>
-  );
 
   return (
     <div>

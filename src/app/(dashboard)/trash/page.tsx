@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Loader2, AlertCircle, Trash2, RotateCw, ShieldAlert } from 'lucide-react'
 import type { Invoice } from '@/utils/invoice-types'
 import { cn } from '@/utils/cn'
+import { StatusBadge } from '@/components/StatusBadge'
 
 // Confirmation Modal Component
 const ConfirmationModal = ({
@@ -180,17 +181,6 @@ export default function TrashPage() {
     setIsModalOpen(true)
   }
 
-  const StatusBadge = ({ status }: { status: string }) => (
-    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full capitalize
-      ${status === 'paid' ? 'bg-green-200 text-green-900' : ''}
-      ${status === 'pending' ? 'bg-yellow-200 text-yellow-900' : ''}
-      ${status === 'draft' ? 'bg-gray-300 text-gray-900' : ''}
-      ${status === 'overdue' ? 'bg-red-200 text-red-900' : ''}
-    `}>
-      {status}
-    </span>
-  );
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[calc(10vh-10rem)]">
@@ -270,7 +260,7 @@ export default function TrashPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-white/70">{invoice.client?.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-white/70">${invoice.summary?.total.toFixed(2)}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-white/70">
-                    {invoice.metadata.originalStatus && <StatusBadge status={invoice.metadata.originalStatus} />}
+                    {invoice.metadata.originalStatus && <StatusBadge status={invoice.metadata.originalStatus} size="sm" />}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-white/70">
                     {invoice.deletedAt ? new Date(invoice.deletedAt).toLocaleDateString() : 'N/A'}

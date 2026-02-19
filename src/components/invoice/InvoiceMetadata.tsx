@@ -54,7 +54,7 @@ export function InvoiceMetadata({ metadata, onChange }: InvoiceMetadataProps) {
             className={inputClass}
           >
             <option value="draft">Draft</option>
-            <option value="sent">Sent</option>
+            <option value="pending">Pending</option>
             <option value="paid">Paid</option>
             <option value="overdue">Overdue</option>
           </select>

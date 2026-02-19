@@ -15,6 +15,12 @@ app.use('/api/invoices', invoiceRoutes)
 app.use('/api/ai', aiRoutes)
 app.use('/api/pdf', pdfRoutes)
 
+// Global error handler — must be registered after all routes
+app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  console.error('[Express] Unhandled error:', err)
+  res.status(500).json({ error: 'Internal server error' })
+})
+
 const PORT = process.env.EXPRESS_PORT || 3001
 
 app.listen(PORT, () => {
