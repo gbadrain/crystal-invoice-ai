@@ -15,7 +15,7 @@ export async function POST() {
     return NextResponse.json({ error: 'Stripe is not configured.' }, { status: 503 })
   }
 
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } })
+  const user = await prisma.user.findUnique({ where: { email: session.user!.email! } })
   if (!user) return NextResponse.json({ error: 'User not found.' }, { status: 404 })
 
   // If already pro, redirect straight to portal instead

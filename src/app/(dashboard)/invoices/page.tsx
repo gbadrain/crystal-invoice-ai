@@ -61,7 +61,7 @@ export default async function InvoicesPage() {
   const session = await requireUser();
 
   // 2. Fetch data on the server for the logged-in user
-  const initialInvoices = await getInvoices(session.user.id);
+  const initialInvoices = await getInvoices(session.user!.id);
 
   // 3. Render the client component with the initial data
   return <InvoiceList initialInvoices={initialInvoices} />;

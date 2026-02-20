@@ -12,7 +12,7 @@ export async function getAuthUserId(): Promise<string | NextResponse> {
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
-  return session.user.id
+  return session.user!.id as string
 }
 
 /**

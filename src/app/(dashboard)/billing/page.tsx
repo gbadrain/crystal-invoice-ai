@@ -11,7 +11,7 @@ export default async function BillingPage() {
   if (!session?.user?.email) redirect('/auth/signin')
 
   const user = await prisma.user.findUnique({
-    where: { email: session.user.email },
+    where: { email: session.user!.email! },
     select: { isPro: true, stripeCustomerId: true, stripeSubscriptionId: true },
   })
 

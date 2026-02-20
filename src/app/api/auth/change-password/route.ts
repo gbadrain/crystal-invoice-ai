@@ -25,7 +25,7 @@ export async function POST(request: Request) {
   }
 
   // Fetch the authenticated user
-  const user = await prisma.user.findUnique({ where: { id: session.user.id } })
+  const user = await prisma.user.findUnique({ where: { id: session.user!.id as string } })
   if (!user) {
     return NextResponse.json({ error: 'User not found.' }, { status: 404 })
   }
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
   // Hash and persist
   const passwordHash = await bcrypt.hash(newPassword, 12)
   await prisma.user.update({
-    where: { id: session.user.id },
+    where: { id: session.user!.id as string },
     data: { passwordHash },
   })
 
