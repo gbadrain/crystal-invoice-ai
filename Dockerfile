@@ -9,12 +9,13 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-COPY package*.json ./
+# Use server-only package.json — no Next.js, no Prisma
+COPY server/package.json ./package.json
+RUN npm install
 
-# Skip Prisma preinstall — Express server does not use Prisma
-RUN npm ci --ignore-scripts
-
-COPY . .
+# Copy server source and shared utilities it imports
+COPY server/ ./server/
+COPY src/utils/ ./src/utils/
 
 ENV NODE_ENV=production
 
