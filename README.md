@@ -1,6 +1,24 @@
 # Crystal Invoice AI
 
-> **AI-powered invoicing for freelancers and small businesses — from plain English to professional PDF in seconds.**
+**[crystalinvoiceai.com](https://crystalinvoiceai.com)**
+
+> ### Say the job. Crystal does the rest.
+> **Speak into the mic → AI builds the invoice → professional PDF → emailed to your client.**
+> Free to start. No forms. No fuss.
+
+| | |
+|---|---|
+| 🎙️ **Voice or text** | Describe your job out loud or type it in plain English |
+| 🤖 **AI-generated** | Line items, rates, tax, client details — extracted instantly |
+| 📄 **Professional PDF** | Clean, A4-formatted — looks like it cost 10× more |
+| 📧 **Send to client** | One button emails the invoice directly |
+| ✅ **Free to start** | 3 invoices free — upgrade to Pro for unlimited |
+
+---
+
+> **Coming Soon — Industry-Specific Invoice Templates**
+> Pre-built for the way each trade actually works:
+> Dentist · Handyman · Restaurant · Online Business · Personal Trainer · Cleaner · Consultant · Builder · Photographer
 
 ---
 
@@ -224,6 +242,49 @@ All core features are implemented and tested in production:
 - Dashboard with status overview
 
 **Pending**: Stripe production keys (billing UI is live, upgrade flow activates on key addition).
+
+---
+
+## Future Improvements
+
+The current build covers the full core loop — from plain English to delivered invoice. The roadmap below reflects where the product goes next.
+
+### Mobile App
+The most requested natural extension. A native iOS and Android app (React Native / Expo) would put voice-to-invoice directly in a tradesperson's pocket — on-site, between jobs, with no laptop required. A **Progressive Web App (PWA)** is a viable near-term step: installable from the browser, offline-capable, with the same voice input already in place.
+
+### AI & Intelligence Upgrades
+- **Client memory** — the AI learns past rates, job descriptions, and recurring clients from invoice history. "Invoice John for the usual" becomes a complete invoice.
+- **Multi-language generation** — describe a job in any language; the invoice outputs in the client's locale and currency format.
+- **Smarter model toggle** — Claude Opus for complex multi-service invoices requiring deeper inference.
+- **Auto-categorisation** — line items tagged by type (labour, materials, travel) for cleaner reporting.
+
+### Client & Business Management
+- **Client address book** — save and reuse client profiles across invoices; no retyping the same name and address.
+- **Multi-business profiles** — one account, multiple trading names or entities, each with its own logo and bank details.
+- **Recurring invoices** — schedule auto-generation weekly, monthly, or on a custom cadence.
+- **Quote → Invoice conversion** — send a quote or estimate first; convert to a live invoice on client approval.
+
+### Payments & Collections
+- **Stripe Payment Links in email** — clients click "Pay Now" directly inside the invoice email and settle the balance online, no bank transfer required.
+- **Partial payment recording** — track deposits and staged payments against a single invoice.
+- **Automated overdue reminders** — email reminders sent at configurable intervals (3 days, 7 days, 14 days overdue).
+- **Payment receipt generation** — auto-issue a receipt PDF when an invoice is marked paid.
+
+### Integrations & Export
+- **Accounting software** — QuickBooks, Xero, and FreeAgent export for users who need invoices to feed into their books.
+- **Automation** — Zapier and Make.com webhook triggers (invoice created, paid, overdue) for no-code workflow builders.
+- **Bulk export** — CSV and Excel for users who want their invoice data outside the app.
+- **Public API** — authenticated REST endpoints for power users building custom integrations.
+
+### Analytics & Reporting
+- **Revenue dashboard** — monthly and quarterly charts; income at a glance.
+- **Client profitability** — total billed vs average days-to-pay per client; identify who pays fast and who doesn't.
+- **Tax summary report** — annual income and tax totals in a format ready for self-assessment filing.
+
+### Infrastructure
+- **S3 / Cloudflare R2 PDF storage** — replace the current in-memory token store with persistent object storage; enables shareable invoice links and longer download windows.
+- **Audit log** — full change history per invoice (who changed what, when) for dispute resolution.
+- **Multi-currency** — display, invoice, and track revenue in any currency with live exchange rates.
 
 ---
 
