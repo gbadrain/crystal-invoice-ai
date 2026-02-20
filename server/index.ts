@@ -7,7 +7,15 @@ import { pdfRoutes } from './pdf/generate'
 
 const app = express()
 
-app.use(cors({ origin: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000' }))
+app.use(cors({
+  origin: [
+    process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+    'https://crystal-invoice-ai.vercel.app',
+    'http://localhost:3000',
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}))
 app.use(express.json({ limit: '10mb' }))
 
 app.get('/health', (_req, res) => res.json({ ok: true }))
