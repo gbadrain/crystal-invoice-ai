@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { LandingPage } from '@/components/LandingPage'
 import { DashboardShell } from '@/components/DashboardShell'
-import { DashboardPage } from '@/pages/DashboardPage'
+import { DashboardPage } from '@/components/DashboardPage'
 
 /**
  * Smart root route.

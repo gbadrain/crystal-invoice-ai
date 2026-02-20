@@ -3,7 +3,10 @@
     "allow": [
       "Bash(npx next build:*)",
       "Bash(node -e:*)",
-      "Bash(env:*)"
+      "Bash(env:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ]
   }
 }
