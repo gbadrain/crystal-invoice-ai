@@ -22,7 +22,7 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
   res.status(500).json({ error: 'Internal server error' })
 })
 
-const PORT = process.env.EXPRESS_PORT || 3001
+const PORT = process.env.PORT || process.env.EXPRESS_PORT || 3001
 
 app.listen(PORT, () => {
   console.log(`Crystal Invoice API running on port ${PORT}`)
