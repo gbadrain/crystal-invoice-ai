@@ -16,7 +16,7 @@ export default function ViewInvoicePage() {
   const [sendError, setSendError] = useState<string | null>(null)
   const params = useParams()
   const router = useRouter()
-  const { id } = params
+  const id = typeof params?.id === 'string' ? params.id : ''
 
   useEffect(() => {
     if (id) {
