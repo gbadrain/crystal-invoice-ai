@@ -204,11 +204,13 @@ export default function TrashPage() {
 
   return (
     <div>
-      <ConfirmationModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        {...modalConfig}
-      />
+      {modalConfig && (
+        <ConfirmationModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          {...modalConfig}
+        />
+      )}
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold mb-1">Trash Bin</h1>
