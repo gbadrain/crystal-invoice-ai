@@ -15,9 +15,9 @@ function SignInForm() {
   const searchParams = useSearchParams()
 
   // Honour any ?callbackUrl= passed by requireUser redirects; default to '/'
-  const callbackUrl = searchParams.get('callbackUrl') || '/'
-  const justRegistered = searchParams.get('success') === '1'
-  const resetSuccess = searchParams.get('resetSuccess') === '1'
+  const callbackUrl = searchParams?.get('callbackUrl') || '/'
+  const justRegistered = searchParams?.get('success') === '1'
+  const resetSuccess = searchParams?.get('resetSuccess') === '1'
 
   // Refs let us read the real DOM value at submit time.
   // Safari Touch ID and most password managers write directly to the DOM node

@@ -16,7 +16,7 @@ const STRENGTH_COLORS = [
 
 function SuccessBanner() {
   const params = useSearchParams()
-  if (params.get('success') !== '1') return null
+  if (params?.get('success') !== '1') return null
   return (
     <div className="flex items-center gap-2 p-3 mb-6 rounded-xl bg-green-500/10 border border-green-500/20">
       <CheckCircle2 className="w-4 h-4 text-green-400 shrink-0" />
