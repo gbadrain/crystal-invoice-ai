@@ -22,6 +22,7 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
   res.status(500).json({ error: 'Internal server error' })
 })
 
+// Railway injects PORT; fall back to EXPRESS_PORT for local dev
 const PORT = process.env.PORT || process.env.EXPRESS_PORT || 3001
 
 app.listen(PORT, () => {
