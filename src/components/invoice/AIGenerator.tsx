@@ -14,7 +14,8 @@ const PLACEHOLDER = `Example: "I cleaned 3 HVAC units at $150 each for John Smit
 export function AIGenerator({ onGenerate }: AIGeneratorProps) {
   const [text, setText] = useState('')
   const [isListening, setIsListening] = useState(false)
-  const recognitionRef = useRef<SpeechRecognition | null>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const recognitionRef = useRef<any>(null)
   const { generateInvoiceFromText, isLoading, error } = useInvoiceAI()
 
   function toggleListening() {
@@ -31,12 +32,14 @@ export function AIGenerator({ onGenerate }: AIGeneratorProps) {
       return
     }
 
-    const recognition: SpeechRecognition = new SR()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const recognition: any = new SR()
     recognition.continuous = true
     recognition.interimResults = true
     recognition.lang = 'en-US'
 
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    recognition.onresult = (event: any) => {
       let transcript = ''
       for (let i = 0; i < event.results.length; i++) {
         transcript += event.results[i][0].transcript
