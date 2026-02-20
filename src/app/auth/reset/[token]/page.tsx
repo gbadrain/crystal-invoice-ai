@@ -18,7 +18,7 @@ const STRENGTH_COLORS = [
 export default function ResetPasswordPage() {
   const params = useParams()
   const router = useRouter()
-  const token = typeof params.token === 'string' ? params.token : ''
+  const token = typeof params?.token === 'string' ? params.token : ''
 
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
