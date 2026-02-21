@@ -11,6 +11,8 @@ app.use(cors({
   origin: [
     process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
     'https://crystal-invoice-ai.vercel.app',
+    'https://crystalinvoiceai.com',
+    'https://www.crystalinvoiceai.com',
     'http://localhost:3000',
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
