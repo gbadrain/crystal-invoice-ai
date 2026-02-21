@@ -1,6 +1,6 @@
 # Crystal Invoice AI
 
-**[crystalinvoiceai.com](https://crystalinvoiceai.com)**
+**[crystalinvoiceAI.com](https://crystalinvoiceai.com)**
 
 > ### Say the job. Crystal does the rest.
 > **Speak into the mic → AI builds the invoice → professional PDF → emailed to your client.**
