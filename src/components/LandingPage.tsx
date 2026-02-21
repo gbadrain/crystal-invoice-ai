@@ -94,12 +94,12 @@ export function LandingPage() {
           <Image
             src="/icon.png"
             alt="Crystal Invoice AI"
-            width={48}
-            height={48}
+            width={60}
+            height={60}
             className="rounded-xl shrink-0"
             priority
           />
-          <span className="text-lg font-bold tracking-tight">
+          <span className="text-2xl font-bold tracking-tight">
             <span className="text-crystal-400">Crystal</span>
             <span className="text-white/80"> Invoice</span>
           </span>
