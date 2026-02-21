@@ -71,7 +71,7 @@ export function buildInvoiceEmailHTML(invoice: InvoiceEmailData, appUrl: string,
   // or omit to fall back to brand text (data: URIs are blocked by Gmail/Outlook)
   const resolvedLogo = logoSrc ?? null
   const logoHTML = resolvedLogo
-    ? `<img src="${resolvedLogo}" alt="Logo" style="max-height:52px;max-width:160px;object-fit:contain;display:block;" />`
+    ? `<img src="${resolvedLogo}" alt="Logo" style="max-height:72px;max-width:200px;object-fit:contain;display:block;" />`
     : `<span style="font-size:20px;font-weight:800;letter-spacing:-0.5px;color:#ffffff;">
         <span style="color:#c4b5fd;">Crystal</span> Invoice AI
        </span>`

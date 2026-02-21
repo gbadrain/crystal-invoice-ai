@@ -82,7 +82,7 @@ export function buildInvoiceHTML(invoice: Invoice): string {
       </tr>`
 
   const logoHTML = logo
-    ? `<img src="${logo}" alt="Logo" style="max-height: 60px; max-width: 180px; object-fit: contain;" />`
+    ? `<img src="${logo}" alt="Logo" style="max-height: 80px; max-width: 220px; object-fit: contain;" />`
     : `<div style="font-size: 22px; font-weight: 700; color: #4c6ef5; letter-spacing: -0.5px;">Crystal Invoice</div>`
 
   return `<!DOCTYPE html>
