@@ -35,7 +35,7 @@ async function renderPDF(invoice: Record<string, unknown>): Promise<Buffer> {
   try {
     const page = await browser.newPage()
     await page.emulateMediaType('print')
-    await page.setContent(html, { waitUntil: ['load', 'networkidle0'], timeout: 30000 })
+    await page.setContent(html, { waitUntil: 'domcontentloaded', timeout: 30000 })
     console.log('[PDF] Page content set, rendering PDF...')
 
     const pdfUint8 = await page.pdf({

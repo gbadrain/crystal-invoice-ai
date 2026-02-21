@@ -56,7 +56,7 @@ function esc(v: string | null | undefined): string {
   return v.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }
 
-export function buildInvoiceEmailHTML(invoice: InvoiceEmailData, appUrl: string): string {
+export function buildInvoiceEmailHTML(invoice: InvoiceEmailData, appUrl: string, logoSrc?: string | null): string {
   const items = (invoice.lineItems as LineItem[]) ?? []
 
   const lineItemRows = items.map((item, i) => `
@@ -67,8 +67,11 @@ export function buildInvoiceEmailHTML(invoice: InvoiceEmailData, appUrl: string)
       <td style="padding:12px 16px;font-size:14px;color:#0f172a;font-weight:600;text-align:right;border-bottom:1px solid #f1f5f9;">${money(item.amount)}</td>
     </tr>`).join('')
 
-  const logoHTML = invoice.logo
-    ? `<img src="${invoice.logo}" alt="Logo" style="max-height:52px;max-width:160px;object-fit:contain;display:block;" />`
+  // logoSrc: pass 'cid:invoice-logo' when using Resend inline attachment,
+  // or omit to fall back to brand text (data: URIs are blocked by Gmail/Outlook)
+  const resolvedLogo = logoSrc ?? null
+  const logoHTML = resolvedLogo
+    ? `<img src="${resolvedLogo}" alt="Logo" style="max-height:52px;max-width:160px;object-fit:contain;display:block;" />`
     : `<span style="font-size:20px;font-weight:800;letter-spacing:-0.5px;color:#ffffff;">
         <span style="color:#c4b5fd;">Crystal</span> Invoice AI
        </span>`
