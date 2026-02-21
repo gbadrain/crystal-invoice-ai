@@ -136,6 +136,15 @@ Invoices move through a clear status lifecycle. The dashboard surfaces outstandi
 ### Trash and Restore
 Soft deletion with full restore capability. Nothing is permanently deleted unless explicitly confirmed.
 
+### Company Logo
+Upload a PNG, JPG, or SVG (up to 500 KB). The logo is stored as a base64 data URL in PostgreSQL and automatically embedded in every PDF and every email sent to clients. Changing the logo on an invoice updates both outputs immediately — no cache delay.
+
+### Auto Overdue Detection
+Every time the invoice list loads, pending invoices whose due date has passed are automatically promoted to `overdue`. No cron job required — the status is always accurate at list-read time.
+
+### Stripe Subscription Billing
+Live Stripe integration with a hosted Checkout flow ($9/month) and a Customer Portal for plan management and cancellation. A `Pro` badge appears in the sidebar once the subscription is active. Non-Pro users see a usage banner with an inline upgrade prompt.
+
 ### Freemium Model
 Free users get three invoices. Pro users ($9/month via Stripe) get unlimited invoices and full feature access. The upgrade path is inline — no separate checkout page is required.
 
@@ -191,6 +200,12 @@ Claude Haiku is fast and cost-effective but its JSON output is not perfectly con
 ### CORS Across Two Origins
 The Express backend (Railway) needs to accept requests from the Next.js frontend (Vercel). With production deployments using dynamic Vercel preview URLs, a static CORS allowlist was insufficient. The solution was to explicitly whitelist the production Vercel origin via the `NEXT_PUBLIC_APP_URL` environment variable and allow all origins in development.
 
+### Logo in Email — Gmail CID Limitation
+The initial implementation used CID inline attachments to embed the company logo in invoice emails. Gmail ignores CID attachments entirely and renders them as file attachments instead. The fix was to serve the logo via a public (no-auth) HTTPS endpoint (`/api/public/logo/[id]`) and reference it as a standard `<img src="">` in the HTML — a URL every email client can load.
+
+### Stripe Keys — Trailing Newline Corruption
+When adding Stripe API keys to Vercel via the CLI, using `echo "value" | vercel env add` appends a trailing newline to the value. Stripe's SDK treats this as a malformed key and retries the connection multiple times before failing with a cryptic connection error. The fix is to pipe with `printf '%s' 'value' | vercel env add` — which writes the value with no trailing newline.
+
 ---
 
 ## Getting Started (Local Development)
@@ -228,20 +243,22 @@ Required environment variables are documented in `.env.example`. The application
 
 ## Status
 
-All core features are implemented and tested in production:
+All core features are implemented, tested, and live in production at [crystalinvoiceai.com](https://crystalinvoiceai.com):
 
 - User registration and authentication
 - Password reset (email token) and change-password (settings)
 - Full invoice CRUD with soft delete and restore
 - AI generation via Claude Haiku
 - Voice input via Web Speech API
-- PDF generation via Puppeteer
-- Email delivery via Resend
-- Stripe subscription billing
-- Freemium enforcement with usage tracking
-- Dashboard with status overview
-
-**Pending**: Stripe production keys (billing UI is live, upgrade flow activates on key addition).
+- PDF generation via Puppeteer (Railway)
+- Email delivery via Resend (verified custom domain)
+- Company logo — uploaded once, persisted to DB, embedded in PDF and email
+- Auto overdue detection — pending invoices past due date auto-promote to `overdue` on list load
+- Stripe subscription billing — **live payments active** ($9/month)
+- Stripe Customer Portal — subscribers can manage and cancel directly
+- Billing success/cancellation banners on return from Stripe
+- Freemium enforcement — free tier capped at 3 invoices; Pro users are unlimited
+- Dashboard with status overview and live trash badge
 
 ---
 
