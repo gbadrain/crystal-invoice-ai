@@ -30,24 +30,9 @@ export async function POST(
   const appUrl = process.env.NEXTAUTH_URL ?? 'http://localhost:3000'
   const from = process.env.RESEND_FROM ?? 'Crystal Invoice <noreply@crystalinvoice.com>'
 
-  // Gmail/Outlook block data: URIs in emails — convert logo to a CID inline attachment
-  type ResendAttachment = { filename: string; content: Buffer; headers: Record<string, string> }
-  let logoSrc: string | null = null
-  const attachments: ResendAttachment[] = []
-
-  if (invoice.logo) {
-    const match = invoice.logo.match(/^data:([^;]+);base64,(.+)$/)
-    if (match) {
-      const mimeType = match[1]                              // e.g. image/png
-      const ext = mimeType.split('/')[1]?.split('+')[0] ?? 'png'
-      logoSrc = 'cid:invoice-logo'
-      attachments.push({
-        filename: `logo.${ext}`,
-        content: Buffer.from(match[2], 'base64'),
-        headers: { 'Content-ID': '<invoice-logo>' },
-      })
-    }
-  }
+  // Use a public HTTPS URL for the logo — Gmail/Outlook block both data: URIs
+  // and CID inline attachments. A plain <img src="https://..."> works everywhere.
+  const logoSrc = invoice.logo ? `${appUrl}/api/public/logo/${invoice.id}` : null
 
   const html = buildInvoiceEmailHTML(invoice, appUrl, logoSrc)
 
@@ -59,7 +44,6 @@ export async function POST(
       to: invoice.clientEmail,
       subject: `Invoice ${invoice.invoiceNumber} from ${invoice.user.email}`,
       html,
-      ...(attachments.length > 0 && { attachments }),
     })
 
     // Update status to pending if it was draft
