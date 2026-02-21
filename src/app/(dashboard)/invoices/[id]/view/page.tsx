@@ -28,7 +28,7 @@ export default function ViewInvoicePage() {
     setIsLoading(true)
     setError(null)
     try {
-      const response = await fetch(`/api/invoices/${id}`)
+      const response = await fetch(`/api/invoices/${id}`, { cache: 'no-store' })
       if (!response.ok) {
         if (response.status === 404) {
           setError('Invoice not found.')

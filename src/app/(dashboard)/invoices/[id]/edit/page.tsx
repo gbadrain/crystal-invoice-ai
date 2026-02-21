@@ -77,7 +77,7 @@ export default function EditInvoicePage({ params }: EditInvoicePageProps) {
   useEffect(() => {
     async function fetchInvoice() {
       try {
-        const response = await fetch(`/api/invoices/${id}`)
+        const response = await fetch(`/api/invoices/${id}`, { cache: 'no-store' })
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }

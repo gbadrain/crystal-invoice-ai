@@ -32,7 +32,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
     headers: {
       'Content-Type': mimeType,
       'Content-Length': String(buffer.length),
-      'Cache-Control': 'public, max-age=86400', // cache 24h — logo rarely changes
+      'Cache-Control': 'no-cache, must-revalidate', // always re-fetch — logo can change
     },
   })
 }
