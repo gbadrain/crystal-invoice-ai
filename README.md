@@ -322,4 +322,4 @@ The most requested natural extension. A native iOS and Android app (React Native
 
 ## License
 
-MIT — see [LICENSE](LICENSE)
+MIT — Copyright © 2026 Gurpreet Singh Badrain. See [LICENSE](LICENSE) for details.
