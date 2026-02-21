@@ -1,6 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import Image from 'next/image'
 import Link from 'next/link'
 import { Zap, CheckCircle, ArrowRight, FileText, Sparkles, Shield, Send, Clock, Star } from 'lucide-react'
 import { FREE_INVOICE_LIMIT } from '@/lib/plans'
@@ -90,9 +91,14 @@ export function LandingPage() {
       {/* Nav */}
       <nav className="relative z-10 flex items-center justify-between px-8 lg:px-16 py-5 border-b border-white/[0.06]">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-crystal-600 flex items-center justify-center shadow-lg shadow-crystal-600/30">
-            <Zap className="w-4 h-4 text-white" />
-          </div>
+          <Image
+            src="/icon.png"
+            alt="Crystal Invoice AI"
+            width={36}
+            height={36}
+            className="rounded-xl"
+            priority
+          />
           <span className="text-lg font-bold tracking-tight">
             <span className="text-crystal-400">Crystal</span>
             <span className="text-white/80"> Invoice</span>
