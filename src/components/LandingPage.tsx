@@ -90,24 +90,19 @@ export function LandingPage() {
 
       {/* Nav */}
       <nav className="relative z-10 flex items-center justify-between px-8 lg:px-16 py-5 border-b border-white/[0.06]">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <Image
             src="/icon.png"
             alt="Crystal Invoice AI"
-            width={40}
-            height={40}
+            width={48}
+            height={48}
             className="rounded-xl shrink-0"
             priority
           />
-          <Image
-            src="/logo.png"
-            alt="Crystal Invoice"
-            width={160}
-            height={40}
-            className="object-contain hidden sm:block"
-            style={{ width: 'auto', height: '32px' }}
-            priority
-          />
+          <span className="text-lg font-bold tracking-tight">
+            <span className="text-crystal-400">Crystal</span>
+            <span className="text-white/80"> Invoice</span>
+          </span>
         </div>
         <div className="flex items-center gap-6">
           <a href="#features" className="text-sm text-white/40 hover:text-white transition-colors hidden md:block">Features</a>
