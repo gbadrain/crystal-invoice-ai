@@ -90,19 +90,24 @@ export function LandingPage() {
 
       {/* Nav */}
       <nav className="relative z-10 flex items-center justify-between px-8 lg:px-16 py-5 border-b border-white/[0.06]">
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-3">
           <Image
             src="/icon.png"
             alt="Crystal Invoice AI"
-            width={48}
-            height={48}
-            className="rounded-xl"
+            width={40}
+            height={40}
+            className="rounded-xl shrink-0"
             priority
           />
-          <span className="text-lg font-bold tracking-tight">
-            <span className="text-crystal-400">Crystal</span>
-            <span className="text-white/80"> Invoice</span>
-          </span>
+          <Image
+            src="/logo.png"
+            alt="Crystal Invoice"
+            width={160}
+            height={40}
+            className="object-contain hidden sm:block"
+            style={{ width: 'auto', height: '32px' }}
+            priority
+          />
         </div>
         <div className="flex items-center gap-6">
           <a href="#features" className="text-sm text-white/40 hover:text-white transition-colors hidden md:block">Features</a>
@@ -161,7 +166,7 @@ export function LandingPage() {
           </div>
         </div>
 
-        <div className="w-full max-w-sm shrink-0">
+        <div className="w-full max-w-sm shrink-0 transition-all duration-300 hover:-translate-y-2 hover:drop-shadow-[0_24px_48px_rgba(99,102,241,0.2)]">
           <SignInCard />
         </div>
       </section>
@@ -194,7 +199,7 @@ export function LandingPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
           {/* Free */}
-          <div className="glass-panel p-8 border border-white/[0.06] flex flex-col">
+          <div className="glass-panel p-8 border border-white/[0.06] flex flex-col transition-all duration-300 hover:-translate-y-2 hover:border-white/20 hover:shadow-2xl hover:shadow-white/5 cursor-pointer">
             <p className="text-xs text-white/40 uppercase tracking-wider mb-1">Free</p>
             <div className="flex items-baseline gap-1 mb-6">
               <span className="text-4xl font-bold text-white">$0</span>
@@ -217,7 +222,7 @@ export function LandingPage() {
           </div>
 
           {/* Pro */}
-          <div className="glass-panel p-8 border border-crystal-500/30 flex flex-col relative overflow-hidden">
+          <div className="glass-panel p-8 border border-crystal-500/30 flex flex-col relative overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:border-crystal-400/60 hover:shadow-2xl hover:shadow-crystal-500/25 cursor-pointer">
             <div className="absolute top-4 right-4 px-2.5 py-1 rounded-full bg-crystal-600/20 border border-crystal-500/30 text-crystal-300 text-xs font-semibold">
               Most Popular
             </div>
