@@ -146,6 +146,10 @@ export default function EditInvoicePage({ params }: EditInvoicePageProps) {
         throw new Error(errorData.error || `HTTP error! status: ${response.status}`)
       }
 
+      const saved = await response.json()
+      // Confirm logo was persisted — log to browser console for debugging
+      console.log('[Save] logo saved:', !!saved?.invoice?.logo)
+
       router.refresh()
       router.push('/invoices') // Redirect to invoice list after saving
     } catch (err: any) {

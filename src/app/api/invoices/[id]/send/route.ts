@@ -34,8 +34,11 @@ export async function POST(
   const appUrl = process.env.NEXTAUTH_URL ?? 'http://localhost:3000'
   const from = process.env.RESEND_FROM ?? 'Crystal Invoice <noreply@crystalinvoice.com>'
 
-  // Use a public HTTPS URL for the logo — Gmail/Outlook block data: URIs and CID attachments
-  const logoSrc = invoice.logo ? `${appUrl}/api/public/logo/${invoice.id}` : null
+  // Use a versioned public HTTPS URL for the logo.
+  // Gmail proxies and caches images by URL — adding ?v=<timestamp> busts the cache
+  // every time the invoice is updated (updatedAt changes on every save).
+  const logoV = invoice.updatedAt.getTime()
+  const logoSrc = invoice.logo ? `${appUrl}/api/public/logo/${invoice.id}?v=${logoV}` : null
   const html = buildInvoiceEmailHTML(invoice, appUrl, logoSrc)
 
   // Generate PDF from Railway and attach it to the email
