@@ -59,7 +59,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
-    const { client, metadata, lineItems, summary, notes } = body
+    const { client, metadata, lineItems, summary, notes, logo } = body
 
     const invoice = await prisma.invoice.create({
       data: {
@@ -80,6 +80,7 @@ export async function POST(request: Request) {
         discountAmount: summary.discountAmount,
         total: summary.total,
         notes: notes || null,
+        logo: logo || null,
       },
     })
 

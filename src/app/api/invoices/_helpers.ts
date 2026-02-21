@@ -44,6 +44,7 @@ export function formatInvoice(inv: PrismaInvoice): Invoice {
       total: inv.total,
     },
     notes: inv.notes || '',
+    logo: inv.logo || undefined,
     deletedAt: inv.deletedAt?.toISOString() || null,
   }
 }

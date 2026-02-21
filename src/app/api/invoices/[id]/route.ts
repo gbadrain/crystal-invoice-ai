@@ -45,7 +45,7 @@ export async function PUT(request: Request, context: RouteContext) {
     }
 
     const body = await request.json()
-    const { client, metadata, lineItems, summary, notes } = body
+    const { client, metadata, lineItems, summary, notes, logo } = body
 
     const updated = await prisma.invoice.update({
       where: { id },
@@ -66,6 +66,7 @@ export async function PUT(request: Request, context: RouteContext) {
         discountAmount: summary.discountAmount,
         total: summary.total,
         notes: notes || null,
+        logo: logo || null,
       },
     })
 
