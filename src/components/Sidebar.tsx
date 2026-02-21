@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { LayoutDashboard, FilePlus, FileText, Trash, Settings, CreditCard } from 'lucide-react'
 import { cn } from '@/utils/cn'
@@ -49,12 +50,22 @@ export function Sidebar() {
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 glass-panel-solid border-r border-white/10 flex flex-col">
       {/* Branding */}
-      <div className="px-6 py-6 border-b border-white/10">
-        <h1 className="text-xl font-bold tracking-tight">
-          <span className="text-crystal-400">Crystal</span>{' '}
-          <span className="text-white/80">Invoice</span>
-        </h1>
-        <p className="text-xs text-white/40 mt-1">AI-Powered Invoicing</p>
+      <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-bold tracking-tight">
+            <span className="text-crystal-400">Crystal</span>{' '}
+            <span className="text-white/80">Invoice</span>
+          </h1>
+          <p className="text-xs text-white/40 mt-0.5">AI-Powered Invoicing</p>
+        </div>
+        <Image
+          src="/icon.png"
+          alt="Crystal Invoice AI"
+          width={44}
+          height={44}
+          className="rounded-xl shrink-0"
+          priority
+        />
       </div>
 
       {/* Navigation */}

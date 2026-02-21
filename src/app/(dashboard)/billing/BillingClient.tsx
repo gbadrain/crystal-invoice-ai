@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import { Zap, CheckCircle, ExternalLink, CreditCard } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { Zap, CheckCircle, ExternalLink, CreditCard, PartyPopper, XCircle } from 'lucide-react'
 import { FREE_INVOICE_LIMIT } from '@/lib/plans'
 
 interface Props {
@@ -11,6 +12,13 @@ interface Props {
 
 export function BillingClient({ isPro, hasStripeCustomer }: Props) {
   const [loading, setLoading] = useState(false)
+  const searchParams = useSearchParams()
+  const [banner, setBanner] = useState<'success' | 'canceled' | null>(null)
+
+  useEffect(() => {
+    if (searchParams.get('success') === '1') setBanner('success')
+    else if (searchParams.get('canceled') === '1') setBanner('canceled')
+  }, [searchParams])
 
   const handleUpgrade = async () => {
     setLoading(true)
@@ -50,6 +58,25 @@ export function BillingClient({ isPro, hasStripeCustomer }: Props) {
 
   return (
     <div className="space-y-4">
+      {/* Post-payment banners */}
+      {banner === 'success' && (
+        <div className="flex items-start gap-3 p-4 rounded-2xl bg-green-500/10 border border-green-500/20">
+          <PartyPopper className="w-5 h-5 text-green-400 mt-0.5 shrink-0" />
+          <div>
+            <p className="text-sm font-semibold text-green-300">Welcome to Pro!</p>
+            <p className="text-xs text-green-400/70 mt-0.5">Your account has been upgraded. Enjoy unlimited invoices and all Pro features.</p>
+          </div>
+          <button onClick={() => setBanner(null)} className="ml-auto text-green-400/50 hover:text-green-300"><XCircle className="w-4 h-4" /></button>
+        </div>
+      )}
+      {banner === 'canceled' && (
+        <div className="flex items-start gap-3 p-4 rounded-2xl bg-white/5 border border-white/10">
+          <XCircle className="w-5 h-5 text-white/40 mt-0.5 shrink-0" />
+          <p className="text-sm text-white/50">Payment was canceled — no charge was made.</p>
+          <button onClick={() => setBanner(null)} className="ml-auto text-white/30 hover:text-white/50"><XCircle className="w-4 h-4" /></button>
+        </div>
+      )}
+
       {/* Current Plan */}
       <div className="glass-panel rounded-2xl p-6 border border-white/10">
         <div className="flex items-center justify-between mb-4">

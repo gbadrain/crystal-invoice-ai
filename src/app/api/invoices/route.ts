@@ -14,6 +14,17 @@ export async function GET(request: Request) {
   const statusFilter = searchParams.get('status')
 
   try {
+    // Auto-mark overdue: pending invoices whose dueDate has passed
+    const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD
+    await prisma.invoice.updateMany({
+      where: {
+        userId,
+        status: InvoiceStatus.pending,
+        dueDate: { lt: today },
+      },
+      data: { status: InvoiceStatus.overdue },
+    })
+
     const invoices = await prisma.invoice.findMany({
       where: {
         userId,
