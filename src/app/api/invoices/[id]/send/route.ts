@@ -57,6 +57,7 @@ export async function POST(
 </head>
 <body>
 <div class="card">
+  ${invoice.logo ? `<img src="${invoice.logo}" alt="Logo" style="max-height:56px;max-width:160px;object-fit:contain;margin-bottom:20px;display:block;" />` : ''}
   <h1>Invoice ${invoice.invoiceNumber}</h1>
   <p class="sub">From ${invoice.user.email} • Issued ${invoice.issueDate} • Due ${invoice.dueDate}</p>
 
