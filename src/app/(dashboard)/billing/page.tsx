@@ -1,6 +1,7 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { stripe } from '@/lib/stripe'
 import { redirect } from 'next/navigation'
 import { BillingClient } from './BillingClient'
 
@@ -15,6 +16,20 @@ export default async function BillingPage() {
     select: { isPro: true, stripeCustomerId: true, stripeSubscriptionId: true },
   })
 
+  // Fetch live subscription state from Stripe if available
+  let cancelAtPeriodEnd = false
+  let currentPeriodEnd: string | null = null
+
+  if (user?.stripeSubscriptionId && process.env.STRIPE_SECRET_KEY) {
+    try {
+      const sub = await stripe.subscriptions.retrieve(user.stripeSubscriptionId)
+      cancelAtPeriodEnd = sub.cancel_at_period_end
+      currentPeriodEnd = new Date(sub.current_period_end * 1000).toISOString()
+    } catch {
+      // Subscription not found in Stripe (e.g. stale test-mode ID) — ignore
+    }
+  }
+
   return (
     <div className="max-w-2xl mx-auto py-10 px-4">
       <h1 className="text-2xl font-bold text-white mb-2">Billing</h1>
@@ -22,6 +37,8 @@ export default async function BillingPage() {
       <BillingClient
         isPro={user?.isPro ?? false}
         hasStripeCustomer={!!user?.stripeCustomerId}
+        cancelAtPeriodEnd={cancelAtPeriodEnd}
+        currentPeriodEnd={currentPeriodEnd}
       />
     </div>
   )

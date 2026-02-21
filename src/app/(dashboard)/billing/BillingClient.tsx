@@ -1,17 +1,23 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useSearchParams } from 'next/navigation'
-import { Zap, CheckCircle, ExternalLink, CreditCard, PartyPopper, XCircle } from 'lucide-react'
+import { Zap, CheckCircle, ExternalLink, CreditCard, PartyPopper, XCircle, AlertTriangle } from 'lucide-react'
 import { FREE_INVOICE_LIMIT } from '@/lib/plans'
 
 interface Props {
   isPro: boolean
   hasStripeCustomer: boolean
+  cancelAtPeriodEnd: boolean
+  currentPeriodEnd: string | null
 }
 
-export function BillingClient({ isPro, hasStripeCustomer }: Props) {
+export function BillingClient({ isPro, hasStripeCustomer, cancelAtPeriodEnd, currentPeriodEnd }: Props) {
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false)
+  const [localCancelAtPeriodEnd, setLocalCancelAtPeriodEnd] = useState(cancelAtPeriodEnd)
   const searchParams = useSearchParams()
   const [banner, setBanner] = useState<'success' | 'canceled' | null>(null)
 
@@ -19,6 +25,10 @@ export function BillingClient({ isPro, hasStripeCustomer }: Props) {
     if (searchParams.get('success') === '1') setBanner('success')
     else if (searchParams.get('canceled') === '1') setBanner('canceled')
   }, [searchParams])
+
+  const formattedEndDate = currentPeriodEnd
+    ? new Date(currentPeriodEnd).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+    : null
 
   const handleUpgrade = async () => {
     setLoading(true)
@@ -30,9 +40,8 @@ export function BillingClient({ isPro, hasStripeCustomer }: Props) {
       } else {
         alert(data.error || 'Could not start checkout. Please try again.')
       }
-    } catch (err) {
+    } catch {
       alert('Network error. Please try again.')
-      console.error('[Upgrade]', err)
     } finally {
       setLoading(false)
     }
@@ -48,9 +57,49 @@ export function BillingClient({ isPro, hasStripeCustomer }: Props) {
       } else {
         alert(data.error || 'Could not open billing portal. Please try again.')
       }
-    } catch (err) {
+    } catch {
       alert('Network error. Please try again.')
-      console.error('[Portal]', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleCancelPlan = async () => {
+    setLoading(true)
+    setShowCancelConfirm(false)
+    try {
+      const res = await fetch('/api/stripe/cancel', { method: 'POST' })
+      const data = await res.json()
+      if (data.cancelAtPeriodEnd !== undefined) {
+        setLocalCancelAtPeriodEnd(true)
+        router.refresh()
+      } else {
+        alert(data.error || 'Could not cancel subscription. Please try again.')
+      }
+    } catch {
+      alert('Network error. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleReactivate = async () => {
+    setLoading(true)
+    try {
+      const res = await fetch('/api/stripe/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reactivate: true }),
+      })
+      const data = await res.json()
+      if (data.cancelAtPeriodEnd !== undefined) {
+        setLocalCancelAtPeriodEnd(false)
+        router.refresh()
+      } else {
+        alert(data.error || 'Could not reactivate subscription. Please try again.')
+      }
+    } catch {
+      alert('Network error. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -77,6 +126,26 @@ export function BillingClient({ isPro, hasStripeCustomer }: Props) {
         </div>
       )}
 
+      {/* Scheduled cancellation warning */}
+      {isPro && localCancelAtPeriodEnd && formattedEndDate && (
+        <div className="flex items-start gap-3 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20">
+          <AlertTriangle className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-amber-300">Plan cancellation scheduled</p>
+            <p className="text-xs text-amber-400/70 mt-0.5">
+              Your Pro access continues until <strong>{formattedEndDate}</strong>. After that your account switches to Free.
+            </p>
+          </div>
+          <button
+            onClick={handleReactivate}
+            disabled={loading}
+            className="shrink-0 text-xs px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-500/30 text-amber-300 hover:bg-amber-500/30 transition-colors disabled:opacity-50"
+          >
+            Keep Pro
+          </button>
+        </div>
+      )}
+
       {/* Current Plan */}
       <div className="glass-panel rounded-2xl p-6 border border-white/10">
         <div className="flex items-center justify-between mb-4">
@@ -94,8 +163,12 @@ export function BillingClient({ isPro, hasStripeCustomer }: Props) {
             </h2>
           </div>
           {isPro && (
-            <span className="px-3 py-1 rounded-full bg-crystal-600/20 border border-crystal-500/20 text-crystal-300 text-xs font-semibold">
-              Active
+            <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${
+              localCancelAtPeriodEnd
+                ? 'bg-amber-500/10 border-amber-500/20 text-amber-300'
+                : 'bg-crystal-600/20 border-crystal-500/20 text-crystal-300'
+            }`}>
+              {localCancelAtPeriodEnd ? 'Cancels ' + formattedEndDate : 'Active'}
             </span>
           )}
         </div>
@@ -119,17 +192,39 @@ export function BillingClient({ isPro, hasStripeCustomer }: Props) {
         </ul>
 
         {isPro ? (
-          hasStripeCustomer ? (
-            <button
-              onClick={handlePortal}
-              disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl border border-white/10 text-white/60 text-sm hover:bg-white/5 transition-colors disabled:opacity-50"
-            >
-              <CreditCard className="w-4 h-4" />
-              {loading ? 'Opening portal…' : 'Manage Subscription'}
-              <ExternalLink className="w-3.5 h-3.5" />
-            </button>
-          ) : null
+          hasStripeCustomer && (
+            <div className="flex flex-wrap gap-3">
+              {/* Manage card / invoices */}
+              <button
+                onClick={handlePortal}
+                disabled={loading}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl border border-white/10 text-white/60 text-sm hover:bg-white/5 transition-colors disabled:opacity-50"
+              >
+                <CreditCard className="w-4 h-4" />
+                {loading ? 'Opening…' : 'Manage Subscription'}
+                <ExternalLink className="w-3.5 h-3.5" />
+              </button>
+
+              {/* Cancel or reactivate */}
+              {!localCancelAtPeriodEnd ? (
+                <button
+                  onClick={() => setShowCancelConfirm(true)}
+                  disabled={loading}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl border border-red-500/20 text-red-400/70 text-sm hover:bg-red-500/10 hover:text-red-300 transition-colors disabled:opacity-50"
+                >
+                  Cancel Plan
+                </button>
+              ) : (
+                <button
+                  onClick={handleReactivate}
+                  disabled={loading}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl border border-crystal-500/20 text-crystal-300 text-sm hover:bg-crystal-500/10 transition-colors disabled:opacity-50"
+                >
+                  {loading ? 'Reactivating…' : 'Keep Pro'}
+                </button>
+              )}
+            </div>
+          )
         ) : (
           <div className="space-y-3">
             <div className="flex items-baseline gap-1">
@@ -150,6 +245,40 @@ export function BillingClient({ isPro, hasStripeCustomer }: Props) {
           </div>
         )}
       </div>
+
+      {/* Cancel confirmation dialog */}
+      {showCancelConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+          <div className="glass-panel rounded-2xl p-6 max-w-sm w-full border border-white/10 shadow-2xl">
+            <div className="flex items-start gap-3 mb-4">
+              <AlertTriangle className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />
+              <div>
+                <h3 className="text-base font-semibold text-white mb-1">Cancel Pro plan?</h3>
+                <p className="text-sm text-white/50">
+                  You'll keep Pro access until{' '}
+                  <strong className="text-white/70">{formattedEndDate ?? 'end of billing period'}</strong>.
+                  After that your account switches to Free and you'll be limited to {FREE_INVOICE_LIMIT} invoices.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setShowCancelConfirm(false)}
+                className="px-4 py-2 rounded-xl text-sm text-white/50 hover:text-white hover:bg-white/5 transition-colors"
+              >
+                Keep Pro
+              </button>
+              <button
+                onClick={handleCancelPlan}
+                disabled={loading}
+                className="px-4 py-2 rounded-xl bg-red-500/20 border border-red-500/30 text-red-300 text-sm hover:bg-red-500/30 transition-colors disabled:opacity-50"
+              >
+                {loading ? 'Cancelling…' : 'Yes, cancel plan'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
