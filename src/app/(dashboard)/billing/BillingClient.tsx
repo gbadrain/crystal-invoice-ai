@@ -17,7 +17,14 @@ export function BillingClient({ isPro, hasStripeCustomer }: Props) {
     try {
       const res = await fetch('/api/stripe/checkout', { method: 'POST' })
       const data = await res.json()
-      if (data.url) window.location.href = data.url
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        alert(data.error || 'Could not start checkout. Please try again.')
+      }
+    } catch (err) {
+      alert('Network error. Please try again.')
+      console.error('[Upgrade]', err)
     } finally {
       setLoading(false)
     }
@@ -28,7 +35,14 @@ export function BillingClient({ isPro, hasStripeCustomer }: Props) {
     try {
       const res = await fetch('/api/stripe/portal', { method: 'POST' })
       const data = await res.json()
-      if (data.url) window.location.href = data.url
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        alert(data.error || 'Could not open billing portal. Please try again.')
+      }
+    } catch (err) {
+      alert('Network error. Please try again.')
+      console.error('[Portal]', err)
     } finally {
       setLoading(false)
     }

@@ -34,9 +34,14 @@ export function UsageBanner() {
     try {
       const res = await fetch('/api/stripe/checkout', { method: 'POST' })
       const data = await res.json()
-      if (data.url) window.location.href = data.url
-    } catch {
-      // silently fail — user will see nothing happen
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        alert(data.error || 'Could not start checkout. Please try again.')
+      }
+    } catch (err) {
+      alert('Network error. Please try again.')
+      console.error('[Upgrade]', err)
     } finally {
       setLoading(false)
     }
@@ -83,7 +88,7 @@ export function UsageBanner() {
       {/* Upgrade CTA */}
       <button
         onClick={handleUpgrade}
-        disabled={loading || !process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
+        disabled={loading}
         className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold transition-all hover:bg-amber-500/20 disabled:opacity-60 disabled:cursor-not-allowed"
       >
         <Zap className="w-3.5 h-3.5" />
