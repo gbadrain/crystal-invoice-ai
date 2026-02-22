@@ -39,7 +39,11 @@ export async function POST(request: Request) {
       to: normalizedEmail,
       subject: 'Welcome to Crystal Invoice AI',
       html: buildWelcomeEmailHTML(normalizedEmail, appUrl),
-    }).catch((err) => console.error('[register] Welcome email failed:', err))
+    })
+      .then((res) => {
+        if (!res.ok) console.error('[register] Welcome email failed:', res.error)
+      })
+      .catch((err) => console.error('[register] Welcome email failed (unhandled promise rejection):', err))
 
     return NextResponse.json(
       { message: 'Account created.', user: { id: user.id, email: user.email } },
