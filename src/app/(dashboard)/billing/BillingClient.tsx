@@ -22,8 +22,8 @@ export function BillingClient({ isPro, hasStripeCustomer, cancelAtPeriodEnd, cur
   const [banner, setBanner] = useState<'success' | 'canceled' | null>(null)
 
   useEffect(() => {
-    if (searchParams.get('success') === '1') setBanner('success')
-    else if (searchParams.get('canceled') === '1') setBanner('canceled')
+    if (searchParams?.get('success') === '1') setBanner('success')
+    else if (searchParams?.get('canceled') === '1') setBanner('canceled')
   }, [searchParams])
 
   const formattedEndDate = currentPeriodEnd

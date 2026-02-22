@@ -24,7 +24,7 @@ export default async function BillingPage() {
     try {
       const sub = await stripe.subscriptions.retrieve(user.stripeSubscriptionId)
       cancelAtPeriodEnd = sub.cancel_at_period_end
-      currentPeriodEnd = new Date(sub.current_period_end * 1000).toISOString()
+      currentPeriodEnd = sub.cancel_at ? new Date(sub.cancel_at * 1000).toISOString() : null
     } catch {
       // Subscription not found in Stripe (e.g. stale test-mode ID) — ignore
     }

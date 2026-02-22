@@ -38,7 +38,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       cancelAtPeriodEnd: updated.cancel_at_period_end,
       cancelAt: updated.cancel_at ? new Date(updated.cancel_at * 1000).toISOString() : null,
-      currentPeriodEnd: new Date(updated.current_period_end * 1000).toISOString(),
+      currentPeriodEnd: updated.cancel_at ? new Date(updated.cancel_at * 1000).toISOString() : null,
     })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error'
