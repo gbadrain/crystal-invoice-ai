@@ -30,8 +30,10 @@ async function ViewInvoiceContent({ id }: { id: string }) {
   }
 
   // The prisma `invoice` object is not directly serializable
-  // A simple JSON stringify/parse will strip undefined values and convert dates
-  const plainInvoice = JSON.parse(JSON.stringify(invoice))
+  // Map Prisma's 'id' to the client-side 'Invoice' type's '_id'
+  const clientInvoice = { ...invoice, _id: invoice.id };
+  // A simple JSON stringify/parse will strip undefined values and convert dates (e.g., Date objects to ISO strings)
+  const plainInvoice = JSON.parse(JSON.stringify(clientInvoice));
 
   return <ViewInvoiceClient initialInvoice={plainInvoice} />
 }

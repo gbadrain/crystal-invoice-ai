@@ -13,8 +13,7 @@ import { AboutSection } from '@/components/landing/AboutSection'
 import { MidCTASection } from '@/components/landing/MidCTASection'
 import { HowItWorksSection } from '@/components/landing/HowItWorksSection'
 import { MotionDiv } from '@/components/MotionDiv'
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { useRef } from 'react'
+import { motion } from 'framer-motion'
 
 // TODO: Add email verification banner here once emailVerified field is added to Prisma User model
 // and email verification flow is implemented.
@@ -95,14 +94,8 @@ const PLAN_PRO = [
 ]
 
 export function LandingPage() {
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({ target: ref })
-  const y1 = useTransform(scrollYProgress, [0, 1], ['0%', '50%'])
-  const y2 = useTransform(scrollYProgress, [0, 1], ['0%', '100%'])
-  const y3 = useTransform(scrollYProgress, [0, 1], ['0%', '150%'])
-
   return (
-    <div className="min-h-screen flex flex-col" ref={ref}>
+    <div className="min-h-screen flex flex-col">
 
       {/* Decorative background orbs */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
@@ -112,7 +105,7 @@ export function LandingPage() {
           delay={0.2}
           duration={1}
         >
-          <motion.div style={{ y: y1 }} className="absolute -top-56 left-1/2 -translate-x-1/2 w-[900px] h-[900px] bg-crystal-600/[0.08] rounded-full blur-3xl" />
+          <div className="absolute -top-56 left-1/2 -translate-x-1/2 w-[900px] h-[900px] bg-crystal-600/[0.08] rounded-full blur-3xl" />
         </MotionDiv>
         <MotionDiv
           scale={0.8}
@@ -120,7 +113,7 @@ export function LandingPage() {
           delay={0.4}
           duration={1}
         >
-          <motion.div style={{ y: y2 }} className="absolute top-1/2 -right-64 w-[700px] h-[700px] bg-crystal-400/[0.05] rounded-full blur-3xl" />
+          <div className="absolute top-1/2 -right-64 w-[700px] h-[700px] bg-crystal-400/[0.05] rounded-full blur-3xl" />
         </MotionDiv>
         <MotionDiv
           scale={0.8}
@@ -128,7 +121,7 @@ export function LandingPage() {
           delay={0.6}
           duration={1}
         >
-          <motion.div style={{ y: y3 }} className="absolute -bottom-40 left-0 w-[500px] h-[500px] bg-crystal-800/10 rounded-full blur-3xl" />
+          <div className="absolute -bottom-40 left-0 w-[500px] h-[500px] bg-crystal-800/10 rounded-full blur-3xl" />
         </MotionDiv>
       </div>
 
@@ -399,21 +392,11 @@ export function LandingPage() {
             {/* Links */}
             <MotionDiv y={20} opacity={0} delay={0.2}>
               <nav className="flex items-center gap-5 text-xs text-white/25" aria-label="Footer navigation">
-                <motion.div whileHover={{ x: 2, color: '#ffffff' }} transition={{ duration: 0.2 }}>
-                  <Link href="/auth/signin" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Sign in</Link>
-                </motion.div>
-                <motion.div whileHover={{ x: 2, color: '#ffffff' }} transition={{ duration: 0.2 }}>
-                  <Link href="/auth/signup" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Sign up</Link>
-                </motion.div>
-                <motion.div whileHover={{ x: 2, color: '#ffffff' }} transition={{ duration: 0.2 }}>
-                  <a href="#pricing" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Pricing</a>
-                </motion.div>
-                <motion.div whileHover={{ x: 2, color: '#ffffff' }} transition={{ duration: 0.2 }}>
-                  <Link href="/terms" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Terms</Link>
-                </motion.div>
-                <motion.div whileHover={{ x: 2, color: '#ffffff' }} transition={{ duration: 0.2 }}>
-                  <Link href="/privacy" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Privacy</Link>
-                </motion.div>
+                <Link href="/auth/signin" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Sign in</Link>
+                <Link href="/auth/signup" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Sign up</Link>
+                <a href="#pricing" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Pricing</a>
+                <Link href="/terms" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Terms</Link>
+                <Link href="/privacy" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Privacy</Link>
               </nav>
             </MotionDiv>
           </div>
