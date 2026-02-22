@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { FileText, PlusCircle, DollarSign, Clock, AlertCircle, CheckCircle, TrendingUp } from 'lucide-react'
 import type { Invoice } from '@/utils/invoice-types'
 import { DashboardPageSkeleton } from '@/components/DashboardPageSkeleton'
+import { MotionDiv } from '@/components/MotionDiv'
 
 function StatCard({
   icon,
@@ -12,12 +13,14 @@ function StatCard({
   value,
   sub,
   accent,
+  delay = 0,
 }: {
   icon: React.ReactNode
   title: string
   value: string | number
   sub?: string
   accent?: 'green' | 'yellow' | 'red' | 'crystal'
+  delay?: number
 }) {
   const accentBorder = {
     green: 'border-green-500/20',
@@ -27,14 +30,16 @@ function StatCard({
   }[accent ?? 'crystal']
 
   return (
-    <div className={`glass-card p-6 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 ${accentBorder}`}>
-      <div className="flex items-center gap-2 mb-3">
-        {icon}
-        <p className="text-xs text-white/40 uppercase tracking-wider font-medium">{title}</p>
+    <MotionDiv y={20} opacity={0} delay={delay}>
+      <div className={`glass-card p-6 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 ${accentBorder}`}>
+        <div className="flex items-center gap-2 mb-3">
+          {icon}
+          <p className="text-xs text-white/40 uppercase tracking-wider font-medium">{title}</p>
+        </div>
+        <p className="text-2xl font-bold text-white">{value}</p>
+        {sub && <p className="text-xs text-white/30 mt-1">{sub}</p>}
       </div>
-      <p className="text-2xl font-bold text-white">{value}</p>
-      {sub && <p className="text-xs text-white/30 mt-1">{sub}</p>}
-    </div>
+    </MotionDiv>
   )
 }
 
@@ -75,19 +80,21 @@ export function DashboardPage() {
   return (
     <div className="fade-in slide-up">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold mb-1">Dashboard</h1>
-          <p className="text-white/40 text-sm">Your invoicing activity at a glance.</p>
+      <MotionDiv y={20} opacity={0}>
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold mb-1">Dashboard</h1>
+            <p className="text-white/40 text-sm">Your invoicing activity at a glance.</p>
+          </div>
+          <Link
+            href="/invoices/new"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-crystal-600 text-white text-sm font-medium hover:bg-crystal-700 shadow-lg shadow-crystal-600/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+          >
+            <PlusCircle className="w-4 h-4" />
+            New Invoice
+          </Link>
         </div>
-        <Link
-          href="/invoices/new"
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-crystal-600 text-white text-sm font-medium hover:bg-crystal-700 shadow-lg shadow-crystal-600/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
-        >
-          <PlusCircle className="w-4 h-4" />
-          New Invoice
-        </Link>
-      </div>
+      </MotionDiv>
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
@@ -97,6 +104,7 @@ export function DashboardPage() {
           value={isLoading ? '—' : invoices.length}
           sub="invoices"
           accent="crystal"
+          delay={0.1}
         />
         <StatCard
           icon={<CheckCircle className="w-4 h-4 text-green-400" />}
@@ -104,6 +112,7 @@ export function DashboardPage() {
           value={isLoading ? '—' : paidInvoices.length}
           sub="invoices"
           accent="green"
+          delay={0.2}
         />
         <StatCard
           icon={<Clock className="w-4 h-4 text-yellow-400" />}
@@ -111,6 +120,7 @@ export function DashboardPage() {
           value={isLoading ? '—' : pendingInvoices.length}
           sub="invoices"
           accent="yellow"
+          delay={0.3}
         />
         <StatCard
           icon={<AlertCircle className="w-4 h-4 text-red-400" />}
@@ -118,6 +128,7 @@ export function DashboardPage() {
           value={isLoading ? '—' : overdueInvoices.length}
           sub="invoices"
           accent="red"
+          delay={0.4}
         />
         <StatCard
           icon={<DollarSign className="w-4 h-4 text-green-400" />}
@@ -125,81 +136,93 @@ export function DashboardPage() {
           value={isLoading ? '—' : `${totalRevenue.toFixed(2)}`}
           sub="collected"
           accent="green"
+          delay={0.5}
         />
       </div>
 
       {/* Unpaid outstanding banner (only if > 0) */}
       {!isLoading && unpaidAmount > 0 && (
-        <div className="mb-6 flex items-center gap-3 px-5 py-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 shadow-md">
-          <TrendingUp className="w-4 h-4 shrink-0" />
-          <span className="text-sm font-medium">
-            <span className="font-bold">${unpaidAmount.toFixed(2)}</span> outstanding across{' '}
-            {pendingInvoices.length + overdueInvoices.length} unpaid invoice
-            {pendingInvoices.length + overdueInvoices.length !== 1 ? 's' : ''}.
-          </span>
-        </div>
+        <MotionDiv y={20} opacity={0} delay={0.6}>
+          <div className="mb-6 flex items-center gap-3 px-5 py-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 shadow-md">
+            <TrendingUp className="w-4 h-4 shrink-0" />
+            <span className="text-sm font-medium">
+              <span className="font-bold">${unpaidAmount.toFixed(2)}</span> outstanding across{' '}
+              {pendingInvoices.length + overdueInvoices.length} unpaid invoice
+              {pendingInvoices.length + overdueInvoices.length !== 1 ? 's' : ''}.
+            </span>
+          </div>
+        </MotionDiv>
       )}
 
       {/* Empty state */}
       {!isLoading && !error && invoices.length === 0 && (
-        <div className="glass-panel p-16 flex flex-col items-center justify-center text-center gap-4 rounded-xl shadow-lg">
-          <FileText className="w-12 h-12 text-white/15" />
-          <div>
-            <p className="text-white/60 font-medium">No invoices yet</p>
-            <p className="text-white/30 text-sm mt-1">Create your first invoice to get started.</p>
+        <MotionDiv y={20} opacity={0} delay={0.7}>
+          <div className="glass-panel p-16 flex flex-col items-center justify-center text-center gap-4 rounded-xl shadow-lg">
+            <FileText className="w-12 h-12 text-white/15" />
+            <div>
+              <p className="text-white/60 font-medium">No invoices yet</p>
+              <p className="text-white/30 text-sm mt-1">Create your first invoice to get started.</p>
+            </div>
+            <Link
+              href="/invoices/new"
+              className="mt-2 flex items-center gap-2 px-5 py-2 rounded-lg bg-crystal-600 text-white text-sm font-medium hover:bg-crystal-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+            >
+              <PlusCircle className="w-4 h-4" />
+              New Invoice
+            </Link>
           </div>
-          <Link
-            href="/invoices/new"
-            className="mt-2 flex items-center gap-2 px-5 py-2 rounded-lg bg-crystal-600 text-white text-sm font-medium hover:bg-crystal-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
-          >
-            <PlusCircle className="w-4 h-4" />
-            New Invoice
-          </Link>
-        </div>
+        </MotionDiv>
       )}
 
       {/* Error state */}
       {error && (
-        <div className="glass-panel p-8 text-center text-red-400 text-sm rounded-xl shadow-lg"></div>
+        <MotionDiv y={20} opacity={0} delay={0.7}>
+          <div className="glass-panel p-8 text-center text-red-400 text-sm rounded-xl shadow-lg">
+            <p>Error: {error}</p>
+          </div>
+        </MotionDiv>
       )}
 
       {/* Recent invoices */}
       {!isLoading && invoices.length > 0 && (
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Recent Invoices</h2>
-            <Link href="/invoices" className="text-xs text-crystal-400 hover:underline">
-              View all
-            </Link>
-          </div>
-          <div className="glass-panel divide-y divide-white/[0.06] rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-            {invoices.slice(0, 6).map((inv) => (
-              <Link
-                key={inv._id}
-                href={`/invoices/${inv._id}/view`}
-                className="flex items-center justify-between px-6 py-4 hover:bg-white/[0.03] transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <span
-                    className={`w-2 h-2 rounded-full shrink-0 ${STATUS_DOT[inv.metadata?.status ?? 'draft'] ?? 'bg-white/20'}`}
-                  />
-                  <div>
-                    <p className="text-sm font-medium text-white">
-                      {inv.metadata?.invoiceNumber || 'Draft'}
-                    </p>
-                    <p className="text-xs text-white/40">{inv.client?.name || 'No client'}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-semibold text-white">
-                    ${(inv.summary?.total ?? 0).toFixed(2)}
-                  </p>
-                  <p className="text-xs text-white/40 capitalize">{inv.metadata?.status ?? 'draft'}</p>
-                </div>
+        <MotionDiv y={20} opacity={0} delay={0.8}>
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-semibold text-white/60 uppercase tracking-wider">Recent Invoices</h2>
+              <Link href="/invoices" className="text-xs text-crystal-400 hover:underline">
+                View all
               </Link>
-            ))}
+            </div>
+            <div className="glass-panel divide-y divide-white/[0.06] rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+              {invoices.slice(0, 6).map((inv, index) => (
+                <MotionDiv key={inv._id} y={20} opacity={0} delay={index * 0.05}>
+                  <Link
+                    href={`/invoices/${inv._id}/view`}
+                    className="flex items-center justify-between px-6 py-4 hover:bg-white/[0.03] transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span
+                        className={`w-2 h-2 rounded-full shrink-0 ${STATUS_DOT[inv.metadata?.status ?? 'draft'] ?? 'bg-white/20'}`}
+                      />
+                      <div>
+                        <p className="text-sm font-medium text-white">
+                          {inv.metadata?.invoiceNumber || 'Draft'}
+                        </p>
+                        <p className="text-xs text-white/40">{inv.client?.name || 'No client'}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-semibold text-white">
+                        ${(inv.summary?.total ?? 0).toFixed(2)}
+                      </p>
+                      <p className="text-xs text-white/40 capitalize">{inv.metadata?.status ?? 'draft'}</p>
+                    </div>
+                  </Link>
+                </MotionDiv>
+              ))}
+            </div>
           </div>
-        </div>
+        </MotionDiv>
       )}
     </div>
   )
