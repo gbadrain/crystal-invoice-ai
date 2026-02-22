@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { InvoiceStatus } from '@prisma/client'
 import { getAuthUserId, formatInvoice } from '../_helpers'
 
 type RouteContext = { params: Promise<{ id: string }> }
@@ -57,7 +56,7 @@ export async function PUT(request: Request, context: RouteContext) {
         invoiceNumber: metadata.invoiceNumber,
         issueDate: metadata.issueDate,
         dueDate: metadata.dueDate,
-        status: (metadata.status || existing.status) as InvoiceStatus,
+        status: (metadata.status || existing.status),
         lineItems: lineItems,
         subtotal: summary.subtotal,
         taxRate: summary.taxRate,
@@ -102,7 +101,7 @@ export async function DELETE(request: Request, context: RouteContext) {
 
     // Soft delete
     const invoice = await prisma.invoice.findFirst({
-      where: { id, userId, status: { not: InvoiceStatus.trashed } },
+      where: { id, userId, status: { not: 'trashed' } },
     })
 
     if (!invoice) {
@@ -113,7 +112,7 @@ export async function DELETE(request: Request, context: RouteContext) {
       where: { id },
       data: {
         originalStatus: invoice.status,
-        status: InvoiceStatus.trashed,
+        status: 'trashed',
         deletedAt: new Date(),
       },
     })
@@ -124,3 +123,4 @@ export async function DELETE(request: Request, context: RouteContext) {
     return NextResponse.json({ error: 'Internal server error.' }, { status: 500 })
   }
 }
+

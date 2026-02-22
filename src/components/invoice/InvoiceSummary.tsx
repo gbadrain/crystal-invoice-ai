@@ -2,6 +2,7 @@
 
 import type { InvoiceSummary as InvoiceSummaryType } from '@/utils/invoice-types'
 import { formatCurrency } from '@/utils/invoice-calculations'
+import { cn } from '@/utils/cn'
 
 interface InvoiceSummaryProps {
   summary: InvoiceSummaryType
@@ -11,8 +12,7 @@ interface InvoiceSummaryProps {
   onDiscountRateChange: (rate: number) => void
 }
 
-const inputClass =
-  'w-20 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white text-right focus:outline-none focus:border-crystal-500/50 focus:ring-1 focus:ring-crystal-500/30 transition-colors'
+const inputClass = "block w-24 rounded-md border-0 bg-slate-800/60 py-2 text-white ring-1 ring-inset ring-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-crystal-500 sm:text-sm sm:leading-6 text-right focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500"
 
 export function InvoiceSummary({
   summary,
@@ -22,67 +22,70 @@ export function InvoiceSummary({
   onDiscountRateChange,
 }: InvoiceSummaryProps) {
   return (
-    <div className="glass-panel p-6">
-      <h2 className="text-lg font-semibold mb-4 text-white/90">Summary</h2>
-      <div className="space-y-3">
-        {/* Subtotal */}
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-white/50">Subtotal</span>
-          <span className="text-sm text-white/80 font-medium">
-            {formatCurrency(summary.subtotal)}
-          </span>
-        </div>
-
-        {/* Discount */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-white/50">Discount</span>
-            <input
-              type="number"
-              value={discountRate}
-              onChange={(e) => onDiscountRateChange(Math.max(0, Math.min(100, Number(e.target.value))))}
-              min={0}
-              max={100}
-              className={inputClass}
-            />
-            <span className="text-xs text-white/30">%</span>
-          </div>
-          {summary.discountAmount > 0 && (
-            <span className="text-sm text-red-400 font-medium">
-              -{formatCurrency(summary.discountAmount)}
-            </span>
-          )}
-        </div>
-
-        {/* Tax */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-white/50">Tax</span>
-            <input
-              type="number"
-              value={taxRate}
-              onChange={(e) => onTaxRateChange(Math.max(0, Math.min(100, Number(e.target.value))))}
-              min={0}
-              max={100}
-              className={inputClass}
-            />
-            <span className="text-xs text-white/30">%</span>
-          </div>
-          {summary.taxAmount > 0 && (
-            <span className="text-sm text-white/80 font-medium">
-              {formatCurrency(summary.taxAmount)}
-            </span>
-          )}
-        </div>
-
-        {/* Divider */}
-        <div className="border-t border-white/10 pt-3">
+    <div className="rounded-xl shadow-lg shadow-slate-950/40 bg-slate-900/70 ring-1 ring-slate-800 h-full hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
+      <div className="p-6">
+        <h3 className="text-lg font-semibold text-white">Summary</h3>
+        <div className="mt-6 space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-base font-bold text-white">Total</span>
-            <span className="text-lg font-bold text-crystal-400">
-              {formatCurrency(summary.total)}
+            <span className="text-sm text-slate-400">Subtotal</span>
+            <span className="text-sm font-medium text-slate-200">
+              {formatCurrency(summary.subtotal)}
             </span>
           </div>
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-slate-400">Discount</span>
+              <div className="relative">
+                <input
+                  type="number"
+                  value={discountRate}
+                  onChange={(e) => onDiscountRateChange(Math.max(0, Math.min(100, Number(e.target.value))))}
+                  min={0} max={100}
+                  className={cn(inputClass, "pr-6")}
+                />
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                  <span className="text-slate-400 sm:text-sm">%</span>
+                </div>
+              </div>
+            </div>
+            {summary.discountAmount > 0 && (
+              <span className="text-sm font-medium text-red-400">
+                -{formatCurrency(summary.discountAmount)}
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-slate-400">Tax</span>
+              <div className="relative">
+                <input
+                  type="number"
+                  value={taxRate}
+                  onChange={(e) => onTaxRateChange(Math.max(0, Math.min(100, Number(e.target.value))))}
+                  min={0} max={100}
+                  className={cn(inputClass, "pr-6")}
+                />
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                  <span className="text-slate-400 sm:text-sm">%</span>
+                </div>
+              </div>
+            </div>
+            {summary.taxAmount > 0 && (
+              <span className="text-sm font-medium text-slate-200">
+                {formatCurrency(summary.taxAmount)}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="px-6 py-4 bg-slate-900/50 border-t border-slate-800">
+        <div className="flex items-baseline justify-between">
+          <span className="text-base font-semibold text-white">Total</span>
+          <span className="text-2xl font-bold text-crystal-400">
+            {formatCurrency(summary.total)}
+          </span>
         </div>
       </div>
     </div>

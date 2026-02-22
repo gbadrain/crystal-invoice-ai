@@ -4,22 +4,21 @@ import { useState, useRef } from 'react'
 import { Sparkles, Loader2, AlertCircle, Mic, MicOff } from 'lucide-react'
 import { useInvoiceAI } from '@/ai/useInvoiceAI'
 import type { ParsedInvoice } from '@/utils/ai-parser'
+import { cn } from '@/utils/cn'
 
 interface AIGeneratorProps {
   onGenerate: (invoice: ParsedInvoice) => void
 }
 
-const PLACEHOLDER = `Example: "I cleaned 3 HVAC units at $150 each for John Smith, john@smith.com, 123 Main St. Add 8% tax and a 5% loyalty discount."`
+const PLACEHOLDER = `Example: "Invoice John Smith at john@smith.com for 3 HVAC units at $150 each. Add 8% tax and a 5% discount."`
 
 export function AIGenerator({ onGenerate }: AIGeneratorProps) {
   const [text, setText] = useState('')
   const [isListening, setIsListening] = useState(false)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null)
   const { generateInvoiceFromText, isLoading, error } = useInvoiceAI()
 
   function toggleListening() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
     if (!SR) {
       alert('Speech recognition is not supported in this browser. Try Chrome or Edge.')
@@ -32,13 +31,11 @@ export function AIGenerator({ onGenerate }: AIGeneratorProps) {
       return
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const recognition: any = new SR()
     recognition.continuous = true
     recognition.interimResults = true
     recognition.lang = 'en-US'
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     recognition.onresult = (event: any) => {
       let transcript = ''
       for (let i = 0; i < event.results.length; i++) {
@@ -73,79 +70,62 @@ export function AIGenerator({ onGenerate }: AIGeneratorProps) {
   }
 
   return (
-    <div className="glass-panel p-6 border-crystal-500/20 bg-crystal-900/10">
-      <div className="flex items-center gap-2 mb-4">
-        <Sparkles className="w-5 h-5 text-crystal-400" />
-        <h2 className="text-lg font-semibold text-white/90">Generate with AI</h2>
-      </div>
-
-      <p className="text-sm text-white/40 mb-3">
-        Describe your invoice in plain English — or use the mic to speak.
-      </p>
-
-      {/* Textarea with mic button inside */}
-      <div className="relative">
-        <textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder={PLACEHOLDER}
-          rows={3}
-          disabled={isLoading}
-          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-12 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-crystal-500/50 focus:ring-1 focus:ring-crystal-500/30 transition-colors resize-none disabled:opacity-50"
-        />
-        <button
-          type="button"
-          onClick={toggleListening}
-          disabled={isLoading}
-          title={isListening ? 'Stop recording' : 'Speak your invoice'}
-          className={`absolute bottom-3 right-3 p-2 rounded-lg transition-all ${
-            isListening
-              ? 'bg-red-500/25 text-red-400 border border-red-500/50 shadow-lg shadow-red-500/20 animate-pulse'
-              : 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 shadow-lg shadow-cyan-500/25 hover:bg-cyan-500/30 hover:shadow-cyan-500/40'
-          } disabled:opacity-30 disabled:cursor-not-allowed`}
-        >
-          {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-5 h-5" />}
-        </button>
-      </div>
-
-      {/* Listening indicator */}
-      {isListening && (
-        <p className="text-xs text-red-400 mt-2 flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse inline-block" />
-          Listening… speak now, click mic to stop
-        </p>
-      )}
-
-      {/* Error message */}
-      {error && (
-        <div className="flex items-start gap-2 mt-3 p-3 rounded-xl bg-red-500/10 border border-red-500/20">
-          <AlertCircle className="w-4 h-4 text-red-400 mt-0.5 shrink-0" />
-          <p className="text-sm text-red-300">{error}</p>
+    <div className="rounded-xl shadow-lg shadow-crystal-950/40 bg-gradient-to-br from-crystal-900/30 to-slate-900/30 ring-1 ring-crystal-500/20 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
+      <div className="p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <Sparkles className="w-6 h-6 text-crystal-400" />
+          <h3 className="text-lg font-semibold text-white">Generate with AI</h3>
         </div>
-      )}
+        
+        <div className="relative">
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={PLACEHOLDER}
+            rows={3}
+            disabled={isLoading}
+            className="block w-full rounded-md border-0 bg-slate-800/60 py-2.5 pr-12 text-white ring-1 ring-inset ring-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-crystal-500 sm:text-sm sm:leading-6 resize-none disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500"
+          />
+          <button
+            type="button"
+            onClick={toggleListening}
+            disabled={isLoading}
+            title={isListening ? 'Stop recording' : 'Record audio'}
+            className={cn(
+              'absolute bottom-2.5 right-2.5 p-2 rounded-lg transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200',
+              isListening
+                ? 'bg-red-500/20 text-red-400 ring-1 ring-red-500/30 animate-pulse'
+                : 'bg-slate-700/80 text-slate-300 hover:bg-slate-700'
+            )}
+          >
+            {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+          </button>
+        </div>
 
-      <div className="flex items-center justify-between mt-4">
-        <p className="text-xs text-white/25">
-          {isLoading ? 'Generating...' : 'Cmd+Enter to generate'}
+        {error && (
+          <div className="flex items-start gap-2 mt-3 text-xs text-red-400">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <p>{error}</p>
+          </div>
+        )}
+      </div>
+      <div className="px-6 py-4 bg-slate-900/50 border-t border-slate-800 flex items-center justify-between gap-4">
+        <p className="text-xs text-slate-400">
+          {isLoading ? 'Generating...' : 'Press Cmd+Enter to generate'}
         </p>
         <button
           type="button"
           onClick={handleGenerate}
           disabled={!text.trim() || isLoading}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-crystal-600 text-white text-sm font-medium hover:bg-crystal-700 transition-colors shadow-lg shadow-crystal-600/20 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-crystal-600"
+          className="inline-flex items-center justify-center rounded-lg text-sm font-semibold py-2 px-4 bg-crystal-600 text-white hover:bg-crystal-500 disabled:opacity-50 shadow-lg shadow-crystal-600/20 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-600 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
         >
           {isLoading ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin" />
-              Generating...
-            </>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           ) : (
-            <>
-              <Sparkles className="w-4 h-4" />
-              Generate Invoice
-            </>
+            <Sparkles className="mr-2 h-4 w-4" />
           )}
+          Generate
         </button>
       </div>
     </div>

@@ -1,13 +1,15 @@
+import { Suspense } from 'react'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { stripe } from '@/lib/stripe'
 import { redirect } from 'next/navigation'
 import { BillingClient } from './BillingClient'
+import { BillingSkeleton } from './BillingSkeleton'
 
 export const metadata = { title: 'Billing — Crystal Invoice' }
 
-export default async function BillingPage() {
+async function BillingPageContent() {
   const session = await getServerSession(authOptions)
   if (!session?.user?.email) redirect('/auth/signin')
 
@@ -16,7 +18,6 @@ export default async function BillingPage() {
     select: { isPro: true, stripeCustomerId: true, stripeSubscriptionId: true },
   })
 
-  // Fetch live subscription state from Stripe if available
   let cancelAtPeriodEnd = false
   let currentPeriodEnd: string | null = null
 
@@ -24,22 +25,44 @@ export default async function BillingPage() {
     try {
       const sub = await stripe.subscriptions.retrieve(user.stripeSubscriptionId)
       cancelAtPeriodEnd = sub.cancel_at_period_end
-      currentPeriodEnd = sub.cancel_at ? new Date(sub.cancel_at * 1000).toISOString() : null
+      currentPeriodEnd = sub.cancel_at
+        ? new Date(sub.cancel_at * 1000).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })
+        : null
     } catch {
-      // Subscription not found in Stripe (e.g. stale test-mode ID) — ignore
+      // Ignore Stripe errors
     }
   }
 
   return (
-    <div className="max-w-2xl mx-auto py-10 px-4">
-      <h1 className="text-2xl font-bold text-white mb-2">Billing</h1>
-      <p className="text-white/40 text-sm mb-8">Manage your plan and subscription.</p>
-      <BillingClient
-        isPro={user?.isPro ?? false}
-        hasStripeCustomer={!!user?.stripeCustomerId}
-        cancelAtPeriodEnd={cancelAtPeriodEnd}
-        currentPeriodEnd={currentPeriodEnd}
-      />
+    <BillingClient
+      isPro={user?.isPro ?? false}
+      hasStripeCustomer={!!user?.stripeCustomerId}
+      cancelAtPeriodEnd={cancelAtPeriodEnd}
+      currentPeriodEnd={currentPeriodEnd}
+    />
+  )
+}
+
+export default function BillingPage() {
+  return (
+    <div>
+      <div className="sm:flex sm:items-center sm:justify-between mb-8">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+            Billing
+          </h1>
+          <p className="mt-2 text-sm text-slate-400">
+            Manage your plan and subscription details.
+          </p>
+        </div>
+      </div>
+      <Suspense fallback={<BillingSkeleton />}>
+        <BillingPageContent />
+      </Suspense>
     </div>
   )
 }

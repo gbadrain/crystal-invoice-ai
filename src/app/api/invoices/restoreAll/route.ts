@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { InvoiceStatus } from '@prisma/client'
 import { getAuthUserId } from '../_helpers'
 
 // POST /api/invoices/restoreAll — restore all trashed invoices
@@ -11,7 +10,7 @@ export async function POST() {
 
   try {
     const trashed = await prisma.invoice.findMany({
-      where: { userId, status: InvoiceStatus.trashed },
+      where: { userId, status: 'trashed' },
     })
 
     if (trashed.length === 0) {
@@ -23,7 +22,7 @@ export async function POST() {
         prisma.invoice.update({
           where: { id: inv.id },
           data: {
-            status: inv.originalStatus || InvoiceStatus.draft,
+            status: inv.originalStatus || 'draft',
             originalStatus: null,
             deletedAt: null,
           },

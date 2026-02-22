@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { FileText, PlusCircle, DollarSign, Clock, AlertCircle, CheckCircle, TrendingUp } from 'lucide-react'
 import type { Invoice } from '@/utils/invoice-types'
+import { DashboardPageSkeleton } from '@/components/DashboardPageSkeleton'
 
 function StatCard({
   icon,
@@ -26,7 +27,7 @@ function StatCard({
   }[accent ?? 'crystal']
 
   return (
-    <div className={`glass-panel p-6 border ${accentBorder}`}>
+    <div className={`glass-card p-6 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 ${accentBorder}`}>
       <div className="flex items-center gap-2 mb-3">
         {icon}
         <p className="text-xs text-white/40 uppercase tracking-wider font-medium">{title}</p>
@@ -67,8 +68,12 @@ export function DashboardPage() {
     0
   )
 
+  if (isLoading) {
+    return <DashboardPageSkeleton />
+  }
+
   return (
-    <div>
+    <div className="fade-in slide-up">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
@@ -77,7 +82,7 @@ export function DashboardPage() {
         </div>
         <Link
           href="/invoices/new"
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-crystal-600 text-white text-sm font-medium hover:bg-crystal-700 transition-colors shadow-lg shadow-crystal-600/20"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-crystal-600 text-white text-sm font-medium hover:bg-crystal-700 transition-colors shadow-lg shadow-crystal-600/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
         >
           <PlusCircle className="w-4 h-4" />
           New Invoice
@@ -117,7 +122,7 @@ export function DashboardPage() {
         <StatCard
           icon={<DollarSign className="w-4 h-4 text-green-400" />}
           title="Revenue"
-          value={isLoading ? '—' : `$${totalRevenue.toFixed(2)}`}
+          value={isLoading ? '—' : `${totalRevenue.toFixed(2)}`}
           sub="collected"
           accent="green"
         />
@@ -125,7 +130,7 @@ export function DashboardPage() {
 
       {/* Unpaid outstanding banner (only if > 0) */}
       {!isLoading && unpaidAmount > 0 && (
-        <div className="mb-6 flex items-center gap-3 px-5 py-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
+        <div className="mb-6 flex items-center gap-3 px-5 py-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 shadow-md">
           <TrendingUp className="w-4 h-4 shrink-0" />
           <span className="text-sm font-medium">
             <span className="font-bold">${unpaidAmount.toFixed(2)}</span> outstanding across{' '}
@@ -137,7 +142,7 @@ export function DashboardPage() {
 
       {/* Empty state */}
       {!isLoading && !error && invoices.length === 0 && (
-        <div className="glass-panel p-16 flex flex-col items-center justify-center text-center gap-4">
+        <div className="glass-panel p-16 flex flex-col items-center justify-center text-center gap-4 rounded-xl shadow-lg">
           <FileText className="w-12 h-12 text-white/15" />
           <div>
             <p className="text-white/60 font-medium">No invoices yet</p>
@@ -145,7 +150,7 @@ export function DashboardPage() {
           </div>
           <Link
             href="/invoices/new"
-            className="mt-2 flex items-center gap-2 px-5 py-2 rounded-lg bg-crystal-600 text-white text-sm font-medium hover:bg-crystal-700 transition-colors"
+            className="mt-2 flex items-center gap-2 px-5 py-2 rounded-lg bg-crystal-600 text-white text-sm font-medium hover:bg-crystal-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
           >
             <PlusCircle className="w-4 h-4" />
             New Invoice
@@ -155,7 +160,7 @@ export function DashboardPage() {
 
       {/* Error state */}
       {error && (
-        <div className="glass-panel p-8 text-center text-red-400 text-sm">{error}</div>
+        <div className="glass-panel p-8 text-center text-red-400 text-sm rounded-xl shadow-lg"></div>
       )}
 
       {/* Recent invoices */}
@@ -167,7 +172,7 @@ export function DashboardPage() {
               View all
             </Link>
           </div>
-          <div className="glass-panel divide-y divide-white/[0.06]">
+          <div className="glass-panel divide-y divide-white/[0.06] rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
             {invoices.slice(0, 6).map((inv) => (
               <Link
                 key={inv._id}

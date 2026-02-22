@@ -1,5 +1,9 @@
-import { NewInvoicePage } from '@/components/NewInvoicePage'
+import { InvoiceForm } from '@/components/invoice/InvoiceForm'
 
-export default function Page() {
-  return <NewInvoicePage />
+export const metadata = {
+  title: 'New Invoice',
+}
+
+export default function NewInvoicePage() {
+  return <InvoiceForm />
 }

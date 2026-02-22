@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { InvoiceStatus } from '@prisma/client'
 import { getAuthUserId, formatInvoice } from './_helpers'
 import { FREE_INVOICE_LIMIT } from '@/lib/plans'
 
@@ -19,18 +18,18 @@ export async function GET(request: Request) {
     await prisma.invoice.updateMany({
       where: {
         userId,
-        status: InvoiceStatus.pending,
+        status: 'pending',
         dueDate: { lt: today },
       },
-      data: { status: InvoiceStatus.overdue },
+      data: { status: 'overdue' },
     })
 
     const invoices = await prisma.invoice.findMany({
       where: {
         userId,
         status: statusFilter === 'trashed'
-          ? InvoiceStatus.trashed
-          : { not: InvoiceStatus.trashed },
+          ? 'trashed'
+          : { not: 'trashed' },
       },
       orderBy: { createdAt: 'desc' },
     })
@@ -54,7 +53,7 @@ export async function POST(request: Request) {
     const user = await prisma.user.findUnique({ where: { id: userId }, select: { isPro: true } })
     if (!user?.isPro) {
       const invoiceCount = await prisma.invoice.count({
-        where: { userId, status: { not: InvoiceStatus.trashed } },
+        where: { userId, status: { not: 'trashed' } },
       })
       if (invoiceCount >= FREE_INVOICE_LIMIT) {
         return NextResponse.json(
@@ -82,7 +81,7 @@ export async function POST(request: Request) {
         invoiceNumber: metadata.invoiceNumber,
         issueDate: metadata.issueDate,
         dueDate: metadata.dueDate,
-        status: (metadata.status || 'draft') as InvoiceStatus,
+        status: (metadata.status || 'draft'),
         lineItems: lineItems,
         subtotal: summary.subtotal,
         taxRate: summary.taxRate,
@@ -115,7 +114,7 @@ export async function DELETE(request: Request) {
 
   try {
     const { count } = await prisma.invoice.deleteMany({
-      where: { userId, status: InvoiceStatus.trashed },
+      where: { userId, status: 'trashed' },
     })
 
     return NextResponse.json({ success: true, deleted: count })

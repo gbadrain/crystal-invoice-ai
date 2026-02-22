@@ -18,8 +18,9 @@ async function getInvoices(userId: string): Promise<Invoice[]> {
       },
     });
 
-    // Map Prisma Invoice to your existing frontend Invoice type
-    const formattedInvoices: Invoice[] = invoices.map((inv) => ({
+    type PrismaInvoice = typeof invoices[number];
+
+    const formattedInvoices: Invoice[] = invoices.map((inv: PrismaInvoice) => ({
       _id: inv.id,
       logo: undefined, // Logo is handled client-side or not stored in DB
       client: {
@@ -51,18 +52,13 @@ async function getInvoices(userId: string): Promise<Invoice[]> {
     return formattedInvoices;
   } catch (error) {
     console.error("Error fetching invoices from DB:", error);
-    // In a real app, you might want to handle this more gracefully
     return [];
   }
 }
 
 export default async function InvoicesPage() {
-  // 1. Protect the page and get the user session
   const session = await requireUser();
-
-  // 2. Fetch data on the server for the logged-in user
   const initialInvoices = await getInvoices(session.user!.id);
-
-  // 3. Render the client component with the initial data
   return <InvoiceList initialInvoices={initialInvoices} />;
 }
+

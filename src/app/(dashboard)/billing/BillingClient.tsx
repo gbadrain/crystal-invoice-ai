@@ -1,10 +1,19 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { useSearchParams } from 'next/navigation'
-import { Zap, CheckCircle, ExternalLink, CreditCard, PartyPopper, XCircle, AlertTriangle } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import {
+  Zap,
+  CheckCircle,
+  ExternalLink,
+  CreditCard,
+  PartyPopper,
+  XCircle,
+  AlertTriangle,
+  Loader2,
+} from 'lucide-react'
 import { FREE_INVOICE_LIMIT } from '@/lib/plans'
+import { cn } from '@/utils/cn'
 
 interface Props {
   isPro: boolean
@@ -13,11 +22,52 @@ interface Props {
   currentPeriodEnd: string | null
 }
 
-export function BillingClient({ isPro, hasStripeCustomer, cancelAtPeriodEnd, currentPeriodEnd }: Props) {
+function Card({
+  title,
+  description,
+  footer,
+  children,
+  className,
+}: {
+  title: string
+  description: string
+  footer?: React.ReactNode
+  children?: React.ReactNode
+  className?: string
+}) {
+  return (
+    <div
+      className={cn(
+        'rounded-xl shadow-lg shadow-slate-950/40 bg-slate-900/70 ring-1 ring-slate-800 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300',
+        className
+      )}
+    >
+      <div className="p-6 sm:p-8">
+        <h3 className="text-lg font-semibold leading-6 text-white">{title}</h3>
+        <p className="mt-2 text-sm text-slate-400">{description}</p>
+        {children}
+      </div>
+      {footer && (
+        <div className="px-6 py-4 bg-slate-900/50 border-t border-slate-800">
+          {footer}
+        </div>
+      )}
+    </div>
+  )
+}
+
+export function BillingClient({
+  isPro,
+  hasStripeCustomer,
+  cancelAtPeriodEnd,
+  currentPeriodEnd,
+}: Props) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [action, setAction] = useState<
+    'checkout' | 'portal' | 'cancel' | 'reactivate' | null
+  >(null)
   const [showCancelConfirm, setShowCancelConfirm] = useState(false)
-  const [localCancelAtPeriodEnd, setLocalCancelAtPeriodEnd] = useState(cancelAtPeriodEnd)
   const searchParams = useSearchParams()
   const [banner, setBanner] = useState<'success' | 'canceled' | null>(null)
 
@@ -26,268 +76,231 @@ export function BillingClient({ isPro, hasStripeCustomer, cancelAtPeriodEnd, cur
     else if (searchParams?.get('canceled') === '1') setBanner('canceled')
   }, [searchParams])
 
-  const formattedEndDate = currentPeriodEnd
-    ? new Date(currentPeriodEnd).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
-    : null
-
-  const handleUpgrade = async () => {
+  const handleAction = async (
+    type: 'checkout' | 'portal' | 'cancel' | 'reactivate'
+  ) => {
     setLoading(true)
+    setAction(type)
+    let url = ''
+    let options: RequestInit = { method: 'POST' }
+
     try {
-      const res = await fetch('/api/stripe/checkout', { method: 'POST' })
+      switch (type) {
+        case 'checkout':
+          url = '/api/stripe/checkout'
+          break
+        case 'portal':
+          url = '/api/stripe/portal'
+          break
+        case 'cancel':
+          url = '/api/stripe/cancel'
+          setShowCancelConfirm(false)
+          break
+        case 'reactivate':
+          url = '/api/stripe/cancel'
+          options = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reactivate: true }),
+          }
+          break
+      }
+
+      const res = await fetch(url, options)
       const data = await res.json()
+
       if (data.url) {
         window.location.href = data.url
-      } else {
-        alert(data.error || 'Could not start checkout. Please try again.')
-      }
-    } catch {
-      alert('Network error. Please try again.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handlePortal = async () => {
-    setLoading(true)
-    try {
-      const res = await fetch('/api/stripe/portal', { method: 'POST' })
-      const data = await res.json()
-      if (data.url) {
-        window.location.href = data.url
-      } else {
-        alert(data.error || 'Could not open billing portal. Please try again.')
-      }
-    } catch {
-      alert('Network error. Please try again.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleCancelPlan = async () => {
-    setLoading(true)
-    setShowCancelConfirm(false)
-    try {
-      const res = await fetch('/api/stripe/cancel', { method: 'POST' })
-      const data = await res.json()
-      if (data.cancelAtPeriodEnd !== undefined) {
-        setLocalCancelAtPeriodEnd(true)
+      } else if (type === 'cancel' || type === 'reactivate') {
         router.refresh()
       } else {
-        alert(data.error || 'Could not cancel subscription. Please try again.')
+        alert(data.error || 'An error occurred. Please try again.')
       }
     } catch {
-      alert('Network error. Please try again.')
+      alert('A network error occurred. Please try again.')
     } finally {
       setLoading(false)
-    }
-  }
-
-  const handleReactivate = async () => {
-    setLoading(true)
-    try {
-      const res = await fetch('/api/stripe/cancel', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reactivate: true }),
-      })
-      const data = await res.json()
-      if (data.cancelAtPeriodEnd !== undefined) {
-        setLocalCancelAtPeriodEnd(false)
-        router.refresh()
-      } else {
-        alert(data.error || 'Could not reactivate subscription. Please try again.')
-      }
-    } catch {
-      alert('Network error. Please try again.')
-    } finally {
-      setLoading(false)
+      setAction(null)
     }
   }
 
   return (
-    <div className="space-y-4">
-      {/* Post-payment banners */}
+    <div className="space-y-8 fade-in scale-in">
+      {/* Banners */}
       {banner === 'success' && (
-        <div className="flex items-start gap-3 p-4 rounded-2xl bg-green-500/10 border border-green-500/20">
+        <div className="flex items-start gap-3 p-4 rounded-xl bg-green-500/10 border border-green-500/20 shadow-md">
           <PartyPopper className="w-5 h-5 text-green-400 mt-0.5 shrink-0" />
           <div>
-            <p className="text-sm font-semibold text-green-300">Welcome to Pro!</p>
-            <p className="text-xs text-green-400/70 mt-0.5">Your account has been upgraded. Enjoy unlimited invoices and all Pro features.</p>
-          </div>
-          <button onClick={() => setBanner(null)} className="ml-auto text-green-400/50 hover:text-green-300"><XCircle className="w-4 h-4" /></button>
-        </div>
-      )}
-      {banner === 'canceled' && (
-        <div className="flex items-start gap-3 p-4 rounded-2xl bg-white/5 border border-white/10">
-          <XCircle className="w-5 h-5 text-white/40 mt-0.5 shrink-0" />
-          <p className="text-sm text-white/50">Payment was canceled — no charge was made.</p>
-          <button onClick={() => setBanner(null)} className="ml-auto text-white/30 hover:text-white/50"><XCircle className="w-4 h-4" /></button>
-        </div>
-      )}
-
-      {/* Scheduled cancellation warning */}
-      {isPro && localCancelAtPeriodEnd && formattedEndDate && (
-        <div className="flex items-start gap-3 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20">
-          <AlertTriangle className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />
-          <div className="flex-1">
-            <p className="text-sm font-semibold text-amber-300">Plan cancellation scheduled</p>
-            <p className="text-xs text-amber-400/70 mt-0.5">
-              Your Pro access continues until <strong>{formattedEndDate}</strong>. After that your account switches to Free.
+            <h4 className="text-sm font-semibold text-green-300">
+              Welcome to Pro!
+            </h4>
+            <p className="text-xs text-green-400/70 mt-0.5">
+              Your account is upgraded. Enjoy unlimited invoices and AI features.
             </p>
           </div>
           <button
-            onClick={handleReactivate}
-            disabled={loading}
-            className="shrink-0 text-xs px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-500/30 text-amber-300 hover:bg-amber-500/30 transition-colors disabled:opacity-50"
+            onClick={() => setBanner(null)}
+            className="ml-auto text-green-400/50 hover:text-green-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500 rounded-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
           >
-            Keep Pro
+            <XCircle className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+      {banner === 'canceled' && (
+        <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-800 border border-slate-700 shadow-md">
+          <XCircle className="w-5 h-5 text-slate-400 mt-0.5 shrink-0" />
+          <p className="text-sm text-slate-300">
+            Payment was canceled. No charge was made.
+          </p>
+          <button
+            onClick={() => setBanner(null)}
+            className="ml-auto text-slate-400/50 hover:text-slate-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-500 rounded-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+          >
+            <XCircle className="w-4 h-4" />
           </button>
         </div>
       )}
 
-      {/* Current Plan */}
-      <div className="glass-panel rounded-2xl p-6 border border-white/10">
-        <div className="flex items-center justify-between mb-4">
+      {/* Main Plan Card */}
+      <Card
+        title="Your Plan"
+        description={
+          isPro
+            ? 'You have access to all Pro features.'
+            : `You are on the Free plan. You can create up to ${FREE_INVOICE_LIMIT} invoices.`
+        }
+      >
+        <div className="mt-6 p-4 rounded-lg bg-slate-800/50 border border-slate-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <p className="text-xs text-white/40 uppercase tracking-wider mb-1">Current Plan</p>
-            <h2 className="text-xl font-bold text-white">
-              {isPro ? (
-                <span className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-crystal-400" />
-                  Pro — Unlimited
-                </span>
-              ) : (
-                'Free'
-              )}
-            </h2>
-          </div>
-          {isPro && (
-            <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${
-              localCancelAtPeriodEnd
-                ? 'bg-amber-500/10 border-amber-500/20 text-amber-300'
-                : 'bg-crystal-600/20 border-crystal-500/20 text-crystal-300'
-            }`}>
-              {localCancelAtPeriodEnd ? 'Cancels ' + formattedEndDate : 'Active'}
-            </span>
-          )}
-        </div>
-
-        <ul className="space-y-2 mb-6">
-          {isPro ? (
-            <>
-              <PlanFeature text="Unlimited invoices" active />
-              <PlanFeature text="AI invoice generation" active />
-              <PlanFeature text="PDF export" active />
-              <PlanFeature text="Priority support" active />
-            </>
-          ) : (
-            <>
-              <PlanFeature text={`Up to ${FREE_INVOICE_LIMIT} invoices`} active />
-              <PlanFeature text="PDF export" active />
-              <PlanFeature text="AI invoice generation" />
-              <PlanFeature text="Unlimited invoices" />
-            </>
-          )}
-        </ul>
-
-        {isPro ? (
-          hasStripeCustomer && (
-            <div className="flex flex-wrap gap-3">
-              {/* Manage card / invoices */}
-              <button
-                onClick={handlePortal}
-                disabled={loading}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl border border-white/10 text-white/60 text-sm hover:bg-white/5 transition-colors disabled:opacity-50"
+            <h4 className="font-semibold text-white flex items-center gap-3">
+              <span>{isPro ? 'Pro' : 'Free'} Plan</span>
+              <span
+                className={cn(
+                  'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
+                  isPro
+                    ? 'bg-green-500/10 text-green-400'
+                    : 'bg-slate-400/10 text-slate-300'
+                )}
               >
-                <CreditCard className="w-4 h-4" />
-                {loading ? 'Opening…' : 'Manage Subscription'}
-                <ExternalLink className="w-3.5 h-3.5" />
-              </button>
-
-              {/* Cancel or reactivate */}
-              {!localCancelAtPeriodEnd ? (
-                <button
-                  onClick={() => setShowCancelConfirm(true)}
-                  disabled={loading}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl border border-red-500/20 text-red-400/70 text-sm hover:bg-red-500/10 hover:text-red-300 transition-colors disabled:opacity-50"
-                >
-                  Cancel Plan
-                </button>
-              ) : (
-                <button
-                  onClick={handleReactivate}
-                  disabled={loading}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl border border-crystal-500/20 text-crystal-300 text-sm hover:bg-crystal-500/10 transition-colors disabled:opacity-50"
-                >
-                  {loading ? 'Reactivating…' : 'Keep Pro'}
-                </button>
-              )}
-            </div>
-          )
-        ) : (
-          <div className="space-y-3">
-            <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-bold text-white">$9</span>
-              <span className="text-white/40 text-sm">/month</span>
-            </div>
-            <button
-              onClick={handleUpgrade}
-              disabled={loading}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-semibold text-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              <Zap className="w-4 h-4" />
-              {loading ? 'Redirecting to Stripe…' : 'Upgrade to Pro'}
-            </button>
-            <p className="text-xs text-white/30 text-center">
-              Secure payment via Stripe · Cancel anytime
+                Current
+              </span>
+            </h4>
+            <p className="text-slate-300 mt-1">
+              {isPro ? '$9 / month' : '$0 / month'}
             </p>
           </div>
-        )}
-      </div>
+          {!isPro && (
+            <button
+              onClick={() => handleAction('checkout')}
+              disabled={loading}
+              className="inline-flex items-center justify-center rounded-lg text-sm font-semibold py-2.5 px-5 bg-crystal-600 text-white hover:bg-crystal-500 disabled:opacity-50 shadow-lg shadow-crystal-600/20 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-600 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+            >
+              {loading && action === 'checkout' ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Zap className="mr-2 h-4 w-4" />
+              )}
+              Upgrade to Pro
+            </button>
+          )}
+        </div>
+      </Card>
+
+      {/* Subscription Management */}
+      {isPro && hasStripeCustomer && (
+        <Card
+          title="Subscription Management"
+          description={
+            cancelAtPeriodEnd
+              ? `Your plan is scheduled to be canceled on ${currentPeriodEnd}. You can reactivate it below.`
+              : 'Manage your billing details, view payment history, or cancel your Pro plan.'
+          }
+        >
+          <div className="mt-6 flex flex-col sm:flex-row gap-4">
+            <button
+              onClick={() => handleAction('portal')}
+              disabled={loading}
+              className="inline-flex w-full sm:w-auto items-center justify-center rounded-md text-sm font-semibold py-2 px-4 bg-slate-700 text-white hover:bg-slate-600 disabled:opacity-50 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+            >
+              {loading && action === 'portal' ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <CreditCard className="mr-2 h-4 w-4" />
+              )}
+              <span>Billing Portal</span>
+              <ExternalLink className="ml-2 h-4 w-4" />
+            </button>
+            {cancelAtPeriodEnd ? (
+              <button
+                onClick={() => handleAction('reactivate')}
+                disabled={loading}
+                className="inline-flex w-full sm:w-auto items-center justify-center rounded-md text-sm font-semibold py-2 px-4 bg-green-600 text-white hover:bg-green-500 disabled:opacity-50 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+              >
+                {loading && action === 'reactivate' ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <CheckCircle className="mr-2 h-4 w-4" />
+                )}
+                Reactivate Plan
+              </button>
+            ) : (
+              <button
+                onClick={() => setShowCancelConfirm(true)}
+                disabled={loading}
+                className="inline-flex w-full sm:w-auto items-center justify-center rounded-md text-sm font-semibold py-2 px-4 bg-red-900/50 text-red-300 hover:bg-red-900/80 disabled:opacity-50 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+              >
+                {loading && action === 'cancel' ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <XCircle className="mr-2 h-4 w-4" />
+                )}
+                Cancel Plan
+              </button>
+            )}
+          </div>
+        </Card>
+      )}
 
       {/* Cancel confirmation dialog */}
       {showCancelConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-          <div className="glass-panel rounded-2xl p-6 max-w-sm w-full border border-white/10 shadow-2xl">
-            <div className="flex items-start gap-3 mb-4">
-              <AlertTriangle className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />
+          <div className="rounded-xl shadow-lg bg-slate-900 ring-1 ring-slate-800 max-w-sm w-full p-6">
+            <div className="flex items-start gap-4 mb-4">
+              <AlertTriangle className="w-6 h-6 text-amber-400 mt-0.5 shrink-0" />
               <div>
-                <h3 className="text-base font-semibold text-white mb-1">Cancel Pro plan?</h3>
-                <p className="text-sm text-white/50">
+                <h3 className="text-base font-semibold text-white mb-1">
+                  Cancel Pro Plan
+                </h3>
+                <p className="text-sm text-slate-400">
                   You'll keep Pro access until{' '}
-                  <strong className="text-white/70">{formattedEndDate ?? 'end of billing period'}</strong>.
-                  After that your account switches to Free and you'll be limited to {FREE_INVOICE_LIMIT} invoices.
+                  <strong className="text-slate-200">
+                    {currentPeriodEnd ?? 'the end of your billing period'}
+                  </strong>
+                  .
                 </p>
               </div>
             </div>
             <div className="flex gap-3 justify-end">
               <button
                 onClick={() => setShowCancelConfirm(false)}
-                className="px-4 py-2 rounded-xl text-sm text-white/50 hover:text-white hover:bg-white/5 transition-colors"
+                className="px-4 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
               >
-                Keep Pro
+                Keep Plan
               </button>
               <button
-                onClick={handleCancelPlan}
+                onClick={() => handleAction('cancel')}
                 disabled={loading}
-                className="px-4 py-2 rounded-xl bg-red-500/20 border border-red-500/30 text-red-300 text-sm hover:bg-red-500/30 transition-colors disabled:opacity-50"
+                className="px-4 py-2 rounded-md bg-red-600 text-white text-sm font-medium hover:bg-red-500 transition-colors disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
               >
-                {loading ? 'Cancelling…' : 'Yes, cancel plan'}
+                {loading && action === 'cancel' ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : null}
+                Yes, cancel
               </button>
             </div>
           </div>
         </div>
       )}
     </div>
-  )
-}
-
-function PlanFeature({ text, active = false }: { text: string; active?: boolean }) {
-  return (
-    <li className={`flex items-center gap-2 text-sm ${active ? 'text-white/70' : 'text-white/20 line-through'}`}>
-      <span className={`w-1.5 h-1.5 rounded-full ${active ? 'bg-crystal-400' : 'bg-white/20'}`} />
-      {text}
-    </li>
   )
 }

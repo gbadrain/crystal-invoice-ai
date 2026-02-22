@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { InvoiceStatus } from '@prisma/client'
 import { getAuthUserId, formatInvoice } from '../../_helpers'
 
 type RouteContext = { params: Promise<{ id: string }> }
@@ -14,7 +13,7 @@ export async function POST(request: Request, context: RouteContext) {
 
   try {
     const invoice = await prisma.invoice.findFirst({
-      where: { id, userId, status: InvoiceStatus.trashed },
+      where: { id, userId, status: 'trashed' },
     })
 
     if (!invoice) {
@@ -24,7 +23,7 @@ export async function POST(request: Request, context: RouteContext) {
     const updated = await prisma.invoice.update({
       where: { id },
       data: {
-        status: invoice.originalStatus || InvoiceStatus.draft,
+        status: invoice.originalStatus || 'draft',
         originalStatus: null,
         deletedAt: null,
       },
