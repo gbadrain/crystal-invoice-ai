@@ -303,7 +303,7 @@ export function LandingPage() {
               </ul>
               <Link
                 href="/auth/signup"
-                className="block text-center py-2.5 rounded-xl border border-white/10 text-white/60 text-sm font-medium hover:bg-white/5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
+                className="block text-center py-2.5 rounded-xl border border-white/10 text-white/60 text-sm font-medium hover:bg-white/5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
               >
                 Get started free
               </Link>
@@ -331,7 +331,7 @@ export function LandingPage() {
               </ul>
               <Link
                 href="/auth/signup"
-                className="block text-center py-2.5 rounded-xl bg-crystal-600 text-white text-sm font-semibold hover:bg-crystal-700 transition-colors shadow-lg shadow-crystal-600/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-crystal-400"
+                className="block text-center py-2.5 rounded-xl bg-crystal-600 text-white text-sm font-semibold hover:bg-crystal-700 transition-colors shadow-lg shadow-crystal-600/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-crystal-400 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 animate-pulse-slow"
               >
                 Start Pro — $9/mo
               </Link>
