@@ -1,4 +1,6 @@
 import { MotionDiv } from '@/components/MotionDiv'
+import { FloatingAvatar } from '@/components/FloatingAvatar'
+import { motion } from 'framer-motion'
 
 const testimonials = [
   {
@@ -52,8 +54,10 @@ export function TestimonialsSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {testimonials.map((t, index) => (
             <MotionDiv key={t.name} y={20} opacity={0} delay={index * 0.1}>
-              <div
-                className="glass-panel p-6 rounded-2xl border border-white/[0.08] flex flex-col gap-4 hover:border-white/15 transition-all duration-300 hover:-translate-y-1"
+              <motion.div
+                className="glass-panel p-6 rounded-2xl border border-white/[0.08] flex flex-col gap-4"
+                whileHover={{ y: -5, boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)' }}
+                transition={{ duration: 0.3 }}
               >
                 {/* Stars */}
                 <div className="flex gap-1">
@@ -69,18 +73,20 @@ export function TestimonialsSection() {
 
                 {/* Author */}
                 <div className="flex items-center gap-3 pt-2 border-t border-white/[0.06]">
-                  <div
-                    className="w-9 h-9 rounded-full bg-crystal-600/30 border border-crystal-500/20 flex items-center justify-center text-xs font-bold text-crystal-300 shrink-0"
-                    aria-hidden="true"
-                  >
-                    {t.avatar}
-                  </div>
+                  <FloatingAvatar>
+                    <div
+                      className="w-9 h-9 rounded-full bg-crystal-600/30 border border-crystal-500/20 flex items-center justify-center text-xs font-bold text-crystal-300 shrink-0"
+                      aria-hidden="true"
+                    >
+                      {t.avatar}
+                    </div>
+                  </FloatingAvatar>
                   <div>
                     <p className="text-sm font-semibold text-white/90">{t.name}</p>
                     <p className="text-xs text-white/40">{t.role}</p>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </MotionDiv>
           ))}
         </div>
