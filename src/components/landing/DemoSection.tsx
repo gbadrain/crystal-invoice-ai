@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Play, X } from 'lucide-react'
 import { MotionDiv } from '@/components/MotionDiv'
+import { motion } from 'framer-motion'
 
 export function DemoSection() {
   const [open, setOpen] = useState(false)
@@ -29,10 +30,13 @@ export function DemoSection() {
 
         {/* Thumbnail / play button */}
         <MotionDiv y={20} opacity={0} delay={0.3}>
-          <button
+          <motion.button
             onClick={() => setOpen(true)}
             aria-label="Play demo video"
             className="group relative w-full max-w-3xl mx-auto rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-crystal-500/10 block focus:outline-none focus-visible:ring-2 focus-visible:ring-crystal-400"
+            whileHover={{ y: -5, boxShadow: '0 20px 40px rgba(99, 102, 241, 0.3)' }}
+            whileTap={{ y: 0, boxShadow: '0 8px 16px rgba(99, 102, 241, 0.2)' }}
+            transition={{ duration: 0.3 }}
           >
             {/* Placeholder thumbnail */}
             <div className="aspect-video bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
@@ -49,7 +53,7 @@ export function DemoSection() {
 
             {/* Hover overlay */}
             <div className="absolute inset-0 bg-crystal-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-          </button>
+          </motion.button>
         </MotionDiv>
       </div>
 
