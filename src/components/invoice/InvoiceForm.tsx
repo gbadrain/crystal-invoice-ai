@@ -26,28 +26,30 @@ function todayISO(): string {
   return new Date().toISOString().split('T')[0]
 }
 
-function dueDateISO(): string {
+function dueDateISO(days = 30): string {
   const d = new Date()
-  d.setDate(d.getDate() + 30)
+  d.setDate(d.getDate() + days)
   return d.toISOString().split('T')[0]
 }
 
 const initialClientState: ClientInfoType = { name: '', email: '', address: '', phone: '' }
-const initialMetadataState: InvoiceMetadataType = {
-  invoiceNumber: generateInvoiceNumber(),
-  issueDate: todayISO(),
-  dueDate: dueDateISO(),
-  status: 'draft',
-}
 const initialLineItemsState: LineItem[] = [{ id: crypto.randomUUID(), description: '', quantity: 1, rate: 0, amount: 0 }]
 
 interface InvoiceFormProps {
   initialInvoice?: Invoice
+  initialDefaults?: { dueDays: number; footer: string; currency: string }
 }
 
-export function InvoiceForm({ initialInvoice }: InvoiceFormProps) {
+export function InvoiceForm({ initialInvoice, initialDefaults }: InvoiceFormProps) {
   const router = useRouter()
   const isEditMode = !!initialInvoice
+
+  const initialMetadataState: InvoiceMetadataType = {
+    invoiceNumber: generateInvoiceNumber(),
+    issueDate: todayISO(),
+    dueDate: dueDateISO(initialDefaults?.dueDays ?? 30),
+    status: 'draft',
+  }
 
   const [client, setClient] = useState<ClientInfoType>(initialInvoice?.client || initialClientState)
   const [metadata, setMetadata] = useState<InvoiceMetadataType>(initialInvoice?.metadata || initialMetadataState)
@@ -55,7 +57,9 @@ export function InvoiceForm({ initialInvoice }: InvoiceFormProps) {
   const [logo, setLogo] = useState<string | undefined>(initialInvoice?.logo)
   const [taxRate, setTaxRate] = useState(initialInvoice?.summary.taxRate || 0)
   const [discountRate, setDiscountRate] = useState(initialInvoice?.summary.discountRate || 0)
-  const [notes, setNotes] = useState(initialInvoice?.notes || '')
+  const [notes, setNotes] = useState(
+    initialInvoice ? (initialInvoice.notes || '') : (initialDefaults?.footer ?? '')
+  )
 
   const [isSaving, setIsSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)

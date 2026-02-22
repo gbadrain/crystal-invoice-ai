@@ -47,10 +47,10 @@ export async function POST(request: Request) {
 
   // Hash and persist
   const passwordHash = await bcrypt.hash(newPassword, 12)
-  await prisma.user.update({
-    where: { id: session.user!.id as string },
-    data: { passwordHash },
-  })
+  const uid = session.user!.id as string
+  await prisma.user.update({ where: { id: uid }, data: { passwordHash } })
+
+  await prisma.auditLog.create({ data: { userId: uid, action: 'password.change' } })
 
   return NextResponse.json({ ok: true })
 }

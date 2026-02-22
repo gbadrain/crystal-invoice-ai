@@ -26,6 +26,13 @@ model User {
   // Profile
   avatarUrl            String?   // base64 data URL or external URL
 
+  // Settings
+  name                 String?   // display name (shown in header, invoices)
+  companyName          String?   // pre-fills invoice company header
+  invoiceCurrency      String    @default("USD")
+  invoiceDueDays       Int       @default(30)
+  invoiceFooter        String?   // default notes/footer text for new invoices
+
   // Stripe / subscription
   isPro                Boolean   @default(false)
   stripeCustomerId     String?   @unique
@@ -42,6 +49,18 @@ model PasswordResetToken {
   createdAt DateTime @default(now())
 
   @@map("password_reset_tokens")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  meta      Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([userId, createdAt])
+  @@map("audit_logs")
 }
 
 model Invoice {

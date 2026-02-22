@@ -23,7 +23,7 @@ const navItems = [
   { label: 'New Invoice', href: '/invoices/new', icon: FilePlus },
   { label: 'Trash', href: '/trash', icon: Trash },
   { label: 'Billing', href: '/billing', icon: CreditCard },
-  { label: 'Settings', href: '/settings/password', icon: Settings },
+  { label: 'Settings', href: '/settings/profile', icon: Settings },
 ]
 
 interface SidebarProps {

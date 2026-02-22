@@ -37,7 +37,7 @@ export const authOptions: NextAuthOptions = {
         return {
           id: user.id,
           email: user.email,
-          name: user.email, // satisfies NextAuth User type; no name column in schema
+          name: user.name || user.email,
         };
       },
     }),
