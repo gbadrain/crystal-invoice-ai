@@ -27,7 +27,7 @@ export function MidCTASection() {
 
             <Link
               href="/auth/signup"
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-crystal-600 text-white font-semibold text-sm hover:bg-crystal-500 transition-colors duration-200 shadow-lg shadow-crystal-600/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-crystal-400"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-crystal-600 text-white font-semibold text-sm hover:bg-crystal-500 shadow-lg shadow-crystal-600/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-crystal-400 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
             >
               Try AI invoicing free
               <ArrowRight className="w-4 h-4" aria-hidden="true" />

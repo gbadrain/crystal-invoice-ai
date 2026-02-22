@@ -135,20 +135,20 @@ export function LandingPage() {
 
       {/* Hero + Sign-in card */}
       <section className="relative z-10 flex flex-col lg:flex-row items-center justify-center gap-16 lg:gap-24 px-8 lg:px-16 py-20 max-w-7xl mx-auto w-full">
-        <div className="flex-1 space-y-8 text-center lg:text-left max-w-xl">
+        <div className="flex-1 space-y-8 text-center lg:text-left max-w-xl glass-card p-8">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-crystal-600/15 border border-crystal-500/25 text-crystal-400 text-xs font-medium tracking-wide">
             <Sparkles className="w-3 h-3" aria-hidden="true" />
             AI-powered invoicing
           </span>
 
-          <h1 className="text-5xl lg:text-6xl font-bold text-white leading-[1.08] tracking-tight">
+          <h1 className="text-5xl lg:text-6xl font-bold text-white leading-[1.08] tracking-tight slide-up">
             Invoicing that{' '}
             <span className="text-crystal-400">works</span>
             <br />
             as fast as you do.
           </h1>
 
-          <p className="text-lg text-white/50 leading-relaxed max-w-md mx-auto lg:mx-0">
+          <p className="text-lg text-white/50 leading-relaxed max-w-md mx-auto lg:mx-0 slide-up animation-delay-200">
             Describe a job in plain English, get a professional invoice in seconds.
             PDF export, email delivery with attachment, payment tracking — all in one place.
           </p>
@@ -156,14 +156,14 @@ export function LandingPage() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
             <Link
               href="/auth/signup"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-crystal-600 text-white font-semibold text-sm hover:bg-crystal-700 transition-colors shadow-lg shadow-crystal-600/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-crystal-400"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-crystal-600 text-white font-semibold text-sm hover:bg-crystal-700 shadow-lg shadow-crystal-600/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-crystal-400 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
             >
               <Zap className="w-4 h-4" aria-hidden="true" />
               Start for free
             </Link>
             <a
               href="#features"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/10 text-white/60 font-medium text-sm hover:bg-white/5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/10 text-white/60 font-medium text-sm hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
             >
               See how it works
             </a>
@@ -188,7 +188,7 @@ export function LandingPage() {
       </div>
 
       {/* Features */}
-      <section id="features" className="relative z-10 px-8 lg:px-16 py-20 max-w-7xl mx-auto w-full">
+      <section id="features" className="relative z-10 px-8 lg:px-16 py-20 max-w-7xl mx-auto w-full slide-left">
         <div className="text-center mb-14">
           <p className="text-xs font-semibold uppercase tracking-widest text-crystal-400 mb-3">Features</p>
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Everything you need to get paid</h2>
@@ -197,10 +197,11 @@ export function LandingPage() {
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {FEATURES.map(({ icon: Icon, title, desc }) => (
+          {FEATURES.map(({ icon: Icon, title, desc }, index) => (
             <div
               key={title}
-              className="glass-panel p-6 border border-white/[0.06] hover:border-crystal-500/20 hover:-translate-y-1 transition-all duration-300"
+              className={`glass-panel p-6 border border-white/[0.06] hover:border-crystal-500/20 hover:-translate-y-1 transition-all duration-300 slide-up hover:scale-[1.02] hover:shadow-xl`}
+              style={{ animationDelay: `${index * 100}ms` }}
             >
               <div className="w-10 h-10 rounded-xl bg-crystal-600/15 border border-crystal-500/20 flex items-center justify-center mb-4">
                 <Icon className="w-5 h-5 text-crystal-400" aria-hidden="true" />
@@ -232,7 +233,7 @@ export function LandingPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
           {/* Free plan */}
-          <div className="glass-panel p-8 border border-white/[0.06] flex flex-col transition-all duration-300 hover:-translate-y-2 hover:border-white/20 hover:shadow-2xl hover:shadow-white/5">
+          <div className="glass-card p-8 flex flex-col transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] hover:shadow-2xl slide-up">
             <p className="text-xs text-white/40 uppercase tracking-wider mb-1">Free</p>
             <div className="flex items-baseline gap-1 mb-6">
               <span className="text-4xl font-bold text-white">$0</span>
@@ -255,7 +256,7 @@ export function LandingPage() {
           </div>
 
           {/* Pro plan */}
-          <div className="glass-panel p-8 border border-crystal-500/30 flex flex-col relative overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:border-crystal-400/60 hover:shadow-2xl hover:shadow-crystal-500/25">
+          <div className="glass-card p-8 flex flex-col relative overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] hover:shadow-2xl slide-up animation-delay-100">
             <div className="absolute top-4 right-4 px-2.5 py-1 rounded-full bg-crystal-600/20 border border-crystal-500/30 text-crystal-300 text-xs font-semibold">
               Most Popular
             </div>
@@ -299,7 +300,7 @@ export function LandingPage() {
       </div>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-white/[0.06] py-8 px-8 lg:px-16 mt-10" role="contentinfo">
+      <footer className="relative z-10 border-t border-white/[0.06] py-8 px-8 lg:px-16 mt-10 fade-in" role="contentinfo">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           {/* Brand */}
           <div className="flex items-center gap-2">
@@ -311,11 +312,11 @@ export function LandingPage() {
 
           {/* Links */}
           <nav className="flex items-center gap-5 text-xs text-white/25" aria-label="Footer navigation">
-            <Link href="/auth/signin" className="hover:text-white/50 transition-colors">Sign in</Link>
-            <Link href="/auth/signup" className="hover:text-white/50 transition-colors">Sign up</Link>
-            <a href="#pricing" className="hover:text-white/50 transition-colors">Pricing</a>
-            <Link href="/terms" className="hover:text-white/50 transition-colors">Terms</Link>
-            <Link href="/privacy" className="hover:text-white/50 transition-colors">Privacy</Link>
+            <Link href="/auth/signin" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Sign in</Link>
+            <Link href="/auth/signup" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Sign up</Link>
+            <a href="#pricing" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Pricing</a>
+            <Link href="/terms" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Terms</Link>
+            <Link href="/privacy" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Privacy</Link>
           </nav>
         </div>
       </footer>
