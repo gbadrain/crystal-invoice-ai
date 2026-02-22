@@ -12,6 +12,7 @@ import { PricingTableSection } from '@/components/landing/PricingTableSection'
 import { AboutSection } from '@/components/landing/AboutSection'
 import { MidCTASection } from '@/components/landing/MidCTASection'
 import { MotionDiv } from '@/components/MotionDiv'
+import { motion } from 'framer-motion'
 
 // TODO: Add email verification banner here once emailVerified field is added to Prisma User model
 // and email verification flow is implemented.
@@ -361,21 +362,35 @@ export function LandingPage() {
         <footer className="relative z-10 border-t border-white/[0.06] py-8 px-8 lg:px-16 mt-10" role="contentinfo">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
             {/* Brand */}
-            <div className="flex items-center gap-2">
-              <Image src="/icon.png" alt="Crystal Invoice AI" width={28} height={28} className="rounded-lg opacity-60" />
-              <span className="text-xs text-white/30 font-medium">
-                © {new Date().getFullYear()} Crystal Invoice AI. All rights reserved.
-              </span>
-            </div>
+            <MotionDiv y={20} opacity={0} delay={0.1}>
+              <div className="flex items-center gap-2">
+                <Image src="/icon.png" alt="Crystal Invoice AI" width={28} height={28} className="rounded-lg opacity-60" />
+                <span className="text-xs text-white/30 font-medium">
+                  © {new Date().getFullYear()} Crystal Invoice AI. All rights reserved.
+                </span>
+              </div>
+            </MotionDiv>
 
             {/* Links */}
-            <nav className="flex items-center gap-5 text-xs text-white/25" aria-label="Footer navigation">
-              <Link href="/auth/signin" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Sign in</Link>
-              <Link href="/auth/signup" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Sign up</Link>
-              <a href="#pricing" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Pricing</a>
-              <Link href="/terms" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Terms</Link>
-              <Link href="/privacy" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Privacy</Link>
-            </nav>
+            <MotionDiv y={20} opacity={0} delay={0.2}>
+              <nav className="flex items-center gap-5 text-xs text-white/25" aria-label="Footer navigation">
+                <motion.div whileHover={{ x: 2, color: '#ffffff' }} transition={{ duration: 0.2 }}>
+                  <Link href="/auth/signin" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Sign in</Link>
+                </motion.div>
+                <motion.div whileHover={{ x: 2, color: '#ffffff' }} transition={{ duration: 0.2 }}>
+                  <Link href="/auth/signup" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Sign up</Link>
+                </motion.div>
+                <motion.div whileHover={{ x: 2, color: '#ffffff' }} transition={{ duration: 0.2 }}>
+                  <a href="#pricing" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Pricing</a>
+                </motion.div>
+                <motion.div whileHover={{ x: 2, color: '#ffffff' }} transition={{ duration: 0.2 }}>
+                  <Link href="/terms" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Terms</Link>
+                </motion.div>
+                <motion.div whileHover={{ x: 2, color: '#ffffff' }} transition={{ duration: 0.2 }}>
+                  <Link href="/privacy" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Privacy</Link>
+                </motion.div>
+              </nav>
+            </MotionDiv>
           </div>
         </footer>
       </MotionDiv>
