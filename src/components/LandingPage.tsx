@@ -11,6 +11,7 @@ import { FAQSection } from '@/components/landing/FAQSection'
 import { PricingTableSection } from '@/components/landing/PricingTableSection'
 import { AboutSection } from '@/components/landing/AboutSection'
 import { MidCTASection } from '@/components/landing/MidCTASection'
+import { HowItWorksSection } from '@/components/landing/HowItWorksSection'
 import { MotionDiv } from '@/components/MotionDiv'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
@@ -248,6 +249,11 @@ export function LandingPage() {
           <SignInCard />
         </MotionDiv>
       </section>
+
+      {/* How It Works Section */}
+      <div className="relative z-10">
+        <HowItWorksSection />
+      </div>
 
       {/* Demo video section */}
       <div className="relative z-10">
