@@ -222,10 +222,10 @@ export function InvoiceList({ initialInvoices }: { initialInvoices: Invoice[] })
             </thead>
             <tbody className="divide-y divide-slate-800 bg-slate-900/70">
               {paginatedInvoices.map((invoice, index) => (
-                <MotionDiv key={invoice._id?.toString()} y={20} opacity={0} delay={index * 0.05}>
+                <MotionDiv key={invoice._id || `invoice-${index}`} y={20} opacity={0} delay={index * 0.05}>
                   <tr className="hover:bg-slate-800/40 transition-colors duration-150">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
-                      <Link href={`/invoices/${invoice._id}/view`} className="hover:text-crystal-400 hover:underline">
+                      <Link href={`/invoices/${invoice._id || 'invalid'}/view`} className="hover:text-crystal-400 hover:underline">
                         {invoice.metadata?.invoiceNumber || 'N/A'}
                       </Link>
                     </td>
@@ -237,16 +237,16 @@ export function InvoiceList({ initialInvoices }: { initialInvoices: Invoice[] })
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex items-center justify-end gap-4">
-                        <Link href={`/invoices/${invoice._id?.toString()}/edit`} className="text-slate-400 hover:text-crystal-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 rounded-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
+                        <Link href={`/invoices/${invoice._id || 'invalid'}/edit`} className="text-slate-400 hover:text-crystal-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 rounded-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
                           <Edit className="w-5 h-5" />
                           <span className="sr-only">Edit</span>
                         </Link>
                         <button
-                          onClick={() => handleDelete(invoice._id?.toString() || '')}
-                          disabled={deletingId === invoice._id?.toString()}
+                          onClick={() => handleDelete(invoice._id || '')}
+                          disabled={deletingId === invoice._id}
                           className="text-slate-400 hover:text-red-400 disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 rounded-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                         >
-                          {deletingId === invoice._id?.toString() ? <Loader2 className="w-5 h-5 animate-spin" /> : <Trash2 className="w-5 h-5" />}
+                          {deletingId === invoice._id ? <Loader2 className="w-5 h-5 animate-spin" /> : <Trash2 className="w-5 h-5" />}
                           <span className="sr-only">Delete</span>
                         </button>
                       </div>
