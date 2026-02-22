@@ -82,7 +82,7 @@ export function DashboardPage() {
         </div>
         <Link
           href="/invoices/new"
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-crystal-600 text-white text-sm font-medium hover:bg-crystal-700 transition-colors shadow-lg shadow-crystal-600/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-crystal-600 text-white text-sm font-medium hover:bg-crystal-700 shadow-lg shadow-crystal-600/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
         >
           <PlusCircle className="w-4 h-4" />
           New Invoice
@@ -150,7 +150,7 @@ export function DashboardPage() {
           </div>
           <Link
             href="/invoices/new"
-            className="mt-2 flex items-center gap-2 px-5 py-2 rounded-lg bg-crystal-600 text-white text-sm font-medium hover:bg-crystal-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+            className="mt-2 flex items-center gap-2 px-5 py-2 rounded-lg bg-crystal-600 text-white text-sm font-medium hover:bg-crystal-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
           >
             <PlusCircle className="w-4 h-4" />
             New Invoice

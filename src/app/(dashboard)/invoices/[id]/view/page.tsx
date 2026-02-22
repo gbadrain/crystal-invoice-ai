@@ -10,11 +10,11 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 
   const invoice = await prisma.invoice.findUnique({
     where: { id: params.id, userId: session.user.id },
-    select: { metadata: true },
+    select: { invoiceNumber: true },
   })
 
   return {
-    title: `Invoice ${invoice?.metadata?.invoiceNumber ?? ''}`,
+    title: `Invoice ${invoice?.invoiceNumber ?? ''}`,
   }
 }
 

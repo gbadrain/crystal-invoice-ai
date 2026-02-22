@@ -162,7 +162,7 @@ export function InvoiceList({ initialInvoices }: { initialInvoices: Invoice[] })
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
           <Link
             href="/invoices/new"
-            className="inline-flex items-center gap-2 rounded-lg bg-crystal-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-crystal-600/20 hover:bg-crystal-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-600 transition-colors hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+            className="inline-flex items-center gap-2 rounded-lg bg-crystal-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-crystal-600/20 hover:bg-crystal-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-600 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
           >
             <PlusCircle className="w-5 h-5" />
             <span>New Invoice</span>
@@ -235,14 +235,14 @@ export function InvoiceList({ initialInvoices }: { initialInvoices: Invoice[] })
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex items-center justify-end gap-4">
-                      <Link href={`/invoices/${invoice._id?.toString()}/edit`} className="text-slate-400 hover:text-crystal-400 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 rounded-md hover:scale-[1.02] active:scale-[0.98] transition-transform">
+                      <Link href={`/invoices/${invoice._id?.toString()}/edit`} className="text-slate-400 hover:text-crystal-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 rounded-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
                         <Edit className="w-5 h-5" />
                         <span className="sr-only">Edit</span>
                       </Link>
                       <button
                         onClick={() => handleDelete(invoice._id?.toString() || '')}
                         disabled={deletingId === invoice._id?.toString()}
-                        className="text-slate-400 hover:text-red-400 transition-colors disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 rounded-md hover:scale-[1.02] active:scale-[0.98] transition-transform"
+                        className="text-slate-400 hover:text-red-400 disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 rounded-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                       >
                         {deletingId === invoice._id?.toString() ? <Loader2 className="w-5 h-5 animate-spin" /> : <Trash2 className="w-5 h-5" />}
                         <span className="sr-only">Delete</span>
@@ -276,14 +276,14 @@ export function InvoiceList({ initialInvoices }: { initialInvoices: Invoice[] })
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="relative inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-slate-700 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 hover:scale-[1.02] active:scale-[0.98] transition-transform"
+              className="relative inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-slate-700 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
             >
               Previous
             </button>
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="relative ml-3 inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-slate-700 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 hover:scale-[1.02] active:scale-[0.98] transition-transform"
+              className="relative ml-3 inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-slate-700 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
             >
               Next
             </button>

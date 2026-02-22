@@ -28,6 +28,9 @@ const config: Config = {
         'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
         'glass-inset': 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.15)',
       },
+      animation: {
+        shimmer: 'shimmer 1.5s ease-in-out infinite',
+      },
     },
   },
   plugins: [],
