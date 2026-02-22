@@ -1,6 +1,6 @@
 # Crystal Invoice AI
 
-**[crystalinvoiceAI.com](https://crystalinvoiceai.com)**
+**[crystalinvoiceai.com](https://crystalinvoiceai.com)** — Live in production
 
 > ### Say the job. Crystal does the rest.
 > **Speak into the mic → AI builds the invoice → professional PDF → emailed to your client.**
@@ -10,8 +10,8 @@
 |---|---|
 | 🎙️ **Voice or text** | Describe your job out loud or type it in plain English |
 | 🤖 **AI-generated** | Line items, rates, tax, client details — extracted instantly |
-| 📄 **Professional PDF** | Clean, A4-formatted — looks like it cost 10× more |
-| 📧 **Send to client** | One button emails the invoice directly |
+| 📄 **Professional PDF** | Clean, A4-formatted — consistent across every device |
+| 📧 **Send to client** | One button emails the invoice with PDF attached |
 | ✅ **Free to start** | 3 invoices free — upgrade to Pro for unlimited |
 
 ---
@@ -83,23 +83,32 @@ The AI output is never trusted blindly. A dedicated parser (`src/utils/ai-parser
 An invoice that cannot be delivered is incomplete. Two delivery mechanisms were built:
 
 - **PDF Download** — Puppeteer renders the invoice as an A4 PDF. The binary is held in memory for five minutes with a one-time token, then purged automatically. The user gets a native browser download, not a web preview.
-- **Send to Client** — A single button emails the client a fully styled HTML invoice via Resend. If the invoice is in draft status, it is automatically promoted to `pending` after sending.
+- **Send to Client** — A single button emails the client a fully styled HTML invoice via Resend, with the PDF attached as a binary file. If the invoice is in draft status, it is automatically promoted to `pending` after sending.
 
 ### Phase 5 — Lifecycle and Trash
 
 Invoices have a full lifecycle: `draft → pending → paid / overdue`. Deletion is non-destructive — invoices move to a trash state and can be restored individually or in bulk. Permanent deletion requires explicit confirmation. The original status is preserved so a restored invoice returns exactly where it was.
 
+### Phase 6 — Subscription Billing
+
+A complete Stripe integration handles the full subscription lifecycle without any manual intervention:
+
+- **Upgrade** — User clicks "Upgrade to Pro" → hosted Stripe Checkout → payment captured → webhook fires → account upgraded instantly
+- **Auto-billing** — Stripe charges the card automatically every month. On failure, Stripe retries automatically over several days
+- **Cancel** — In-app "Cancel Plan" button opens a confirmation dialog. Cancellation is scheduled for end of billing period — the user keeps Pro access until then. An amber banner shows the exact cancellation date with a "Keep Pro" reactivate option
+- **Downgrade** — When the billing period ends, Stripe fires `customer.subscription.deleted` → webhook sets `isPro = false` → account downgrades automatically. Zero manual steps required
+
 ---
 
-## Technical Architecture (Summary)
+## Technical Architecture
 
 | Layer | Technology | Deployment |
 |---|---|---|
 | Frontend + CRUD API | Next.js 14 (TypeScript) | Vercel |
 | PDF + AI API | Express 4 (Node.js) | Railway |
-| Database | PostgreSQL + Prisma 7 | Managed Postgres |
+| Database | PostgreSQL + Prisma 7 | Neon (managed Postgres) |
 | Authentication | NextAuth v4 (JWT) | — |
-| Payments | Stripe (subscription) | — |
+| Payments | Stripe (subscriptions) | — |
 | Email | Resend | — |
 | AI Model | Anthropic Claude Haiku | — |
 | Styling | Tailwind CSS | — |
@@ -107,9 +116,10 @@ Invoices have a full lifecycle: `draft → pending → paid / overdue`. Deletion
 **Key architectural decisions:**
 - Prisma 7 uses the `PrismaPg` adapter pattern (no URL in schema file, connection pooling via `pg.Pool`)
 - All code lives in `src/` — the path alias `@/*` maps to `src/*`
-- NextAuth uses JWT strategy — no database session table
+- NextAuth uses JWT strategy — no database session table needed
 - PDF files are stored in Node.js memory with token-based one-time retrieval (no S3 dependency)
 - AI output is constrained via assistant prefill (`{`) to force valid JSON from Claude Haiku
+- Stripe webhook handles all subscription state transitions — no polling, no cron jobs
 
 ---
 
@@ -125,7 +135,7 @@ Speak your invoice description hands-free. A mic button sits directly inside the
 Every invoice renders as a clean, A4-formatted PDF — consistent fonts, spacing, and layout on every device and browser. No browser print dialog quirks.
 
 ### Send to Client
-One button emails the client a fully formatted invoice. Status is automatically updated from draft to pending.
+One button emails the client a fully formatted HTML invoice with the PDF attached. The client receives a styled email and a downloadable PDF in a single delivery. Status is automatically updated from draft to pending after sending.
 
 ### Password Reset & Account Security
 Full self-service password reset via email token — no admin intervention required. Users who forget their password receive a time-limited reset link. Authenticated users can change their password at any time from the Settings page.
@@ -143,10 +153,31 @@ Upload a PNG, JPG, or SVG (up to 500 KB). The logo is stored as a base64 data UR
 Every time the invoice list loads, pending invoices whose due date has passed are automatically promoted to `overdue`. No cron job required — the status is always accurate at list-read time.
 
 ### Stripe Subscription Billing
-Live Stripe integration with a hosted Checkout flow ($9/month) and a Customer Portal for plan management and cancellation. A `Pro` badge appears in the sidebar once the subscription is active. Non-Pro users see a usage banner with an inline upgrade prompt.
+Live Stripe integration handles the complete subscription lifecycle:
+
+| | Free | Pro ($9/month) |
+|---|---|---|
+| Invoices | 3 | Unlimited |
+| AI generation | ✅ | ✅ |
+| PDF export | ✅ | ✅ |
+| Send to client | ✅ | ✅ |
+| Priority support | — | ✅ |
+
+- Stripe charges the card automatically each month — no action required from the user or owner
+- Stripe takes 2.9% + $0.30 per transaction; the remainder is paid out to the owner's bank account on a rolling basis
+- Card failures are retried automatically by Stripe before escalating
+- Cancellation is scheduled for end of billing period — users never lose access mid-cycle
+- The owner receives $8.44 net per active subscriber per month
+
+### In-App Subscription Management
+Pro subscribers manage their plan entirely within the app — no need to email support:
+- **Manage Subscription** — opens Stripe's hosted portal for card updates, payment history, and invoice downloads
+- **Cancel Plan** — confirmation dialog with exact end date; cancellation is never immediate
+- **Keep Pro** — one-click reactivation if the user changes their mind before the period ends
+- **Scheduled cancellation banner** — amber warning showing the exact date access ends, with a reactivate button inline
 
 ### Freemium Model
-Free users get three invoices. Pro users ($9/month via Stripe) get unlimited invoices and full feature access. The upgrade path is inline — no separate checkout page is required.
+Free users get three invoices. Pro users get unlimited invoices and full feature access. The upgrade path is inline — no separate checkout page required.
 
 ---
 
@@ -201,10 +232,16 @@ Claude Haiku is fast and cost-effective but its JSON output is not perfectly con
 The Express backend (Railway) needs to accept requests from the Next.js frontend (Vercel). With production deployments using dynamic Vercel preview URLs, a static CORS allowlist was insufficient. The solution was to explicitly whitelist the production Vercel origin via the `NEXT_PUBLIC_APP_URL` environment variable and allow all origins in development.
 
 ### Logo in Email — Gmail CID Limitation
-The initial implementation used CID inline attachments to embed the company logo in invoice emails. Gmail ignores CID attachments entirely and renders them as file attachments instead. The fix was to serve the logo via a public (no-auth) HTTPS endpoint (`/api/public/logo/[id]`) and reference it as a standard `<img src="">` in the HTML — a URL every email client can load.
+The initial implementation used CID inline attachments to embed the company logo in invoice emails. Gmail ignores CID attachments entirely and renders them as file attachments instead. The fix was to serve the logo via a public (no-auth) HTTPS endpoint (`/api/public/logo/[id]`) and reference it as a standard `<img src="">` in the HTML — a URL every email client can load. A versioned query parameter (`?v=<updatedAt timestamp>`) busts Gmail's aggressive image proxy cache whenever the logo changes.
 
 ### Stripe Keys — Trailing Newline Corruption
 When adding Stripe API keys to Vercel via the CLI, using `echo "value" | vercel env add` appends a trailing newline to the value. Stripe's SDK treats this as a malformed key and retries the connection multiple times before failing with a cryptic connection error. The fix is to pipe with `printf '%s' 'value' | vercel env add` — which writes the value with no trailing newline.
+
+### Stripe Test→Live Mode Migration
+Customer IDs created in Stripe's test mode (`cus_...`) are siloed — they do not exist in live mode. When the application was switched from test keys to live keys, the database still held test-mode customer IDs. Any API call using those IDs against the live Stripe endpoint returns "No such customer" with no clear indication of why. The fix was to identify the stale IDs via a direct database query, clear `stripeCustomerId` and `stripeSubscriptionId` from the affected user records, and allow the checkout flow to create fresh live-mode customer IDs on the next real payment.
+
+### Prisma Migration Recorded but Column Not Created
+A `prisma migrate dev` run created the migration file and recorded it in `_prisma_migrations`, but the actual `ALTER TABLE` never executed against the production database — the `logo` column was missing from the live table. Root cause: `prisma migrate deploy` uses a PostgreSQL advisory lock (`pg_advisory_lock`) which times out on Neon's serverless connection pooler (error P1002). The fix was to bypass the migration runner entirely and execute the `ALTER TABLE invoices ADD COLUMN IF NOT EXISTS logo TEXT` statement directly via `node-pg` against the non-pooled `DATABASE_URL_NEON_DIRECT` connection string.
 
 ---
 
@@ -251,11 +288,12 @@ All core features are implemented, tested, and live in production at [crystalinv
 - AI generation via Claude Haiku
 - Voice input via Web Speech API
 - PDF generation via Puppeteer (Railway)
-- Email delivery via Resend (verified custom domain)
+- Email delivery via Resend (verified custom domain) — HTML invoice + PDF attachment
 - Company logo — uploaded once, persisted to DB, embedded in PDF and email
 - Auto overdue detection — pending invoices past due date auto-promote to `overdue` on list load
-- Stripe subscription billing — **live payments active** ($9/month)
-- Stripe Customer Portal — subscribers can manage and cancel directly
+- Stripe subscription billing — **live payments active** ($9/month, auto-debit monthly)
+- In-app subscription management — Cancel Plan (with confirmation), Keep Pro reactivate, scheduled-cancellation banner with exact end date
+- Stripe Customer Portal — card updates, invoice history, and cancellation via hosted Stripe UI
 - Billing success/cancellation banners on return from Stripe
 - Freemium enforcement — free tier capped at 3 invoices; Pro users are unlimited
 - Dashboard with status overview and live trash badge
