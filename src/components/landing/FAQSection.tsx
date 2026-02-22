@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { MotionDiv } from '@/components/MotionDiv'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const faqs = [
   {
@@ -53,8 +54,10 @@ export function FAQSection() {
             const isOpen = openIndex === i
             return (
               <MotionDiv key={i} y={20} opacity={0} delay={i * 0.1}>
-                <div
+                <motion.div
                   className="glass-panel rounded-2xl border border-white/[0.08] overflow-hidden"
+                  whileHover={{ scale: 1.005, boxShadow: '0 8px 16px -4px rgba(0, 0, 0, 0.1)' }}
+                  transition={{ duration: 0.2 }}
                 >
                   <button
                     onClick={() => setOpenIndex(isOpen ? null : i)}
@@ -62,22 +65,33 @@ export function FAQSection() {
                     className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left hover:bg-white/[0.03] transition-colors duration-200"
                   >
                     <span className="text-sm font-semibold text-white/90">{faq.q}</span>
-                    <ChevronDown
-                      className={`w-4 h-4 text-white/40 shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
-                      aria-hidden="true"
-                    />
+                    <motion.div
+                      animate={{ rotate: isOpen ? 180 : 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <ChevronDown
+                        className="w-4 h-4 text-white/40 shrink-0"
+                        aria-hidden="true"
+                      />
+                    </motion.div>
                   </button>
 
-                  <div
-                    className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                      isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-                    }`}
-                  >
-                    <p className="px-6 pb-5 text-sm text-white/55 leading-relaxed">
-                      {faq.a}
-                    </p>
-                  </div>
-                </div>
+                  <AnimatePresence>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                        className="overflow-hidden"
+                      >
+                        <p className="px-6 pb-5 text-sm text-white/55 leading-relaxed">
+                          {faq.a}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
               </MotionDiv>
             )
           })}
