@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
 import { checkPassword } from '@/lib/password'
+import { sendEmail } from '@/lib/resend'
+import { buildWelcomeEmailHTML } from '@/utils/welcome-email'
 
 export async function POST(request: Request) {
   try {
@@ -30,6 +32,14 @@ export async function POST(request: Request) {
 
     const passwordHash = await bcrypt.hash(password, 12)
     const user = await prisma.user.create({ data: { email: normalizedEmail, passwordHash } })
+
+    // Fire-and-forget welcome email — never blocks the 201 response
+    const appUrl = process.env.NEXTAUTH_URL ?? 'https://crystalinvoiceai.com'
+    sendEmail({
+      to: normalizedEmail,
+      subject: 'Welcome to Crystal Invoice AI',
+      html: buildWelcomeEmailHTML(normalizedEmail, appUrl),
+    }).catch((err) => console.error('[register] Welcome email failed:', err))
 
     return NextResponse.json(
       { message: 'Account created.', user: { id: user.id, email: user.email } },

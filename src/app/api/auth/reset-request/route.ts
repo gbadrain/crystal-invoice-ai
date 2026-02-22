@@ -127,14 +127,8 @@ async function sendEmail(to: string, resetUrl: string): Promise<void> {
   // ── Option 2: Resend (requires a verified domain — onboarding@resend.dev  ──
   // only delivers to the Resend account owner's own email address)           ──
   if (process.env.RESEND_API_KEY) {
-    const { Resend } = await import('resend')
-    const resend = new Resend(process.env.RESEND_API_KEY)
-    await resend.emails.send({
-      from: process.env.RESEND_FROM ?? 'Crystal Invoice <onboarding@resend.dev>',
-      to,
-      subject,
-      html,
-    })
+    const { sendEmail } = await import('@/lib/resend')
+    await sendEmail({ to, subject, html })
     console.log(`[Crystal Invoice] Reset email sent via Resend to ${to}`)
     return
   }

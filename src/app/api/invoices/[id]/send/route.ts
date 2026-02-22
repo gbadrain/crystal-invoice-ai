@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getAuthUserId, formatInvoice } from '../../_helpers'
-import { Resend } from 'resend'
+import { sendEmail } from '@/lib/resend'
 import { buildInvoiceEmailHTML } from '@/utils/email-template'
 
 const EXPRESS_URL =
@@ -13,12 +13,12 @@ export async function POST(
   _req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const result = await getAuthUserId()
-  if (result instanceof NextResponse) return result
-  const userId = result
+  const authResult = await getAuthUserId()
+  if (authResult instanceof NextResponse) return authResult
+  const userId = authResult
 
   if (!process.env.RESEND_API_KEY) {
-    return NextResponse.json({ error: 'Email service not configured. Add RESEND_API_KEY to .env.' }, { status: 503 })
+    return NextResponse.json({ error: 'Email not configured. Add RESEND_API_KEY to environment variables.' }, { status: 503 })
   }
 
   const invoice = await prisma.invoice.findFirst({
@@ -68,28 +68,26 @@ export async function POST(
     console.error('[Send invoice] PDF generation failed, sending without attachment:', err)
   }
 
-  const resend = new Resend(process.env.RESEND_API_KEY)
+  const result = await sendEmail({
+    from,
+    to: invoice.clientEmail,
+    subject: `Invoice ${invoice.invoiceNumber} from ${invoice.user.email}`,
+    html,
+    ...(pdfAttachment ? { attachments: [pdfAttachment] } : {}),
+  })
 
-  try {
-    await resend.emails.send({
-      from,
-      to: invoice.clientEmail,
-      subject: `Invoice ${invoice.invoiceNumber} from ${invoice.user.email}`,
-      html,
-      ...(pdfAttachment ? { attachments: [pdfAttachment] } : {}),
-    })
-
-    // Promote draft → pending after sending
-    if (invoice.status === 'draft') {
-      await prisma.invoice.update({
-        where: { id: invoice.id },
-        data: { status: 'pending' },
-      })
-    }
-
-    return NextResponse.json({ success: true, hasPdf: !!pdfAttachment })
-  } catch (err) {
-    console.error('[Send invoice] Resend error:', err)
+  if (!result.ok) {
+    console.error('[Send invoice] Resend error:', result.error)
     return NextResponse.json({ error: 'Failed to send email. Check your Resend configuration.' }, { status: 500 })
   }
+
+  // Promote draft → pending after sending
+  if (invoice.status === 'draft') {
+    await prisma.invoice.update({
+      where: { id: invoice.id },
+      data: { status: 'pending' },
+    })
+  }
+
+  return NextResponse.json({ success: true, hasPdf: !!pdfAttachment })
 }
