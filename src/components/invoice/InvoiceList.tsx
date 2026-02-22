@@ -18,6 +18,7 @@ import { cn } from '@/utils/cn'
 import { StatusBadge } from '@/components/StatusBadge'
 import { InvoiceListEmptyState } from '@/components/invoice/InvoiceListEmptyState'
 import { InvoiceListSkeleton } from '@/components/invoice/InvoiceListSkeleton'
+import { MotionDiv } from '@/components/MotionDiv'
 
 type SortKey = 'metadata.issueDate' | 'summary.total' | 'metadata.status' | 'metadata.invoiceNumber' | 'client.name'
 type SortDirection = 'asc' | 'desc'
@@ -151,7 +152,7 @@ export function InvoiceList({ initialInvoices }: { initialInvoices: Invoice[] })
   }
 
   return (
-    <div>
+    <MotionDiv y={20} opacity={0}>
       <div className="sm:flex sm:items-center sm:justify-between mb-8">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">Invoices</h1>
@@ -220,36 +221,38 @@ export function InvoiceList({ initialInvoices }: { initialInvoices: Invoice[] })
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800 bg-slate-900/70">
-              {paginatedInvoices.map((invoice) => (
-                <tr key={invoice._id?.toString()} className="hover:bg-slate-800/40 transition-colors duration-150">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
-                    <Link href={`/invoices/${invoice._id}/view`} className="hover:text-crystal-400 hover:underline">
-                      {invoice.metadata?.invoiceNumber || 'N/A'}
-                    </Link>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-300">{invoice.client?.name || 'N/A'}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">{invoice.metadata?.issueDate || 'N/A'}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{invoice.summary?.total != null ? `${invoice.summary.total.toFixed(2)}` : '$0.00'}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <StatusBadge status={invoice.metadata?.status || 'draft'} />
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex items-center justify-end gap-4">
-                      <Link href={`/invoices/${invoice._id?.toString()}/edit`} className="text-slate-400 hover:text-crystal-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 rounded-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
-                        <Edit className="w-5 h-5" />
-                        <span className="sr-only">Edit</span>
+              {paginatedInvoices.map((invoice, index) => (
+                <MotionDiv key={invoice._id?.toString()} y={20} opacity={0} delay={index * 0.05}>
+                  <tr className="hover:bg-slate-800/40 transition-colors duration-150">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
+                      <Link href={`/invoices/${invoice._id}/view`} className="hover:text-crystal-400 hover:underline">
+                        {invoice.metadata?.invoiceNumber || 'N/A'}
                       </Link>
-                      <button
-                        onClick={() => handleDelete(invoice._id?.toString() || '')}
-                        disabled={deletingId === invoice._id?.toString()}
-                        className="text-slate-400 hover:text-red-400 disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 rounded-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
-                      >
-                        {deletingId === invoice._id?.toString() ? <Loader2 className="w-5 h-5 animate-spin" /> : <Trash2 className="w-5 h-5" />}
-                        <span className="sr-only">Delete</span>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-300">{invoice.client?.name || 'N/A'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">{invoice.metadata?.issueDate || 'N/A'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{invoice.summary?.total != null ? `${invoice.summary.total.toFixed(2)}` : '$0.00'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <StatusBadge status={invoice.metadata?.status || 'draft'} />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <div className="flex items-center justify-end gap-4">
+                        <Link href={`/invoices/${invoice._id?.toString()}/edit`} className="text-slate-400 hover:text-crystal-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 rounded-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
+                          <Edit className="w-5 h-5" />
+                          <span className="sr-only">Edit</span>
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(invoice._id?.toString() || '')}
+                          disabled={deletingId === invoice._id?.toString()}
+                          className="text-slate-400 hover:text-red-400 disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 rounded-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                        >
+                          {deletingId === invoice._id?.toString() ? <Loader2 className="w-5 h-5 animate-spin" /> : <Trash2 className="w-5 h-5" />}
+                          <span className="sr-only">Delete</span>
+                        </button>
+                      </div>
+                    </td>
+                  </tr >
+                </MotionDiv>
               ))}
             </tbody>
           </table>
@@ -262,34 +265,36 @@ export function InvoiceList({ initialInvoices }: { initialInvoices: Invoice[] })
       </div>
       
       {totalPages > 1 && (
-        <nav
-          className="flex items-center justify-between border-t border-slate-800 px-4 sm:px-6 py-3"
-          aria-label="Pagination"
-        >
-          <div className="hidden sm:block">
-            <p className="text-sm text-slate-400">
-              Showing <span className="font-medium text-white">{(currentPage - 1) * PAGE_SIZE + 1}</span> to <span className="font-medium text-white">{Math.min(currentPage * PAGE_SIZE, filteredAndSortedInvoices.length)}</span> of{' '}
-              <span className="font-medium text-white">{filteredAndSortedInvoices.length}</span> results
-            </p>
-          </div>
-          <div className="flex flex-1 justify-between sm:justify-end">
-            <button
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              className="relative inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-slate-700 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
-            >
-              Previous
-            </button>
-            <button
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-              className="relative ml-3 inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-slate-700 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
-            >
-              Next
-            </button>
-          </div>
-        </nav>
+        <div className="mt-4">
+          <nav
+            className="flex items-center justify-between border-t border-slate-800 px-4 sm:px-6 py-3"
+            aria-label="Pagination"
+          >
+            <div className="hidden sm:block">
+              <p className="text-sm text-slate-400">
+                Showing <span className="font-medium text-white">{(currentPage - 1) * PAGE_SIZE + 1}</span> to <span className="font-medium text-white">{Math.min(currentPage * PAGE_SIZE, filteredAndSortedInvoices.length)}</span> of{' '}
+                <span className="font-medium text-white">{filteredAndSortedInvoices.length}</span> results
+              </p>
+            </div>
+            <div className="flex flex-1 justify-between sm:justify-end">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="relative inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-slate-700 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="relative ml-3 inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-slate-700 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+              >
+                Next
+              </button>
+            </div>
+          </nav>
+        </div>
       )}
-    </div>
+    </MotionDiv>
   )
 }
