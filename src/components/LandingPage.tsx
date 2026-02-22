@@ -12,7 +12,8 @@ import { PricingTableSection } from '@/components/landing/PricingTableSection'
 import { AboutSection } from '@/components/landing/AboutSection'
 import { MidCTASection } from '@/components/landing/MidCTASection'
 import { MotionDiv } from '@/components/MotionDiv'
-import { motion } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
+import { useRef } from 'react'
 
 // TODO: Add email verification banner here once emailVerified field is added to Prisma User model
 // and email verification flow is implemented.
@@ -93,8 +94,14 @@ const PLAN_PRO = [
 ]
 
 export function LandingPage() {
+  const ref = useRef(null)
+  const { scrollYProgress } = useScroll({ target: ref })
+  const y1 = useTransform(scrollYProgress, [0, 1], ['0%', '50%'])
+  const y2 = useTransform(scrollYProgress, [0, 1], ['0%', '100%'])
+  const y3 = useTransform(scrollYProgress, [0, 1], ['0%', '150%'])
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col" ref={ref}>
 
       {/* Decorative background orbs */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
@@ -104,7 +111,7 @@ export function LandingPage() {
           delay={0.2}
           duration={1}
         >
-          <div className="absolute -top-56 left-1/2 -translate-x-1/2 w-[900px] h-[900px] bg-crystal-600/[0.08] rounded-full blur-3xl" />
+          <motion.div style={{ y: y1 }} className="absolute -top-56 left-1/2 -translate-x-1/2 w-[900px] h-[900px] bg-crystal-600/[0.08] rounded-full blur-3xl" />
         </MotionDiv>
         <MotionDiv
           scale={0.8}
@@ -112,7 +119,7 @@ export function LandingPage() {
           delay={0.4}
           duration={1}
         >
-          <div className="absolute top-1/2 -right-64 w-[700px] h-[700px] bg-crystal-400/[0.05] rounded-full blur-3xl" />
+          <motion.div style={{ y: y2 }} className="absolute top-1/2 -right-64 w-[700px] h-[700px] bg-crystal-400/[0.05] rounded-full blur-3xl" />
         </MotionDiv>
         <MotionDiv
           scale={0.8}
@@ -120,7 +127,7 @@ export function LandingPage() {
           delay={0.6}
           duration={1}
         >
-          <div className="absolute -bottom-40 left-0 w-[500px] h-[500px] bg-crystal-800/10 rounded-full blur-3xl" />
+          <motion.div style={{ y: y3 }} className="absolute -bottom-40 left-0 w-[500px] h-[500px] bg-crystal-800/10 rounded-full blur-3xl" />
         </MotionDiv>
       </div>
 
@@ -192,21 +199,33 @@ export function LandingPage() {
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
             <MotionDiv y={20} opacity={0} delay={1.3}>
-              <Link
-                href="/auth/signup"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-crystal-600 text-white font-semibold text-sm hover:bg-crystal-700 shadow-lg shadow-crystal-600/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-crystal-400 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+              <motion.div
+                whileHover={{ scale: 1.02, boxShadow: '0 0 20px rgba(99, 102, 241, 0.5)' }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ duration: 0.2 }}
               >
-                <Zap className="w-4 h-4" aria-hidden="true" />
-                Start for free
-              </Link>
+                <Link
+                  href="/auth/signup"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-crystal-600 text-white font-semibold text-sm shadow-lg shadow-crystal-600/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-crystal-400"
+                >
+                  <Zap className="w-4 h-4" aria-hidden="true" />
+                  Start for free
+                </Link>
+              </motion.div>
             </MotionDiv>
             <MotionDiv y={20} opacity={0} delay={1.4}>
-              <a
-                href="#features"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/10 text-white/60 font-medium text-sm hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+              <motion.div
+                whileHover={{ scale: 1.02, backgroundColor: 'rgba(255, 255, 255, 0.05)' }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ duration: 0.2 }}
               >
-                See how it works
-              </a>
+                <a
+                  href="#features"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/10 text-white/60 font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
+                >
+                  See how it works
+                </a>
+              </motion.div>
             </MotionDiv>
           </div>
 
