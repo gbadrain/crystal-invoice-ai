@@ -1,8 +1,9 @@
 'use client'
 
 import { useRef, useState, useEffect } from 'react'
-import { Camera, Loader2, CheckCircle2, AlertCircle, Clock } from 'lucide-react'
+import { Camera, Loader2, CheckCircle2, AlertCircle, Clock, ListTodo } from 'lucide-react'
 import { cn } from '@/utils/cn'
+import { MotionDiv } from '@/components/MotionDiv'
 
 const ACTION_LABELS: Record<string, string> = {
   'profile.update': 'Profile updated',
@@ -118,136 +119,154 @@ export function ProfileForm({ email }: { email: string }) {
     <div className="space-y-6">
       {/* Banner */}
       {banner === 'success' && (
-        <div className="flex items-center gap-3 p-4 rounded-xl bg-green-500/10 border border-green-500/20">
-          <CheckCircle2 className="w-5 h-5 text-green-400 shrink-0" />
-          <p className="text-sm text-green-300">Saved successfully.</p>
-        </div>
+        <MotionDiv y={20} opacity={0}>
+          <div className="flex items-center gap-3 p-4 rounded-xl bg-green-500/10 border border-green-500/20">
+            <CheckCircle2 className="w-5 h-5 text-green-400 shrink-0" />
+            <p className="text-sm text-green-300">Saved successfully.</p>
+          </div>
+        </MotionDiv>
       )}
       {banner === 'error' && (
-        <div className="flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20">
-          <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
-          <p className="text-sm text-red-300">{errorMsg}</p>
-        </div>
+        <MotionDiv y={20} opacity={0}>
+          <div className="flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20">
+            <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
+            <p className="text-sm text-red-300">{errorMsg}</p>
+          </div>
+        </MotionDiv>
       )}
 
       {/* Avatar */}
-      <div className="rounded-xl shadow-lg bg-slate-900/70 ring-1 ring-slate-800 p-6 sm:p-8">
-        <h2 className="text-sm font-semibold text-white mb-4">Profile Picture</h2>
-        <div className="flex items-center gap-5">
-          <div
-            className={cn(
-              'h-20 w-20 rounded-full border-2 border-crystal-500/40 flex items-center justify-center overflow-hidden select-none bg-crystal-600/30 shrink-0',
-              uploading && 'opacity-50'
-            )}
-          >
-            {avatarUrl ? (
-              <img src={avatarUrl} alt="Profile" className="h-full w-full object-cover" />
-            ) : (
-              <span className="text-2xl font-bold text-crystal-300">{initials}</span>
-            )}
-          </div>
-          <div>
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploading}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition-all duration-200 disabled:opacity-50"
+      <MotionDiv y={20} opacity={0} delay={0.1}>
+        <div className="rounded-xl shadow-lg bg-slate-900/70 ring-1 ring-slate-800 p-6 sm:p-8">
+          <h2 className="text-sm font-semibold text-white mb-4">Profile Picture</h2>
+          <div className="flex items-center gap-5">
+            <div
+              className={cn(
+                'h-20 w-20 rounded-full border-2 border-crystal-500/40 flex items-center justify-center overflow-hidden select-none bg-crystal-600/30 shrink-0',
+                uploading && 'opacity-50'
+              )}
             >
-              {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
-              {uploading ? 'Uploading…' : 'Change photo'}
-            </button>
-            <p className="mt-1.5 text-xs text-slate-500">PNG, JPG or WebP, max 500 KB</p>
+              {avatarUrl ? (
+                <img src={avatarUrl} alt="Profile" className="h-full w-full object-cover" />
+              ) : (
+                <span className="text-2xl font-bold text-crystal-300">{initials}</span>
+              )}
+            </div>
+            <div>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition-all duration-200 disabled:opacity-50"
+              >
+                {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
+                {uploading ? 'Uploading…' : 'Change photo'}
+              </button>
+              <p className="mt-1.5 text-xs text-slate-500">PNG, JPG or WebP, max 500 KB</p>
+            </div>
           </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/png, image/jpeg, image/webp"
+            className="hidden"
+            onChange={handleAvatarChange}
+          />
         </div>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/png, image/jpeg, image/webp"
-          className="hidden"
-          onChange={handleAvatarChange}
-        />
-      </div>
+      </MotionDiv>
 
       {/* Profile fields */}
-      <form onSubmit={handleSave} className="rounded-xl shadow-lg bg-slate-900/70 ring-1 ring-slate-800">
-        <div className="p-6 sm:p-8 space-y-5">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
-              Email address
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              readOnly
-              className="block w-full rounded-md bg-slate-800/30 py-2.5 px-4 text-slate-400 ring-1 ring-inset ring-slate-700/50 cursor-not-allowed sm:text-sm"
-            />
-            <p className="mt-1.5 text-xs text-slate-500">Email cannot be changed.</p>
+      <MotionDiv y={20} opacity={0} delay={0.2}>
+        <form onSubmit={handleSave} className="rounded-xl shadow-lg bg-slate-900/70 ring-1 ring-slate-800">
+          <div className="p-6 sm:p-8 space-y-5">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
+                Email address
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                readOnly
+                className="block w-full rounded-md bg-slate-800/30 py-2.5 px-4 text-slate-400 ring-1 ring-inset ring-slate-700/50 cursor-not-allowed sm:text-sm"
+              />
+              <p className="mt-1.5 text-xs text-slate-500">Email cannot be changed.</p>
+            </div>
+
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-slate-300 mb-2">
+                Display name
+              </label>
+              <input
+                id="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                maxLength={100}
+                placeholder="Your name"
+                className="block w-full rounded-md border-0 bg-slate-800/60 py-2.5 px-4 text-white ring-1 ring-inset ring-slate-700 placeholder:text-slate-500 focus:ring-2 focus:ring-inset focus:ring-crystal-500 sm:text-sm"
+              />
+              <p className="mt-1.5 text-xs text-slate-500">Takes effect on next sign-in.</p>
+            </div>
+
+            <div>
+              <label htmlFor="company" className="block text-sm font-medium text-slate-300 mb-2">
+                Company name
+              </label>
+              <input
+                id="company"
+                type="text"
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                maxLength={100}
+                placeholder="Acme Corp"
+                className="block w-full rounded-md border-0 bg-slate-800/60 py-2.5 px-4 text-white ring-1 ring-inset ring-slate-700 placeholder:text-slate-500 focus:ring-2 focus:ring-inset focus:ring-crystal-500 sm:text-sm"
+              />
+            </div>
           </div>
 
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-slate-300 mb-2">
-              Display name
-            </label>
-            <input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              maxLength={100}
-              placeholder="Your name"
-              className="block w-full rounded-md border-0 bg-slate-800/60 py-2.5 px-4 text-white ring-1 ring-inset ring-slate-700 placeholder:text-slate-500 focus:ring-2 focus:ring-inset focus:ring-crystal-500 sm:text-sm"
-            />
-            <p className="mt-1.5 text-xs text-slate-500">Takes effect on next sign-in.</p>
+          <div className="px-6 py-4 bg-slate-900/50 border-t border-slate-800 flex justify-end">
+            <button
+              type="submit"
+              disabled={saving}
+              className="inline-flex items-center gap-2 rounded-lg text-sm font-semibold py-2.5 px-5 bg-crystal-600 text-white hover:bg-crystal-500 disabled:opacity-50 shadow-lg shadow-crystal-600/20 transition-all duration-200"
+            >
+              {saving && <Loader2 className="w-4 h-4 animate-spin" />}
+              Save changes
+            </button>
           </div>
-
-          <div>
-            <label htmlFor="company" className="block text-sm font-medium text-slate-300 mb-2">
-              Company name
-            </label>
-            <input
-              id="company"
-              type="text"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-              maxLength={100}
-              placeholder="Acme Corp"
-              className="block w-full rounded-md border-0 bg-slate-800/60 py-2.5 px-4 text-white ring-1 ring-inset ring-slate-700 placeholder:text-slate-500 focus:ring-2 focus:ring-inset focus:ring-crystal-500 sm:text-sm"
-            />
-          </div>
-        </div>
-
-        <div className="px-6 py-4 bg-slate-900/50 border-t border-slate-800 flex justify-end">
-          <button
-            type="submit"
-            disabled={saving}
-            className="inline-flex items-center gap-2 rounded-lg text-sm font-semibold py-2.5 px-5 bg-crystal-600 text-white hover:bg-crystal-500 disabled:opacity-50 shadow-lg shadow-crystal-600/20 transition-all duration-200"
-          >
-            {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-            Save changes
-          </button>
-        </div>
-      </form>
+        </form>
+      </MotionDiv>
 
       {/* Recent activity */}
-      {auditLogs.length > 0 && (
+      <MotionDiv y={20} opacity={0} delay={0.3}>
         <div className="rounded-xl shadow-lg bg-slate-900/70 ring-1 ring-slate-800 p-6 sm:p-8">
           <h2 className="text-sm font-semibold text-white mb-4">Recent Activity</h2>
-          <ul className="space-y-3">
-            {auditLogs.map((log) => (
-              <li key={log.id} className="flex items-center gap-3 text-sm">
-                <Clock className="w-4 h-4 text-slate-500 shrink-0" />
-                <span className="text-slate-300">{ACTION_LABELS[log.action] ?? log.action}</span>
-                <span className="ml-auto text-xs text-slate-500">
-                  {new Date(log.createdAt).toLocaleDateString('en-US', {
-                    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
-                  })}
-                </span>
-              </li>
-            ))}
-          </ul>
+          {auditLogs.length > 0 ? (
+            <ul className="space-y-3">
+              {auditLogs.map((log, index) => (
+                <MotionDiv key={log.id} y={20} opacity={0} delay={index * 0.05}>
+                  <li className="flex items-center gap-3 text-sm">
+                    <Clock className="w-4 h-4 text-slate-500 shrink-0" />
+                    <span className="text-slate-300">{ACTION_LABELS[log.action] ?? log.action}</span>
+                    <span className="ml-auto text-xs text-slate-500">
+                      {new Date(log.createdAt).toLocaleDateString('en-US', {
+                        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
+                      })}
+                    </span>
+                  </li>
+                </MotionDiv>
+              ))}
+            </ul>
+          ) : (
+            <div className="flex flex-col items-center justify-center text-center py-8">
+              <ListTodo className="w-10 h-10 text-white/15 mb-4" />
+              <p className="text-white/60 font-medium">No recent activity</p>
+              <p className="text-white/30 text-sm mt-1">Your actions will appear here.</p>
+            </div>
+          )}
         </div>
-      )}
+      </MotionDiv>
     </div>
   )
 }
