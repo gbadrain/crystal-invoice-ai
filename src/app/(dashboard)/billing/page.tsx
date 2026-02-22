@@ -6,6 +6,7 @@ import { stripe } from '@/lib/stripe'
 import { redirect } from 'next/navigation'
 import { BillingClient } from './BillingClient'
 import { BillingSkeleton } from './BillingSkeleton'
+import { MotionDiv } from '@/components/MotionDiv'
 
 export const metadata = { title: 'Billing — Crystal Invoice' }
 
@@ -50,16 +51,18 @@ async function BillingPageContent() {
 export default function BillingPage() {
   return (
     <div>
-      <div className="sm:flex sm:items-center sm:justify-between mb-8">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-            Billing
-          </h1>
-          <p className="mt-2 text-sm text-slate-400">
-            Manage your plan and subscription details.
-          </p>
+      <MotionDiv y={20} opacity={0}>
+        <div className="sm:flex sm:items-center sm:justify-between mb-8">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+              Billing
+            </h1>
+            <p className="mt-2 text-sm text-slate-400">
+              Manage your plan and subscription details.
+            </p>
+          </div>
         </div>
-      </div>
+      </MotionDiv>
       <Suspense fallback={<BillingSkeleton />}>
         <BillingPageContent />
       </Suspense>
