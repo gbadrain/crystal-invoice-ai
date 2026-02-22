@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Play, X } from 'lucide-react'
+import { MotionDiv } from '@/components/MotionDiv'
 
 export function DemoSection() {
   const [open, setOpen] = useState(false)
@@ -9,39 +10,47 @@ export function DemoSection() {
   return (
     <section className="py-20 px-4">
       <div className="max-w-4xl mx-auto text-center">
-        <p className="text-xs font-semibold uppercase tracking-widest text-crystal-400 mb-3">
-          See It In Action
-        </p>
-        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-          From words to invoice in seconds
-        </h2>
-        <p className="text-white/50 text-lg mb-10 max-w-2xl mx-auto">
-          Watch how Crystal Invoice AI turns a plain English job description into a professional,
-          deliverable invoice — no forms, no fuss.
-        </p>
+        <MotionDiv y={20} opacity={0}>
+          <p className="text-xs font-semibold uppercase tracking-widest text-crystal-400 mb-3">
+            See It In Action
+          </p>
+        </MotionDiv>
+        <MotionDiv y={20} opacity={0} delay={0.1}>
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            From words to invoice in seconds
+          </h2>
+        </MotionDiv>
+        <MotionDiv y={20} opacity={0} delay={0.2}>
+          <p className="text-white/50 text-lg mb-10 max-w-2xl mx-auto">
+            Watch how Crystal Invoice AI turns a plain English job description into a professional,
+            deliverable invoice — no forms, no fuss.
+          </p>
+        </MotionDiv>
 
         {/* Thumbnail / play button */}
-        <button
-          onClick={() => setOpen(true)}
-          aria-label="Play demo video"
-          className="group relative w-full max-w-3xl mx-auto rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-crystal-500/10 block focus:outline-none focus-visible:ring-2 focus-visible:ring-crystal-400"
-        >
-          {/* Placeholder thumbnail */}
-          <div className="aspect-video bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
-            {/* TODO: Replace this div with a real thumbnail image:
-                <Image src="/demo-thumbnail.png" alt="Demo preview" fill className="object-cover" />
-            */}
-            <div className="flex flex-col items-center gap-4">
-              <div className="w-20 h-20 rounded-full bg-crystal-600/30 border border-crystal-500/30 flex items-center justify-center group-hover:bg-crystal-600/50 transition-colors duration-300">
-                <Play className="w-8 h-8 text-crystal-300 ml-1" />
+        <MotionDiv y={20} opacity={0} delay={0.3}>
+          <button
+            onClick={() => setOpen(true)}
+            aria-label="Play demo video"
+            className="group relative w-full max-w-3xl mx-auto rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-crystal-500/10 block focus:outline-none focus-visible:ring-2 focus-visible:ring-crystal-400"
+          >
+            {/* Placeholder thumbnail */}
+            <div className="aspect-video bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
+              {/* TODO: Replace this div with a real thumbnail image:
+                  <Image src="/demo-thumbnail.png" alt="Demo preview" fill className="object-cover" />
+              */}
+              <div className="flex flex-col items-center gap-4">
+                <div className="w-20 h-20 rounded-full bg-crystal-600/30 border border-crystal-500/30 flex items-center justify-center group-hover:bg-crystal-600/50 transition-colors duration-300">
+                  <Play className="w-8 h-8 text-crystal-300 ml-1" />
+                </div>
+                <p className="text-white/40 text-sm">Click to watch demo</p>
               </div>
-              <p className="text-white/40 text-sm">Click to watch demo</p>
             </div>
-          </div>
 
-          {/* Hover overlay */}
-          <div className="absolute inset-0 bg-crystal-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-        </button>
+            {/* Hover overlay */}
+            <div className="absolute inset-0 bg-crystal-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+          </button>
+        </MotionDiv>
       </div>
 
       {/* Modal */}
