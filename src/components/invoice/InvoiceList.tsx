@@ -29,6 +29,14 @@ export function InvoiceList({ initialInvoices }: { initialInvoices: Invoice[] })
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [isAtLimit, setIsAtLimit] = useState(false)
+
+  useEffect(() => {
+    fetch('/api/invoices/usage')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data?.isAtLimit) setIsAtLimit(true) })
+      .catch(() => {})
+  }, [])
 
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
@@ -161,13 +169,25 @@ export function InvoiceList({ initialInvoices }: { initialInvoices: Invoice[] })
           </p>
         </div>
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-          <Link
-            href="/invoices/new"
-            className="inline-flex items-center gap-2 rounded-lg bg-crystal-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-crystal-600/20 hover:bg-crystal-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-600 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
-          >
-            <PlusCircle className="w-5 h-5" />
-            <span>New Invoice</span>
-          </Link>
+          {isAtLimit ? (
+            <Link
+              href="/billing"
+              className="inline-flex items-center gap-2 rounded-lg bg-amber-500/10 border border-amber-500/20 px-4 py-2 text-sm font-semibold text-amber-400 hover:bg-amber-500/20 transition-all duration-200"
+              title="Upgrade to Pro for unlimited invoices"
+            >
+              <PlusCircle className="w-5 h-5 opacity-50" />
+              <span>New Invoice</span>
+              <span className="text-xs bg-amber-500/20 px-1.5 py-0.5 rounded font-semibold">Pro</span>
+            </Link>
+          ) : (
+            <Link
+              href="/invoices/new"
+              className="inline-flex items-center gap-2 rounded-lg bg-crystal-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-crystal-600/20 hover:bg-crystal-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-600 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+            >
+              <PlusCircle className="w-5 h-5" />
+              <span>New Invoice</span>
+            </Link>
+          )}
         </div>
       </div>
 
@@ -222,37 +242,35 @@ export function InvoiceList({ initialInvoices }: { initialInvoices: Invoice[] })
             </thead>
             <tbody className="divide-y divide-slate-800 bg-slate-900/70">
               {paginatedInvoices.map((invoice, index) => (
-                <MotionDiv key={invoice._id || `invoice-${index}`} y={20} opacity={0} delay={index * 0.05}>
-                  <tr className="hover:bg-slate-800/40 transition-colors duration-150">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
-                      <Link href={`/invoices/${invoice._id || 'invalid'}/view`} className="hover:text-crystal-400 hover:underline">
-                        {invoice.metadata?.invoiceNumber || 'N/A'}
+                <tr key={invoice._id || `invoice-${index}`} className="hover:bg-slate-800/40 transition-colors duration-150">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
+                    <Link href={`/invoices/${invoice._id || 'invalid'}/view`} className="hover:text-crystal-400 hover:underline">
+                      {invoice.metadata?.invoiceNumber || 'N/A'}
+                    </Link>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-300">{invoice.client?.name || 'N/A'}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">{invoice.metadata?.issueDate || 'N/A'}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{invoice.summary?.total != null ? `${invoice.summary.total.toFixed(2)}` : '$0.00'}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <StatusBadge status={invoice.metadata?.status || 'draft'} />
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div className="flex items-center justify-end gap-4">
+                      <Link href={`/invoices/${invoice._id || 'invalid'}/edit`} className="text-slate-400 hover:text-crystal-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 rounded-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
+                        <Edit className="w-5 h-5" />
+                        <span className="sr-only">Edit</span>
                       </Link>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-300">{invoice.client?.name || 'N/A'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">{invoice.metadata?.issueDate || 'N/A'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{invoice.summary?.total != null ? `${invoice.summary.total.toFixed(2)}` : '$0.00'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <StatusBadge status={invoice.metadata?.status || 'draft'} />
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex items-center justify-end gap-4">
-                        <Link href={`/invoices/${invoice._id || 'invalid'}/edit`} className="text-slate-400 hover:text-crystal-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 rounded-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
-                          <Edit className="w-5 h-5" />
-                          <span className="sr-only">Edit</span>
-                        </Link>
-                        <button
-                          onClick={() => handleDelete(invoice._id || '')}
-                          disabled={deletingId === invoice._id}
-                          className="text-slate-400 hover:text-red-400 disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 rounded-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
-                        >
-                          {deletingId === invoice._id ? <Loader2 className="w-5 h-5 animate-spin" /> : <Trash2 className="w-5 h-5" />}
-                          <span className="sr-only">Delete</span>
-                        </button>
-                      </div>
-                    </td>
-                  </tr >
-                </MotionDiv>
+                      <button
+                        onClick={() => handleDelete(invoice._id || '')}
+                        disabled={deletingId === invoice._id}
+                        className="text-slate-400 hover:text-red-400 disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 rounded-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                      >
+                        {deletingId === invoice._id ? <Loader2 className="w-5 h-5 animate-spin" /> : <Trash2 className="w-5 h-5" />}
+                        <span className="sr-only">Delete</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
               ))}
             </tbody>
           </table>
