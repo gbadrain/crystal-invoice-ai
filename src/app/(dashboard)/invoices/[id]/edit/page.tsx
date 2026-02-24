@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { requireUser } from '@/lib/requireUser'
+import { formatInvoice } from '@/app/api/invoices/_helpers'
 import { InvoiceForm } from '@/components/invoice/InvoiceForm'
 import { InvoiceFormSkeleton } from '@/components/invoice/InvoiceFormSkeleton'
 
@@ -29,7 +30,7 @@ async function EditInvoiceContent({ id }: { id: string }) {
     notFound()
   }
 
-  const plainInvoice = JSON.parse(JSON.stringify(invoice))
+  const plainInvoice = JSON.parse(JSON.stringify(formatInvoice(invoice)))
 
   return <InvoiceForm initialInvoice={plainInvoice} />
 }
