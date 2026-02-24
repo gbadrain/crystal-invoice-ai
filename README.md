@@ -300,6 +300,102 @@ All core features are implemented, tested, and live in production at [crystalinv
 
 ---
 
+## Owner Operations Guide
+
+This section covers the day-to-day tasks an owner needs to manage the live application — no engineering background required.
+
+---
+
+### Viewing Registered Users
+
+All user accounts are stored in the PostgreSQL database on Neon, regardless of whether they have paid.
+
+**Option 1 — Neon Console (easiest)**
+1. Go to [console.neon.tech](https://console.neon.tech)
+2. Open your project → **Tables** → select the `users` table
+3. All accounts are listed with email, name, plan status, and signup date
+
+**Option 2 — SQL Query**
+In the Neon console, open the **SQL Editor** and run:
+```sql
+SELECT email, name, "isPro", "createdAt"
+FROM users
+ORDER BY "createdAt" DESC;
+```
+
+This shows every account — free and Pro — sorted by most recently signed up.
+
+> **Important:** Stripe only shows customers who have made a payment. The Neon database is the source of truth for all registered accounts.
+
+---
+
+### Viewing Payments and Subscriptions (Stripe)
+
+> Always make sure you are in **Live mode** before checking real payments. The toggle is in the top-left of the Stripe dashboard.
+
+**To check Live mode:** Log in to [dashboard.stripe.com](https://dashboard.stripe.com). In the top-left, the mode label should read **Live** (not Test). Click it to toggle if needed.
+
+| What you want to see | Where to go in Stripe |
+|---|---|
+| All payments and charges | **Payments → All transactions** |
+| Active subscriber list | **Billing → Subscriptions** |
+| A specific customer | **Customers** → search by email |
+| Refunds issued | **Payments → All transactions** → filter by Refunded |
+| Payouts to your bank | **Balance → Payouts** |
+| Your monthly revenue | **Home** → Revenue overview |
+
+---
+
+### Issuing a Refund
+
+1. Go to **Payments → All transactions** (Live mode)
+2. Click the payment you want to refund
+3. Click **Refund payment** in the top-right
+4. Choose full or partial refund → confirm
+
+Refunds typically appear on the customer's card within **5–10 business days**.
+
+---
+
+### Subscription Lifecycle (How It Works)
+
+When a customer upgrades to Pro:
+1. They click "Upgrade to Pro" in the app → redirected to Stripe Checkout
+2. They enter their card → payment captured ($9)
+3. Stripe fires a webhook → app automatically sets their account to Pro
+4. Stripe auto-charges their card every month — no manual action needed
+
+When a customer cancels:
+1. They click "Cancel Plan" in the app → confirm in the dialog
+2. Their cancellation is **scheduled for end of the billing period** — they keep Pro access until then
+3. When the period ends, Stripe fires a webhook → app automatically downgrades the account
+4. The customer can reactivate any time before the period ends
+
+> **Note:** Cancellation is never immediate. Customers always retain access for the full month they paid for. This is enforced at the Stripe level — not just in the UI.
+
+---
+
+### Revenue Breakdown
+
+- **Gross per subscriber:** $9.00 / month
+- **Stripe fees:** 2.9% + $0.30 = ~$0.56 per transaction
+- **Net per subscriber:** ~$8.44 / month
+- Stripe pays out to your linked bank account on a rolling schedule (typically 2-day rolling payouts once enabled)
+
+---
+
+### Dashboards to Bookmark
+
+| Dashboard | URL | What it shows |
+|---|---|---|
+| Your live site | [crystalinvoiceai.com](https://crystalinvoiceai.com) | The app your customers use |
+| Stripe Live | [dashboard.stripe.com](https://dashboard.stripe.com) | Payments, subscribers, payouts |
+| Neon (database) | [console.neon.tech](https://console.neon.tech) | All users, invoices, raw data |
+| Vercel (frontend) | [vercel.com/dashboard](https://vercel.com/dashboard) | Deployment logs, error monitoring |
+| Railway (Express) | [railway.app/dashboard](https://railway.app/dashboard) | PDF/AI server health and logs |
+
+---
+
 ## Future Improvements
 
 The current build covers the full core loop — from plain English to delivered invoice. The roadmap below reflects where the product goes next.
