@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { requireUser } from '@/lib/requireUser'
+import { formatInvoice } from '@/app/api/invoices/_helpers'
 import { ViewInvoiceClient } from './ViewInvoiceClient'
 import { ViewInvoiceSkeleton } from './ViewInvoiceSkeleton'
 
@@ -29,11 +30,7 @@ async function ViewInvoiceContent({ id }: { id: string }) {
     notFound()
   }
 
-  // The prisma `invoice` object is not directly serializable
-  // Map Prisma's 'id' to the client-side 'Invoice' type's '_id'
-  const clientInvoice = { ...invoice, _id: invoice.id };
-  // A simple JSON stringify/parse will strip undefined values and convert dates (e.g., Date objects to ISO strings)
-  const plainInvoice = JSON.parse(JSON.stringify(clientInvoice));
+  const plainInvoice = JSON.parse(JSON.stringify(formatInvoice(invoice)));
 
   return <ViewInvoiceClient initialInvoice={plainInvoice} />
 }

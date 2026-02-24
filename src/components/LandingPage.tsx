@@ -151,6 +151,7 @@ export function LandingPage() {
             </span>
           </div>
           <div className="flex items-center gap-6">
+            <a href="#how-it-works" className="text-sm text-white/40 hover:text-white transition-colors hidden md:block">How it Works</a>
             <a href="#features" className="text-sm text-white/40 hover:text-white transition-colors hidden md:block">Features</a>
             <a href="#pricing" className="text-sm text-white/40 hover:text-white transition-colors hidden md:block">Pricing</a>
             <a href="#about" className="text-sm text-white/40 hover:text-white transition-colors hidden md:block">About</a>

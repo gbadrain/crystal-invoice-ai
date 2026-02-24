@@ -31,7 +31,10 @@ export async function POST(
     return NextResponse.json({ error: 'Client has no email address. Add one before sending.' }, { status: 422 })
   }
 
-  const appUrl = process.env.NEXTAUTH_URL ?? 'http://localhost:3000'
+  const appUrl = process.env.NEXTAUTH_URL
+  if (!appUrl) {
+    return NextResponse.json({ error: 'Server misconfiguration: NEXTAUTH_URL is not set.' }, { status: 500 })
+  }
   const from = process.env.RESEND_FROM ?? 'Crystal Invoice <noreply@crystalinvoice.com>'
 
   // Use a versioned public HTTPS URL for the logo.

@@ -5,8 +5,25 @@ import { Play, X } from 'lucide-react'
 import { MotionDiv } from '@/components/MotionDiv'
 import { motion } from 'framer-motion'
 
+// ─── VIDEO CONFIG ──────────────────────────────────────────────────────────────
+// When your Pictory video is ready, set one of the two options below:
+//
+// Option A — Direct MP4 file (download from Pictory and upload to /public/demo.mp4)
+//   const VIDEO_MP4 = '/demo.mp4'
+//   const VIDEO_EMBED = ''
+//
+// Option B — Pictory hosted embed URL (share → copy embed URL from Pictory)
+//   const VIDEO_MP4 = ''
+//   const VIDEO_EMBED = 'https://pictory.ai/embed/YOUR_VIDEO_ID'
+//
+// Leave both empty to show the "coming soon" placeholder.
+const VIDEO_MP4 = ''
+const VIDEO_EMBED = ''
+// ──────────────────────────────────────────────────────────────────────────────
+
 export function DemoSection() {
   const [open, setOpen] = useState(false)
+  const hasVideo = VIDEO_MP4 || VIDEO_EMBED
 
   return (
     <section className="py-20 px-4">
@@ -38,20 +55,16 @@ export function DemoSection() {
             whileTap={{ y: 0, boxShadow: '0 8px 16px rgba(99, 102, 241, 0.2)' }}
             transition={{ duration: 0.3 }}
           >
-            {/* Placeholder thumbnail */}
             <div className="aspect-video bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
-              {/* TODO: Replace this div with a real thumbnail image:
-                  <Image src="/demo-thumbnail.png" alt="Demo preview" fill className="object-cover" />
-              */}
               <div className="flex flex-col items-center gap-4">
                 <div className="w-20 h-20 rounded-full bg-crystal-600/30 border border-crystal-500/30 flex items-center justify-center group-hover:bg-crystal-600/50 transition-colors duration-300">
                   <Play className="w-8 h-8 text-crystal-300 ml-1" />
                 </div>
-                <p className="text-white/40 text-sm">Click to watch demo</p>
+                <p className="text-white/40 text-sm">
+                  {hasVideo ? 'Click to watch demo' : 'Demo video coming soon'}
+                </p>
               </div>
             </div>
-
-            {/* Hover overlay */}
             <div className="absolute inset-0 bg-crystal-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
           </motion.button>
         </MotionDiv>
@@ -75,22 +88,31 @@ export function DemoSection() {
               <X className="w-4 h-4" />
             </button>
 
-            {/* TODO: Replace the placeholder below with a real YouTube embed:
-                <iframe
-                  src="https://www.youtube.com/embed/YOUR_VIDEO_ID?autoplay=1"
-                  title="Crystal Invoice AI Demo"
-                  allow="autoplay; encrypted-media"
-                  allowFullScreen
-                  className="w-full aspect-video"
-                />
-            */}
-            <div className="aspect-video bg-slate-900 flex flex-col items-center justify-center gap-4">
-              <Play className="w-12 h-12 text-crystal-400" />
-              <p className="text-white/50 text-sm">
-                {/* TODO: Insert real YouTube link here */}
-                Demo video coming soon
-              </p>
-            </div>
+            {VIDEO_MP4 ? (
+              // Option A: direct mp4 (Pictory download → /public/demo.mp4)
+              <video
+                src={VIDEO_MP4}
+                controls
+                autoPlay
+                className="w-full aspect-video bg-black"
+                title="Crystal Invoice AI Demo"
+              />
+            ) : VIDEO_EMBED ? (
+              // Option B: Pictory hosted embed URL
+              <iframe
+                src={VIDEO_EMBED}
+                title="Crystal Invoice AI Demo"
+                allow="autoplay; fullscreen"
+                allowFullScreen
+                className="w-full aspect-video"
+              />
+            ) : (
+              // Placeholder — no video yet
+              <div className="aspect-video bg-slate-900 flex flex-col items-center justify-center gap-4">
+                <Play className="w-12 h-12 text-crystal-400" />
+                <p className="text-white/50 text-sm">Demo video coming soon</p>
+              </div>
+            )}
           </div>
         </div>
       )}
