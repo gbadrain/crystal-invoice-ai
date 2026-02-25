@@ -23,6 +23,7 @@ async function getInvoices(userId: string): Promise<Invoice[]> {
     const formattedInvoices: Invoice[] = invoices.map((inv: PrismaInvoice) => ({
       _id: inv.id,
       logo: undefined, // Logo is handled client-side or not stored in DB
+      currency: inv.currency || 'USD',
       client: {
         name: inv.clientName,
         email: inv.clientEmail || '',
