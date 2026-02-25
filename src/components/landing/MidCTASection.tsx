@@ -7,7 +7,7 @@ export function MidCTASection() {
     <section className="py-16 px-4">
       <div className="max-w-3xl mx-auto">
         <MotionDiv y={20} opacity={0}>
-          <div className="relative rounded-3xl overflow-hidden border border-crystal-500/20 bg-gradient-to-br from-crystal-600/10 via-crystal-500/5 to-transparent p-10 md:p-14 text-center shadow-2xl shadow-crystal-500/10">
+          <div className="crystal-glow-card relative rounded-3xl overflow-hidden border border-crystal-500/20 bg-gradient-to-br from-crystal-600/10 via-crystal-500/5 to-transparent p-10 md:p-14 text-center shadow-2xl shadow-crystal-500/10">
             {/* Decorative glow */}
             <div
               className="absolute -top-20 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full bg-crystal-500/10 blur-3xl pointer-events-none"

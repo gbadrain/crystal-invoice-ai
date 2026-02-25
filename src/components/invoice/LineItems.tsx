@@ -2,17 +2,19 @@
 
 import { Trash2, Plus } from 'lucide-react'
 import type { LineItem } from '@/utils/invoice-types'
-import { calculateLineAmount, formatCurrency } from '@/utils/invoice-calculations'
+import { calculateLineAmount, formatCurrency, getCurrencySymbol } from '@/utils/invoice-calculations'
 import { cn } from '@/utils/cn'
 
 interface LineItemsProps {
   items: LineItem[]
   onChange: (items: LineItem[]) => void
+  currency?: string
 }
 
 const inputClass = "block w-full rounded-md border-0 bg-slate-800/60 py-2.5 text-white ring-1 ring-inset ring-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-crystal-500 sm:text-sm sm:leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500"
 
-export function LineItems({ items, onChange }: LineItemsProps) {
+export function LineItems({ items, onChange, currency = 'USD' }: LineItemsProps) {
+  const currencySymbol = getCurrencySymbol(currency)
   function updateItem(id: string, field: keyof LineItem, value: string | number) {
     const updated = items.map((item) => {
       if (item.id !== id) return item
@@ -90,7 +92,7 @@ export function LineItems({ items, onChange }: LineItemsProps) {
                   <label htmlFor={`rate-${index}`} className="sm:hidden text-xs font-medium text-slate-400 mb-1">Rate</label>
                   <div className="relative">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                      <span className="text-slate-400 sm:text-sm">$</span>
+                      <span className="text-slate-400 sm:text-sm">{currencySymbol}</span>
                     </div>
                     <input
                       id={`rate-${index}`}
@@ -108,7 +110,7 @@ export function LineItems({ items, onChange }: LineItemsProps) {
                 <div className="sm:col-span-1 text-right">
                   <label className="sm:hidden text-xs font-medium text-slate-400 mb-1">Amount</label>
                   <div className="text-sm font-medium text-slate-300 px-3 py-2.5">
-                    {formatCurrency(item.amount)}
+                    {formatCurrency(item.amount, currency)}
                   </div>
                 </div>
 

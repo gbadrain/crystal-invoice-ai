@@ -56,7 +56,7 @@ export function TestimonialsSection() {
             <MotionDiv key={t.name} y={20} opacity={0} delay={index * 0.1}>
               <motion.div
                 className="glass-panel p-6 rounded-2xl border border-white/[0.08] flex flex-col gap-4"
-                whileHover={{ y: -5, boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)' }}
+                whileHover={{ y: -7, scale: 1.02, boxShadow: '0 0 35px rgba(99,102,241,0.45), 0 0 70px rgba(99,102,241,0.18), 0 28px 55px rgba(0,0,0,0.55)' }}
                 transition={{ duration: 0.3 }}
               >
                 {/* Stars */}

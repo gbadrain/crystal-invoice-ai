@@ -14,6 +14,7 @@ import {
   ArrowDown,
 } from 'lucide-react'
 import type { Invoice } from '@/utils/invoice-types'
+import { formatCurrency } from '@/utils/invoice-calculations'
 import { cn } from '@/utils/cn'
 import { StatusBadge } from '@/components/StatusBadge'
 import { InvoiceListEmptyState } from '@/components/invoice/InvoiceListEmptyState'
@@ -250,7 +251,9 @@ export function InvoiceList({ initialInvoices }: { initialInvoices: Invoice[] })
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-300">{invoice.client?.name || 'N/A'}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">{invoice.metadata?.issueDate || 'N/A'}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{invoice.summary?.total != null ? `${invoice.summary.total.toFixed(2)}` : '$0.00'}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
+                    {invoice.summary?.total != null ? formatCurrency(invoice.summary.total, invoice.currency ?? 'USD') : '—'}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <StatusBadge status={invoice.metadata?.status || 'draft'} />
                   </td>

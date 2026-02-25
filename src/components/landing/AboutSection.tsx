@@ -7,14 +7,16 @@ export function AboutSection() {
     <section className="py-20 px-4" id="about">
       <div className="max-w-4xl mx-auto">
         <MotionDiv y={20} opacity={0}>
-          <div className="glass-panel rounded-3xl border border-white/[0.08] p-8 md:p-12 flex flex-col md:flex-row gap-10 items-center">
+          <div className="crystal-glow-card glass-panel rounded-3xl border border-white/[0.08] p-8 md:p-12 flex flex-col md:flex-row gap-10 items-center">
             {/* Avatar / logo */}
-            <motion.div
-              className="shrink-0 flex flex-col items-center gap-3"
-              whileHover={{ scale: 1.05, boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)' }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="w-24 h-24 rounded-2xl overflow-hidden border border-white/10 shadow-lg">
+            <div className="shrink-0 flex flex-col items-center gap-3">
+              <motion.div
+                animate={{ y: [0, -10, 0], rotate: [-2, 2, -2] }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                whileHover={{ scale: 1.08, filter: 'drop-shadow(0 0 20px rgba(99,102,241,0.9))' }}
+                className="w-24 h-24 rounded-2xl overflow-hidden border border-white/10 shadow-lg"
+                style={{ filter: 'drop-shadow(0 6px 16px rgba(99,102,241,0.3))' }}
+              >
                 <Image
                   src="/icon.png"
                   alt="Crystal Invoice AI"
@@ -22,12 +24,12 @@ export function AboutSection() {
                   height={96}
                   className="w-full h-full object-cover"
                 />
-              </div>
+              </motion.div>
               <p className="text-xs text-white/30 text-center">
                 Gurpreet Singh Badrain<br />
                 <span className="text-crystal-400/70">Founder</span>
               </p>
-            </motion.div>
+            </div>
 
             {/* Story */}
             <div>

@@ -3,15 +3,30 @@
 import type { InvoiceMetadata as InvoiceMetadataType } from '@/utils/invoice-types'
 import { cn } from '@/utils/cn'
 
+const CURRENCIES = [
+  { code: 'INR', label: '₹ INR — Indian Rupee' },
+  { code: 'USD', label: '$ USD — US Dollar' },
+  { code: 'EUR', label: '€ EUR — Euro' },
+  { code: 'GBP', label: '£ GBP — British Pound' },
+  { code: 'AED', label: 'AED — UAE Dirham' },
+  { code: 'SGD', label: 'S$ SGD — Singapore Dollar' },
+  { code: 'CAD', label: 'CA$ CAD — Canadian Dollar' },
+  { code: 'AUD', label: 'A$ AUD — Australian Dollar' },
+  { code: 'JPY', label: '¥ JPY — Japanese Yen' },
+  { code: 'CHF', label: 'Fr CHF — Swiss Franc' },
+]
+
 interface InvoiceMetadataProps {
   metadata: InvoiceMetadataType
   onChange: (metadata: InvoiceMetadataType) => void
+  currency: string
+  onCurrencyChange: (currency: string) => void
 }
 
 const inputClass = "block w-full rounded-md border-0 bg-slate-800/60 py-2.5 text-white ring-1 ring-inset ring-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-crystal-500 sm:text-sm sm:leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500"
 const labelClass = "block text-sm font-medium leading-6 text-slate-300"
 
-export function InvoiceMetadata({ metadata, onChange }: InvoiceMetadataProps) {
+export function InvoiceMetadata({ metadata, onChange, currency, onCurrencyChange }: InvoiceMetadataProps) {
   function update(field: keyof InvoiceMetadataType, value: string) {
     onChange({ ...metadata, [field]: value })
   }
@@ -71,6 +86,24 @@ export function InvoiceMetadata({ metadata, onChange }: InvoiceMetadataProps) {
                 onChange={(e) => update('dueDate', e.target.value)}
                 className={inputClass}
               />
+            </div>
+          </div>
+          <div className="sm:col-span-2">
+            <label htmlFor="invoice-currency" className={labelClass}>Currency</label>
+            <div className="mt-2">
+              <select
+                id="invoice-currency"
+                value={currency}
+                onChange={(e) => onCurrencyChange(e.target.value)}
+                className={cn(inputClass, "pr-8")}
+              >
+                {CURRENCIES.map((c) => (
+                  <option key={c.code} value={c.code}>{c.label}</option>
+                ))}
+                {!CURRENCIES.find((c) => c.code === currency) && (
+                  <option value={currency}>{currency}</option>
+                )}
+              </select>
             </div>
           </div>
         </div>

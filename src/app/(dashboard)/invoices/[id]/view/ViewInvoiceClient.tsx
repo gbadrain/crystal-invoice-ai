@@ -33,7 +33,12 @@ export function ViewInvoiceClient({ initialInvoice }: { initialInvoice: Invoice 
       .catch(() => {})
   }, [])
 
-  const { _id: id, client, metadata, lineItems, summary, notes } = invoice
+  const { _id: id, client, metadata, lineItems, summary, notes, currency = 'USD' } = invoice
+  const fmt = (n: number) => {
+    try {
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(n)
+    } catch { return `${currency} ${n.toFixed(2)}` }
+  }
 
   const handleSendToClient = async () => {
     setSendState('sending')
@@ -198,8 +203,8 @@ export function ViewInvoiceClient({ initialInvoice }: { initialInvoice: Invoice 
                 <tr key={item.id} className="border-b border-slate-800 hover:bg-slate-800/50 transition-colors">
                   <td className="py-4 pr-3 text-white font-medium">{item.description}</td>
                   <td className="text-right py-4 px-3 text-slate-300">{item.quantity}</td>
-                  <td className="text-right py-4 px-3 text-slate-300">${item.rate.toFixed(2)}</td>
-                  <td className="text-right py-4 pl-3 font-medium text-white">${item.amount.toFixed(2)}</td>
+                  <td className="text-right py-4 px-3 text-slate-300">{fmt(item.rate)}</td>
+                  <td className="text-right py-4 pl-3 font-medium text-white">{fmt(item.amount)}</td>
                 </tr>
               ))}
             </tbody>
@@ -211,23 +216,23 @@ export function ViewInvoiceClient({ initialInvoice }: { initialInvoice: Invoice 
             <ul className="space-y-2">
               <li className="flex justify-between">
                 <span className="text-slate-400">Subtotal:</span>
-                <span className="font-medium text-white">${summary.subtotal.toFixed(2)}</span>
+                <span className="font-medium text-white">{fmt(summary.subtotal)}</span>
               </li>
               <li className="flex justify-between">
                 <span className="text-slate-400">Tax ({summary.taxRate}%):</span>
-                <span className="font-medium text-white">${summary.taxAmount.toFixed(2)}</span>
+                <span className="font-medium text-white">{fmt(summary.taxAmount)}</span>
               </li>
               {summary.discountAmount > 0 && (
                 <li className="flex justify-between">
                   <span className="text-slate-400">Discount ({summary.discountRate}%):</span>
-                  <span className="font-medium text-white">-${summary.discountAmount.toFixed(2)}</span>
+                  <span className="font-medium text-white">-{fmt(summary.discountAmount)}</span>
                 </li>
               )}
             </ul>
             <div className="border-t border-slate-700 my-3"></div>
             <div className="flex justify-between">
               <span className="text-lg font-bold text-white">Total:</span>
-              <span className="text-lg font-bold text-white">${summary.total.toFixed(2)}</span>
+              <span className="text-lg font-bold text-white">{fmt(summary.total)}</span>
             </div>
           </div>
         </div>

@@ -93,13 +93,13 @@ export function AIGenerator({ onGenerate }: AIGeneratorProps) {
             disabled={isLoading}
             title={isListening ? 'Stop recording' : 'Record audio'}
             className={cn(
-              'absolute bottom-2.5 right-2.5 p-2 rounded-lg transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200',
+              'absolute bottom-2.5 right-2.5 p-3 rounded-lg transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500 hover:scale-125 active:scale-[0.98]',
               isListening
                 ? 'bg-red-500/20 text-red-400 ring-1 ring-red-500/30 animate-pulse'
-                : 'bg-slate-700/80 text-slate-300 hover:bg-slate-700'
+                : 'bg-crystal-600/20 text-crystal-400 ring-1 ring-crystal-500/30 hover:bg-crystal-600/40 hover:ring-crystal-400/50 hover:shadow-lg hover:shadow-crystal-500/30'
             )}
           >
-            {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+            {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
           </button>
         </div>
 

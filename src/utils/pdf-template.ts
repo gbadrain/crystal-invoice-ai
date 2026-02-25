@@ -9,11 +9,11 @@ function esc(str: string | undefined | null): string {
     .replace(/"/g, '&quot;')
 }
 
-function money(amount: number | undefined | null): string {
+function money(amount: number | undefined | null, currency = 'USD'): string {
   const val = typeof amount === 'number' && Number.isFinite(amount) ? amount : 0
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'USD',
+    currency,
   }).format(val)
 }
 
@@ -57,6 +57,7 @@ export function buildInvoiceHTML(invoice: Invoice): string {
   const summary = invoice.summary || { subtotal: 0, taxRate: 0, taxAmount: 0, discountRate: 0, discountAmount: 0, total: 0 }
   const notes = invoice.notes || ''
   const logo = invoice.logo || ''
+  const currency = invoice.currency ?? 'USD'
 
   const lineItemRows = items.length > 0
     ? items.map((item, i) => `
@@ -68,10 +69,10 @@ export function buildInvoiceHTML(invoice: Invoice): string {
             ${typeof item.quantity === 'number' ? item.quantity : 0}
           </td>
           <td style="padding: 10px 12px; border-bottom: 1px solid #eef0f3; font-size: 13px; color: #475569; text-align: right;">
-            ${money(item.rate)}
+            ${money(item.rate, currency)}
           </td>
           <td style="padding: 10px 12px; border-bottom: 1px solid #eef0f3; font-size: 13px; color: #1e293b; text-align: right; font-weight: 500;">
-            ${money(item.amount)}
+            ${money(item.amount, currency)}
           </td>
         </tr>
       `).join('')
@@ -184,18 +185,18 @@ export function buildInvoiceHTML(invoice: Invoice): string {
   <table style="width: 300px; margin-left: auto; margin-bottom: 32px;">
     <tr>
       <td style="padding: 6px 0; font-size: 13px; color: #64748b;">Subtotal</td>
-      <td style="padding: 6px 0; font-size: 13px; color: #1e293b; text-align: right; font-weight: 500;">${money(summary.subtotal)}</td>
+      <td style="padding: 6px 0; font-size: 13px; color: #1e293b; text-align: right; font-weight: 500;">${money(summary.subtotal, currency)}</td>
     </tr>
     ${summary.discountRate > 0 ? `
     <tr>
       <td style="padding: 6px 0; font-size: 13px; color: #64748b;">Discount (${summary.discountRate}%)</td>
-      <td style="padding: 6px 0; font-size: 13px; color: #ef4444; text-align: right; font-weight: 500;">-${money(summary.discountAmount)}</td>
+      <td style="padding: 6px 0; font-size: 13px; color: #ef4444; text-align: right; font-weight: 500;">-${money(summary.discountAmount, currency)}</td>
     </tr>
     ` : ''}
     ${summary.taxRate > 0 ? `
     <tr>
       <td style="padding: 6px 0; font-size: 13px; color: #64748b;">Tax (${summary.taxRate}%)</td>
-      <td style="padding: 6px 0; font-size: 13px; color: #1e293b; text-align: right; font-weight: 500;">${money(summary.taxAmount)}</td>
+      <td style="padding: 6px 0; font-size: 13px; color: #1e293b; text-align: right; font-weight: 500;">${money(summary.taxAmount, currency)}</td>
     </tr>
     ` : ''}
     <tr>
@@ -203,7 +204,7 @@ export function buildInvoiceHTML(invoice: Invoice): string {
     </tr>
     <tr>
       <td style="padding: 8px 0; font-size: 16px; font-weight: 700; color: #0f172a;">Total</td>
-      <td style="padding: 8px 0; font-size: 16px; font-weight: 700; color: #4c6ef5; text-align: right;">${money(summary.total)}</td>
+      <td style="padding: 8px 0; font-size: 16px; font-weight: 700; color: #4c6ef5; text-align: right;">${money(summary.total, currency)}</td>
     </tr>
   </table>
 

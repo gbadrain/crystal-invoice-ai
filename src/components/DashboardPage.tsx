@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { FileText, PlusCircle, DollarSign, Clock, AlertCircle, CheckCircle, TrendingUp } from 'lucide-react'
 import type { Invoice } from '@/utils/invoice-types'
+import { formatCurrency } from '@/utils/invoice-calculations'
 import { DashboardPageSkeleton } from '@/components/DashboardPageSkeleton'
 import { MotionDiv } from '@/components/MotionDiv'
 
@@ -67,6 +68,7 @@ export function DashboardPage() {
   const pendingInvoices = invoices.filter((i) => i.metadata?.status === 'pending')
   const overdueInvoices = invoices.filter((i) => i.metadata?.status === 'overdue')
 
+  const userCurrency = invoices[0]?.currency ?? 'USD'
   const totalRevenue = paidInvoices.reduce((s, i) => s + (i.summary?.total ?? 0), 0)
   const unpaidAmount = [...pendingInvoices, ...overdueInvoices].reduce(
     (s, i) => s + (i.summary?.total ?? 0),
@@ -133,7 +135,7 @@ export function DashboardPage() {
         <StatCard
           icon={<DollarSign className="w-4 h-4 text-green-400" />}
           title="Revenue"
-          value={isLoading ? '—' : `${totalRevenue.toFixed(2)}`}
+          value={isLoading ? '—' : formatCurrency(totalRevenue, userCurrency)}
           sub="collected"
           accent="green"
           delay={0.5}
@@ -146,7 +148,7 @@ export function DashboardPage() {
           <div className="mb-6 flex items-center gap-3 px-5 py-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 shadow-md">
             <TrendingUp className="w-4 h-4 shrink-0" />
             <span className="text-sm font-medium">
-              <span className="font-bold">${unpaidAmount.toFixed(2)}</span> outstanding across{' '}
+              <span className="font-bold">{formatCurrency(unpaidAmount, userCurrency)}</span> outstanding across{' '}
               {pendingInvoices.length + overdueInvoices.length} unpaid invoice
               {pendingInvoices.length + overdueInvoices.length !== 1 ? 's' : ''}.
             </span>
@@ -213,7 +215,7 @@ export function DashboardPage() {
                     </div>
                     <div className="text-right">
                       <p className="text-sm font-semibold text-white">
-                        ${(inv.summary?.total ?? 0).toFixed(2)}
+                        {formatCurrency(inv.summary?.total ?? 0, inv.currency ?? 'USD')}
                       </p>
                       <p className="text-xs text-white/40 capitalize">{inv.metadata?.status ?? 'draft'}</p>
                     </div>

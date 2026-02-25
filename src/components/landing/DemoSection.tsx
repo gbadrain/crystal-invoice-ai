@@ -51,8 +51,8 @@ export function DemoSection() {
             onClick={() => setOpen(true)}
             aria-label="Play demo video"
             className="group relative w-full max-w-3xl mx-auto rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-crystal-500/10 block focus:outline-none focus-visible:ring-2 focus-visible:ring-crystal-400"
-            whileHover={{ y: -5, boxShadow: '0 20px 40px rgba(99, 102, 241, 0.3)' }}
-            whileTap={{ y: 0, boxShadow: '0 8px 16px rgba(99, 102, 241, 0.2)' }}
+            whileHover={{ y: -7, scale: 1.01, boxShadow: '0 0 35px rgba(99,102,241,0.45), 0 0 70px rgba(99,102,241,0.18), 0 28px 55px rgba(0,0,0,0.55)' }}
+            whileTap={{ y: 0, scale: 1, boxShadow: '0 8px 16px rgba(99,102,241,0.2)' }}
             transition={{ duration: 0.3 }}
           >
             <div className="aspect-video bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">

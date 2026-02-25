@@ -136,39 +136,107 @@ export function LandingPage() {
           role="navigation"
           aria-label="Main navigation"
         >
-          <div className="flex items-center gap-2.5">
-            <Image
-              src="/icon.png"
-              alt="Crystal Invoice AI logo"
-              width={60}
-              height={60}
+          <motion.div
+            className="flex items-center gap-2.5 cursor-pointer select-none"
+            whileHover="hovered"
+            initial="rest"
+            animate="rest"
+          >
+            <motion.div
+              variants={{
+                rest: { filter: 'drop-shadow(0 4px 12px rgba(99,102,241,0.25))' },
+                hovered: { filter: 'drop-shadow(0 0 20px rgba(99,102,241,1))' },
+              }}
+              transition={{ duration: 0.35, ease: 'easeOut' }}
               className="rounded-xl shrink-0"
-              priority
-            />
-            <span className="text-2xl font-bold tracking-tight">
-              <span className="text-crystal-400">Crystal</span>
-              <span className="text-white/80"> Invoice</span>
-            </span>
-          </div>
-          <div className="flex items-center gap-6">
-            <a href="#how-it-works" className="text-sm text-white/40 hover:text-white transition-colors hidden md:block">How it Works</a>
-            <a href="#features" className="text-sm text-white/40 hover:text-white transition-colors hidden md:block">Features</a>
-            <a href="#pricing" className="text-sm text-white/40 hover:text-white transition-colors hidden md:block">Pricing</a>
-            <a href="#about" className="text-sm text-white/40 hover:text-white transition-colors hidden md:block">About</a>
-            <Link
-              href="/auth/signup"
-              className="flex items-center gap-1.5 text-sm text-white/60 hover:text-white transition-colors"
             >
-              Create account
-              <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
-            </Link>
+              <motion.div
+                animate={{ y: [0, -9, 0], rotate: [-2, 2, -2] }}
+                transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                <Image
+                  src="/icon.png"
+                  alt="Crystal Invoice AI logo"
+                  width={60}
+                  height={60}
+                  className="rounded-xl"
+                  priority
+                />
+              </motion.div>
+            </motion.div>
+            <span className="text-2xl font-bold tracking-tight">
+              <span className="inline-flex">
+                {['C','r','y','s','t','a','l'].map((letter, i) => (
+                  <motion.span
+                    key={i}
+                    variants={{
+                      rest: { y: 0 },
+                      hovered: { y: [0, -5, 0] },
+                    }}
+                    transition={{ duration: 0.4, delay: i * 0.06, ease: 'easeInOut' }}
+                    className="inline-block text-crystal-400"
+                    style={{ display: 'inline-block' }}
+                  >
+                    {letter}
+                  </motion.span>
+                ))}
+              </span>
+              <motion.span
+                variants={{
+                  rest: { opacity: 0.8 },
+                  hovered: { opacity: 1 },
+                }}
+                transition={{ duration: 0.3 }}
+                className="text-white/80"
+              >
+                {' Invoice'}
+              </motion.span>
+            </span>
+          </motion.div>
+          <div className="flex items-center gap-6">
+            {[
+              { href: '#how-it-works', label: 'How it Works' },
+              { href: '#features', label: 'Features' },
+              { href: '#pricing', label: 'Pricing' },
+              { href: '#about', label: 'About' },
+            ].map(({ href, label }) => (
+              <motion.a
+                key={href}
+                href={href}
+                className="text-sm hidden md:block"
+                initial={{ color: 'rgba(255,255,255,0.4)' }}
+                whileHover={{
+                  color: '#a5b4fc',
+                  textShadow: '0 0 10px rgba(165,180,252,0.8), 0 0 20px rgba(99,102,241,0.5)',
+                  scale: 1.05,
+                }}
+                transition={{ duration: 0.2 }}
+              >
+                {label}
+              </motion.a>
+            ))}
+            <motion.div
+              whileHover={{
+                scale: 1.05,
+                filter: 'drop-shadow(0 0 8px rgba(165,180,252,0.7))',
+              }}
+              transition={{ duration: 0.2 }}
+            >
+              <Link
+                href="/auth/signup"
+                className="flex items-center gap-1.5 text-sm text-white/60 hover:text-white transition-colors"
+              >
+                Create account
+                <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+              </Link>
+            </motion.div>
           </div>
         </nav>
       </MotionDiv>
 
       {/* Hero + Sign-in card */}
       <section className="relative z-10 flex flex-col lg:flex-row items-center justify-center gap-16 lg:gap-24 px-8 lg:px-16 py-20 max-w-7xl mx-auto w-full">
-        <div className="flex-1 space-y-8 text-center lg:text-left max-w-xl glass-card p-8">
+        <div className="crystal-glow-card flex-1 space-y-8 text-center lg:text-left max-w-xl glass-card p-8">
           <MotionDiv y={20} opacity={0} delay={1}>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-crystal-600/15 border border-crystal-500/25 text-crystal-400 text-xs font-medium tracking-wide">
               <Sparkles className="w-3 h-3" aria-hidden="true" />
@@ -235,7 +303,7 @@ export function LandingPage() {
         </div>
 
         <MotionDiv
-          className="w-full max-w-sm shrink-0 transition-all duration-300 hover:-translate-y-2 hover:drop-shadow-[0_24px_48px_rgba(99,102,241,0.2)]"
+          className="crystal-glow-card w-full max-w-sm shrink-0"
           scale={0.9}
           opacity={0}
           delay={1.6}
@@ -272,7 +340,7 @@ export function LandingPage() {
               y={20}
               opacity={0}
               delay={index * 0.1}
-              className={`glass-panel p-6 border border-white/[0.06] hover:border-crystal-500/20 hover:-translate-y-1 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl`}
+              className={`crystal-glow-card glass-panel p-6 border border-white/[0.06]`}
             >
               <div className="w-10 h-10 rounded-xl bg-crystal-600/15 border border-crystal-500/20 flex items-center justify-center mb-4">
                 <Icon className="w-5 h-5 text-crystal-400" aria-hidden="true" />
@@ -307,7 +375,7 @@ export function LandingPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
           {/* Free plan */}
           <MotionDiv y={20} opacity={0}>
-            <div className="glass-card p-8 flex flex-col transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] hover:shadow-2xl">
+            <div className="crystal-glow-card glass-card p-8 flex flex-col">
               <p className="text-xs text-white/40 uppercase tracking-wider mb-1">Free</p>
               <div className="flex items-baseline gap-1 mb-6">
                 <span className="text-4xl font-bold text-white">$0</span>
@@ -332,7 +400,7 @@ export function LandingPage() {
 
           {/* Pro plan */}
           <MotionDiv y={20} opacity={0} delay={0.1}>
-            <div className="glass-card p-8 flex flex-col relative overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] hover:shadow-2xl">
+            <div className="crystal-glow-card glass-card p-8 flex flex-col relative overflow-hidden">
               <div className="absolute top-4 right-4 px-2.5 py-1 rounded-full bg-crystal-600/20 border border-crystal-500/30 text-crystal-300 text-xs font-semibold">
                 Most Popular
               </div>

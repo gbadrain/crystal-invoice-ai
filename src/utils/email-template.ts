@@ -32,11 +32,12 @@ type InvoiceEmailData = {
   total: number
   notes: string | null
   logo: string | null
+  currency?: string
   user: { email: string }
 }
 
-function money(n: number): string {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n)
+function money(n: number, currency = 'USD'): string {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(n)
 }
 
 function statusBadge(status: string): string {
@@ -58,13 +59,14 @@ function esc(v: string | null | undefined): string {
 
 export function buildInvoiceEmailHTML(invoice: InvoiceEmailData, appUrl: string, logoSrc?: string | null): string {
   const items = (invoice.lineItems as LineItem[]) ?? []
+  const currency = invoice.currency ?? 'USD'
 
   const lineItemRows = items.map((item, i) => `
     <tr style="background:${i % 2 === 0 ? '#ffffff' : '#f8fafc'};">
       <td style="padding:12px 16px;font-size:14px;color:#1e293b;border-bottom:1px solid #f1f5f9;">${esc(item.description) || 'Item'}</td>
       <td style="padding:12px 16px;font-size:14px;color:#64748b;text-align:center;border-bottom:1px solid #f1f5f9;">${item.quantity}</td>
-      <td style="padding:12px 16px;font-size:14px;color:#64748b;text-align:right;border-bottom:1px solid #f1f5f9;">${money(item.rate)}</td>
-      <td style="padding:12px 16px;font-size:14px;color:#0f172a;font-weight:600;text-align:right;border-bottom:1px solid #f1f5f9;">${money(item.amount)}</td>
+      <td style="padding:12px 16px;font-size:14px;color:#64748b;text-align:right;border-bottom:1px solid #f1f5f9;">${money(item.rate, currency)}</td>
+      <td style="padding:12px 16px;font-size:14px;color:#0f172a;font-weight:600;text-align:right;border-bottom:1px solid #f1f5f9;">${money(item.amount, currency)}</td>
     </tr>`).join('')
 
   // logoSrc: pass 'cid:invoice-logo' when using Resend inline attachment,
@@ -190,20 +192,20 @@ export function buildInvoiceEmailHTML(invoice: InvoiceEmailData, appUrl: string,
                     <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:8px;">
                       <tr>
                         <td style="font-size:13px;color:#64748b;">Subtotal</td>
-                        <td style="font-size:13px;color:#1e293b;font-weight:500;text-align:right;">${money(invoice.subtotal)}</td>
+                        <td style="font-size:13px;color:#1e293b;font-weight:500;text-align:right;">${money(invoice.subtotal, currency)}</td>
                       </tr>
                     </table>
                     <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:8px;">
                       <tr>
                         <td style="font-size:13px;color:#64748b;">Discount (${invoice.discountRate}%)</td>
-                        <td style="font-size:13px;color:#ef4444;font-weight:500;text-align:right;">-${money(invoice.discountAmount)}</td>
+                        <td style="font-size:13px;color:#ef4444;font-weight:500;text-align:right;">-${money(invoice.discountAmount, currency)}</td>
                       </tr>
                     </table>` : ''}
                     ${invoice.taxAmount > 0 ? `
                     <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:8px;">
                       <tr>
                         <td style="font-size:13px;color:#64748b;">Tax (${invoice.taxRate}%)</td>
-                        <td style="font-size:13px;color:#1e293b;font-weight:500;text-align:right;">${money(invoice.taxAmount)}</td>
+                        <td style="font-size:13px;color:#1e293b;font-weight:500;text-align:right;">${money(invoice.taxAmount, currency)}</td>
                       </tr>
                     </table>` : ''}
                   </td>
@@ -215,7 +217,7 @@ export function buildInvoiceEmailHTML(invoice: InvoiceEmailData, appUrl: string,
                     <table width="100%" cellpadding="0" cellspacing="0" border="0">
                       <tr>
                         <td style="font-size:15px;font-weight:700;color:#0f172a;">Total Due</td>
-                        <td style="font-size:22px;font-weight:800;color:#6d5fd4;text-align:right;letter-spacing:-0.5px;">${money(invoice.total)}</td>
+                        <td style="font-size:22px;font-weight:800;color:#6d5fd4;text-align:right;letter-spacing:-0.5px;">${money(invoice.total, currency)}</td>
                       </tr>
                     </table>
                   </td>

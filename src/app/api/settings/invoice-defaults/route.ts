@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getAuthUserId } from '../../invoices/_helpers'
 
-const SUPPORTED_CURRENCIES = ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'CHF', 'INR']
+const SUPPORTED_CURRENCIES = ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'CHF', 'INR', 'AED', 'SGD']
 
 // GET /api/settings/invoice-defaults
 export async function GET() {
@@ -58,7 +58,18 @@ export async function PATCH(req: NextRequest) {
   if (Object.keys(data).length === 0)
     return NextResponse.json({ error: 'No fields to update.' }, { status: 400 })
 
-  await prisma.user.update({ where: { id: userId }, data })
+  // When currency changes, update all existing invoices to the new currency
+  if (invoiceCurrency && typeof invoiceCurrency === 'string') {
+    await prisma.$transaction([
+      prisma.user.update({ where: { id: userId }, data }),
+      prisma.invoice.updateMany({
+        where: { userId },
+        data: { currency: invoiceCurrency },
+      }),
+    ])
+  } else {
+    await prisma.user.update({ where: { id: userId }, data })
+  }
 
   await prisma.auditLog.create({
     data: { userId, action: 'invoice_defaults.update' },

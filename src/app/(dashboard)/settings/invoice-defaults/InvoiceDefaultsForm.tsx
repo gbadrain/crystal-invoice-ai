@@ -5,14 +5,16 @@ import { Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
 import { MotionDiv } from '@/components/MotionDiv'
 
 const CURRENCIES = [
+  { code: 'INR', label: 'INR — Indian Rupee (₹)' },
   { code: 'USD', label: 'USD — US Dollar ($)' },
   { code: 'EUR', label: 'EUR — Euro (€)' },
   { code: 'GBP', label: 'GBP — British Pound (£)' },
+  { code: 'AED', label: 'AED — UAE Dirham' },
+  { code: 'SGD', label: 'SGD — Singapore Dollar (S$)' },
   { code: 'CAD', label: 'CAD — Canadian Dollar (C$)' },
   { code: 'AUD', label: 'AUD — Australian Dollar (A$)' },
   { code: 'JPY', label: 'JPY — Japanese Yen (¥)' },
   { code: 'CHF', label: 'CHF — Swiss Franc (Fr)' },
-  { code: 'INR', label: 'INR — Indian Rupee (₹)' },
 ]
 
 const DUE_PRESETS = [7, 14, 30, 45, 60, 90]
@@ -80,7 +82,7 @@ export function InvoiceDefaultsForm() {
         <MotionDiv y={20} opacity={0}>
           <div className="flex items-center gap-3 p-4 rounded-xl bg-green-500/10 border border-green-500/20">
             <CheckCircle2 className="w-5 h-5 text-green-400 shrink-0" />
-            <p className="text-sm text-green-300">Invoice defaults saved. New invoices will use these settings.</p>
+            <p className="text-sm text-green-300">Saved. All existing invoices have been updated to the new currency.</p>
           </div>
         </MotionDiv>
       )}

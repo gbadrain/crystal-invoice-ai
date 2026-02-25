@@ -39,7 +39,7 @@ export function PricingTableSection() {
         </MotionDiv>
 
         <MotionDiv y={20} opacity={0} delay={0.1}>
-          <div className="glass-panel rounded-2xl border border-white/[0.08] overflow-hidden">
+          <div className="crystal-glow-card glass-panel rounded-2xl border border-white/[0.08] overflow-hidden">
             <table className="w-full" aria-label="Plan comparison table">
               <thead>
                 <tr className="border-b border-white/[0.08]">

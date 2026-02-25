@@ -10,6 +10,7 @@ interface InvoiceSummaryProps {
   discountRate: number
   onTaxRateChange: (rate: number) => void
   onDiscountRateChange: (rate: number) => void
+  currency?: string
 }
 
 const inputClass = "block w-24 rounded-md border-0 bg-slate-800/60 py-2 text-white ring-1 ring-inset ring-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-crystal-500 sm:text-sm sm:leading-6 text-right focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-500"
@@ -20,6 +21,7 @@ export function InvoiceSummary({
   discountRate,
   onTaxRateChange,
   onDiscountRateChange,
+  currency = 'USD',
 }: InvoiceSummaryProps) {
   return (
     <div className="rounded-xl shadow-lg shadow-slate-950/40 bg-slate-900/70 ring-1 ring-slate-800 h-full hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
@@ -29,7 +31,7 @@ export function InvoiceSummary({
           <div className="flex items-center justify-between">
             <span className="text-sm text-slate-400">Subtotal</span>
             <span className="text-sm font-medium text-slate-200">
-              {formatCurrency(summary.subtotal)}
+              {formatCurrency(summary.subtotal, currency)}
             </span>
           </div>
 
@@ -51,7 +53,7 @@ export function InvoiceSummary({
             </div>
             {summary.discountAmount > 0 && (
               <span className="text-sm font-medium text-red-400">
-                -{formatCurrency(summary.discountAmount)}
+                -{formatCurrency(summary.discountAmount, currency)}
               </span>
             )}
           </div>
@@ -74,7 +76,7 @@ export function InvoiceSummary({
             </div>
             {summary.taxAmount > 0 && (
               <span className="text-sm font-medium text-slate-200">
-                {formatCurrency(summary.taxAmount)}
+                {formatCurrency(summary.taxAmount, currency)}
               </span>
             )}
           </div>
@@ -84,7 +86,7 @@ export function InvoiceSummary({
         <div className="flex items-baseline justify-between">
           <span className="text-base font-semibold text-white">Total</span>
           <span className="text-2xl font-bold text-crystal-400">
-            {formatCurrency(summary.total)}
+            {formatCurrency(summary.total, currency)}
           </span>
         </div>
       </div>

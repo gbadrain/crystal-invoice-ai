@@ -44,7 +44,7 @@ export function HowItWorksSection() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {steps.map((step, index) => (
             <MotionDiv key={index} y={20} opacity={0} delay={index * 0.2 + 0.3}>
-              <div className="glass-panel p-8 rounded-2xl border border-white/[0.08] flex flex-col items-center text-center h-full">
+              <div className="crystal-glow-card glass-panel p-8 rounded-2xl border border-white/[0.08] flex flex-col items-center text-center h-full">
                 <div className="w-14 h-14 rounded-full bg-crystal-600/20 border border-crystal-500/20 flex items-center justify-center mb-6">
                   <step.icon className="w-7 h-7 text-crystal-300" />
                 </div>

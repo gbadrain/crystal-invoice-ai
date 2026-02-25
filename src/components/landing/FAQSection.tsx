@@ -56,7 +56,7 @@ export function FAQSection() {
               <MotionDiv key={i} y={20} opacity={0} delay={i * 0.1}>
                 <motion.div
                   className="glass-panel rounded-2xl border border-white/[0.08] overflow-hidden"
-                  whileHover={{ scale: 1.005, boxShadow: '0 8px 16px -4px rgba(0, 0, 0, 0.1)' }}
+                  whileHover={{ scale: 1.02, y: -4, boxShadow: '0 0 35px rgba(99,102,241,0.45), 0 0 70px rgba(99,102,241,0.18), 0 28px 55px rgba(0,0,0,0.55)' }}
                   transition={{ duration: 0.2 }}
                 >
                   <button

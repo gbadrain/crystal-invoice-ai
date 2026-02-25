@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Loader2, AlertCircle, Trash2, RotateCw, ShieldAlert } from 'lucide-react'
 import type { Invoice } from '@/utils/invoice-types'
 import { cn } from '@/utils/cn'
+import { formatCurrency } from '@/utils/invoice-calculations'
 import { StatusBadge } from '@/components/StatusBadge'
 
 // Confirmation Modal Component
@@ -260,7 +261,7 @@ export default function TrashPage() {
                 <tr key={invoice._id}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white/70">{invoice.metadata?.invoiceNumber}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-white/70">{invoice.client?.name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-white/70">${invoice.summary?.total.toFixed(2)}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-white/70">{formatCurrency(invoice.summary?.total ?? 0, invoice.currency ?? 'USD')}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-white/70">
                     {invoice.metadata.originalStatus && <StatusBadge status={invoice.metadata.originalStatus} size="sm" />}
                   </td>

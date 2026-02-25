@@ -14,6 +14,7 @@ import {
   X,
 } from 'lucide-react'
 import { Dialog, Transition } from '@headlessui/react'
+import { motion } from 'framer-motion'
 import { cn } from '@/utils/cn'
 import { UsageBanner } from '@/components/UsageBanner'
 
@@ -64,21 +65,36 @@ export function Sidebar({ open, setOpen }: SidebarProps) {
   const navigationContent = (
     <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-slate-900 px-6 pb-4">
       <div className="h-16 shrink-0 items-center flex justify-between gap-3">
-        <Link href="/" className="flex items-center gap-3">
-          <Image
-            src="/icon.png"
-            alt="Crystal Invoice AI"
-            width={32}
-            height={32}
-            className="rounded-lg"
-            priority
-          />
-          <div>
+        <Link href="/" className="flex items-center">
+          <motion.div className="flex items-center gap-3 select-none" whileHover="hovered" initial="rest" animate="rest">
+            <motion.div
+              variants={{
+                rest: { scale: 1, filter: 'drop-shadow(0 0 0px rgba(99,102,241,0))' },
+                hovered: { scale: 1.15, filter: 'drop-shadow(0 0 12px rgba(99,102,241,0.9))' },
+              }}
+              transition={{ duration: 0.35, ease: 'easeOut' }}
+            >
+              <Image src="/icon.png" alt="Crystal Invoice AI" width={32} height={32} className="rounded-lg" priority />
+            </motion.div>
             <h1 className="text-lg font-bold tracking-tight">
-              <span className="text-crystal-400">Crystal</span>
-              <span className="text-white/80">Invoice</span>
+              <span className="inline-flex">
+                {['C','r','y','s','t','a','l'].map((letter, i) => (
+                  <motion.span
+                    key={i}
+                    variants={{ rest: { y: 0 }, hovered: { y: [0, -4, 0] } }}
+                    transition={{ duration: 0.35, delay: i * 0.05, ease: 'easeInOut' }}
+                    style={{ display: 'inline-block' }}
+                    className="text-crystal-400"
+                  >{letter}</motion.span>
+                ))}
+              </span>
+              <motion.span
+                variants={{ rest: { opacity: 0.8 }, hovered: { opacity: 1 } }}
+                transition={{ duration: 0.3 }}
+                className="text-white/80"
+              >{' Invoice'}</motion.span>
             </h1>
-          </div>
+          </motion.div>
         </Link>
       </div>
       <nav className="flex flex-1 flex-col">
@@ -185,21 +201,36 @@ export function Sidebar({ open, setOpen }: SidebarProps) {
       {/* Static sidebar for desktop */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-64 lg:flex-col">
         <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-slate-900/10 px-6 pb-4 ring-1 ring-white/10 backdrop-blur-lg">
-          <Link href="/" className="flex h-16 shrink-0 items-center gap-3">
-            <Image
-              src="/icon.png"
-              alt="Crystal Invoice AI"
-              width={32}
-              height={32}
-              className="rounded-lg"
-              priority
-            />
-            <div>
+          <Link href="/" className="flex h-16 shrink-0 items-center">
+            <motion.div className="flex items-center gap-3 select-none" whileHover="hovered" initial="rest" animate="rest">
+              <motion.div
+                variants={{
+                  rest: { scale: 1, filter: 'drop-shadow(0 0 0px rgba(99,102,241,0))' },
+                  hovered: { scale: 1.15, filter: 'drop-shadow(0 0 12px rgba(99,102,241,0.9))' },
+                }}
+                transition={{ duration: 0.35, ease: 'easeOut' }}
+              >
+                <Image src="/icon.png" alt="Crystal Invoice AI" width={32} height={32} className="rounded-lg" priority />
+              </motion.div>
               <h1 className="text-lg font-bold tracking-tight">
-                <span className="text-crystal-400">Crystal</span>
-                <span className="text-white/80">Invoice</span>
+                <span className="inline-flex">
+                  {['C','r','y','s','t','a','l'].map((letter, i) => (
+                    <motion.span
+                      key={i}
+                      variants={{ rest: { y: 0 }, hovered: { y: [0, -4, 0] } }}
+                      transition={{ duration: 0.35, delay: i * 0.05, ease: 'easeInOut' }}
+                      style={{ display: 'inline-block' }}
+                      className="text-crystal-400"
+                    >{letter}</motion.span>
+                  ))}
+                </span>
+                <motion.span
+                  variants={{ rest: { opacity: 0.8 }, hovered: { opacity: 1 } }}
+                  transition={{ duration: 0.3 }}
+                  className="text-white/80"
+                >{' Invoice'}</motion.span>
               </h1>
-            </div>
+            </motion.div>
           </Link>
           <nav className="flex flex-1 flex-col">
             <ul role="list" className="flex flex-1 flex-col gap-y-7">

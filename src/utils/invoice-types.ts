@@ -34,6 +34,7 @@ export interface Invoice {
   _id?: string // Added for mock database compatibility
   deletedAt?: string | null
   logo?: string
+  currency?: string
   client: ClientInfo
   metadata: InvoiceMetadata
   lineItems: LineItem[]

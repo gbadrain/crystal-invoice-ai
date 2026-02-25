@@ -31,9 +31,25 @@ export function generateInvoiceNumber(): string {
   return `INV-${hex()}-${short()}`
 }
 
-export function formatCurrency(amount: number): string {
+export function formatCurrency(amount: number, currency = 'USD'): string {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'USD',
+    currency,
   }).format(amount)
+}
+
+export function getCurrencySymbol(currency: string): string {
+  try {
+    return (
+      new Intl.NumberFormat('en', {
+        style: 'currency',
+        currency,
+        currencyDisplay: 'narrowSymbol',
+      })
+        .formatToParts(0)
+        .find((p) => p.type === 'currency')?.value ?? currency
+    )
+  } catch {
+    return currency
+  }
 }

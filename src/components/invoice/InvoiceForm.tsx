@@ -51,6 +51,9 @@ export function InvoiceForm({ initialInvoice, initialDefaults }: InvoiceFormProp
     status: 'draft',
   }
 
+  const [currency, setCurrency] = useState(
+    initialInvoice?.currency ?? initialDefaults?.currency ?? 'USD'
+  )
   const [client, setClient] = useState<ClientInfoType>(initialInvoice?.client || initialClientState)
   const [metadata, setMetadata] = useState<InvoiceMetadataType>(initialInvoice?.metadata || initialMetadataState)
   const [lineItems, setLineItems] = useState<LineItem[]>(initialInvoice?.lineItems || initialLineItemsState)
@@ -91,12 +94,13 @@ export function InvoiceForm({ initialInvoice, initialDefaults }: InvoiceFormProp
   const currentInvoice: Invoice = useMemo(() => ({
     _id: initialInvoice?._id,
     logo,
+    currency,
     client,
     metadata,
     lineItems,
     summary,
     notes,
-  }), [initialInvoice?._id, logo, client, metadata, lineItems, summary, notes])
+  }), [initialInvoice?._id, logo, currency, client, metadata, lineItems, summary, notes])
 
   async function handleSave() {
     setIsSaving(true)
@@ -186,11 +190,11 @@ export function InvoiceForm({ initialInvoice, initialDefaults }: InvoiceFormProp
           </div>
           <div className="lg:col-span-2 space-y-8">
             <LogoUploader logo={logo} onChange={setLogo} />
-            <InvoiceMetadata metadata={metadata} onChange={setMetadata} />
+            <InvoiceMetadata metadata={metadata} onChange={setMetadata} currency={currency} onCurrencyChange={setCurrency} />
           </div>
         </div>
 
-        <LineItems items={lineItems} onChange={setLineItems} />
+        <LineItems items={lineItems} onChange={setLineItems} currency={currency} />
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           <div className="lg:col-span-3">
@@ -214,6 +218,7 @@ export function InvoiceForm({ initialInvoice, initialDefaults }: InvoiceFormProp
               discountRate={discountRate}
               onTaxRateChange={setTaxRate}
               onDiscountRateChange={setDiscountRate}
+              currency={currency}
             />
           </div>
         </div>
