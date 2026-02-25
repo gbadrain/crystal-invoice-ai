@@ -160,7 +160,7 @@ npm install
 
 # 3. Set up environment variables
 cp .env.example .env
-# Fill in DATABASE_URL, NEXTAUTH_SECRET, ANTHROPIC_API_KEY, etc.
+# Fill in the values — see the table below
 
 # 4. Push schema to database
 npx prisma db push
@@ -169,7 +169,27 @@ npx prisma db push
 npm run dev:all
 ```
 
-All required variables are documented in `.env.example`. The app degrades gracefully without optional services — Stripe and Resend can be omitted for local development and the billing/email features are simply hidden.
+### Environment Variables
+
+All variables are documented in `.env.example` with setup instructions. Quick reference:
+
+| Variable | Required | Description |
+|---|---|---|
+| `DATABASE_URL` | ✅ | PostgreSQL connection string (pooled) |
+| `DATABASE_URL_NEON_DIRECT` | Production only | Non-pooled URL — needed to run Prisma migrations on Neon (avoids P1002 advisory lock timeout) |
+| `NEXTAUTH_SECRET` | ✅ | Random 32-byte secret — `openssl rand -base64 32` |
+| `NEXTAUTH_URL` | ✅ | Your deployment URL (e.g. `https://crystalinvoiceai.com`) |
+| `ANTHROPIC_API_KEY` | ✅ | Claude Haiku API key — [console.anthropic.com](https://console.anthropic.com) |
+| `RESEND_API_KEY` | Optional | Resend email key — billing/email UI hidden if absent |
+| `RESEND_FROM` | Optional | Verified sender address (e.g. `Crystal Invoice AI <noreply@yourdomain.com>`) |
+| `STRIPE_SECRET_KEY` | Optional | Stripe secret key — billing UI hidden if absent |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Optional | Stripe publishable key |
+| `STRIPE_WEBHOOK_SECRET` | Optional | Stripe webhook signing secret |
+| `STRIPE_PRO_PRICE_ID` | Optional | Recurring price ID from Stripe (starts with `price_`) |
+| `NEXT_PUBLIC_EXPRESS_URL` | Optional | Railway Express URL — PDF/AI fall back to localhost if absent |
+| `NEXT_PUBLIC_APP_URL` | Optional | App base URL (defaults to `http://localhost:3000`) |
+
+> **Stripe and Resend are fully optional for local development.** The app degrades gracefully — billing and email features are hidden rather than throwing errors.
 
 ---
 
@@ -209,6 +229,9 @@ All features below are implemented, tested, and running in production at [crysta
 - [x] Stripe Customer Portal — card updates, invoice history, full billing management
 - [x] Freemium enforcement — free tier capped at 3 invoices; Pro users unlimited
 - [x] Dashboard with revenue stats, outstanding totals, overdue count, and recent invoice list
+- [x] SEO-optimized landing page — meta title/description, structured JSON-LD schema, 19 targeted keywords
+- [x] Currency showcase strip on landing page — all 10 supported currencies displayed prominently
+- [x] Multi-currency FAQ, feature card, and plan highlights on landing page
 
 ---
 
