@@ -6,15 +6,21 @@ import { Providers } from '@/components/Providers'
 const inter = Inter({ subsets: ['latin'] })
 
 const APP_URL = 'https://crystalinvoiceai.com'
-const TITLE = 'Crystal Invoice AI — Smart, Fast, Beautiful Invoicing'
+const TITLE = 'Crystal Invoice AI — AI Invoicing with Multi-Currency, PDF & Email'
 const DESCRIPTION =
-  'Generate invoices instantly with AI. Export PDFs, send emails, track payment status, and manage clients effortlessly. Free to start.'
+  'Create professional invoices in seconds with AI. Supports 10+ currencies (USD, EUR, GBP, INR, JPY & more), PDF export, email delivery with attachment, and payment tracking. Free to start.'
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
   title: TITLE,
   description: DESCRIPTION,
-  keywords: ['AI invoicing', 'invoice generator', 'freelance invoice', 'small business invoice', 'payment tracking', 'professional invoice', 'AI-powered invoicing', 'invoice app', 'billing software'],
+  keywords: [
+    'AI invoicing', 'invoice generator', 'freelance invoice', 'small business invoice',
+    'payment tracking', 'professional invoice', 'AI-powered invoicing', 'invoice app',
+    'billing software', 'multi-currency invoice', 'INR invoice', 'GBP invoice', 'EUR invoice',
+    'invoice in Indian Rupees', 'invoice in British Pounds', 'global invoice software',
+    'online invoice maker', 'free invoice generator', 'PDF invoice', 'email invoice',
+  ],
   icons: {
     icon: '/icon.png',
     apple: '/icon.png',
@@ -67,6 +73,7 @@ export default function RootLayout({
       priceCurrency: 'USD',
     },
     description: DESCRIPTION,
+    featureList: 'AI invoice generation, Multi-currency support, PDF export, Email delivery, Payment status tracking, Voice input, Custom logo, Tax and discount',
     softwareHelp: {
       '@type': 'CreativeWork',
       url: `${APP_URL}/faq`,

@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Zap, CheckCircle, ArrowRight, FileText, Sparkles, Shield, Send, Clock, Star, Mic } from 'lucide-react'
+import { Zap, CheckCircle, ArrowRight, FileText, Sparkles, Shield, Send, Clock, Star, Mic, Globe } from 'lucide-react'
 import { FREE_INVOICE_LIMIT } from '@/lib/plans'
 import { DemoSection } from '@/components/landing/DemoSection'
 import { TestimonialsSection } from '@/components/landing/TestimonialsSection'
@@ -69,6 +69,11 @@ const FEATURES = [
     desc: 'Your data lives in your own database. Password-hashed, session-protected, HTTPS everywhere.',
   },
   {
+    icon: Globe,
+    title: 'Multi-Currency Support',
+    desc: 'Invoice clients worldwide. Switch between USD, EUR, GBP, INR, JPY, CAD, AUD, AED, SGD, and CHF. One setting updates every invoice, PDF, email, and dashboard stat instantly.',
+  },
+  {
     icon: CheckCircle,
     title: 'Trash & Restore',
     desc: "Soft-delete invoices you don't need — restore individually or in bulk. Nothing is lost permanently.",
@@ -81,6 +86,7 @@ const PLAN_FREE = [
   'AI generation',
   'Email sending',
   'Status tracking',
+  'Multi-currency (10+ currencies)',
 ]
 
 const PLAN_PRO = [
@@ -89,6 +95,7 @@ const PLAN_PRO = [
   'Full AI generation',
   'Email sending',
   'Status tracking',
+  'Multi-currency (10+ currencies)',
   'Priority support',
   'Custom branding',
 ]
@@ -256,7 +263,7 @@ export function LandingPage() {
           <MotionDiv y={20} opacity={0} delay={1.2}>
             <p className="text-lg text-white/50 leading-relaxed max-w-md mx-auto lg:mx-0 slide-up animation-delay-200">
               Describe a job in plain English, get a professional invoice in seconds.
-              PDF export, email delivery with attachment, payment tracking — all in one place.
+              PDF export, email delivery, multi-currency support, and payment tracking — all in one place.
             </p>
           </MotionDiv>
 
@@ -311,6 +318,36 @@ export function LandingPage() {
           <SignInCard />
         </MotionDiv>
       </section>
+
+      {/* Currency showcase strip */}
+      <div className="relative z-10 py-5 border-y border-white/[0.05] bg-white/[0.015]">
+        <div className="max-w-7xl mx-auto px-8 lg:px-16">
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            <span className="text-xs text-white/25 uppercase tracking-widest mr-3 shrink-0 hidden sm:inline">
+              10+ currencies
+            </span>
+            {[
+              { symbol: '$', code: 'USD' },
+              { symbol: '£', code: 'GBP' },
+              { symbol: '€', code: 'EUR' },
+              { symbol: '₹', code: 'INR' },
+              { symbol: '¥', code: 'JPY' },
+              { symbol: 'CA$', code: 'CAD' },
+              { symbol: 'A$', code: 'AUD' },
+              { symbol: 'S$', code: 'SGD' },
+              { symbol: 'AED', code: 'AED' },
+              { symbol: 'Fr', code: 'CHF' },
+            ].map((c) => (
+              <span
+                key={c.code}
+                className="px-2.5 py-1 rounded-full bg-crystal-600/10 border border-crystal-500/15 text-xs text-crystal-300/80 font-medium"
+              >
+                {c.symbol} {c.code}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
 
       {/* How It Works Section */}
       <div className="relative z-10">

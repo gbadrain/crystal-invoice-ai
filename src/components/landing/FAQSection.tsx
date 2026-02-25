@@ -11,6 +11,10 @@ const faqs = [
     a: 'Yes. All invoices are stored in a private PostgreSQL database tied to your account. No other user can access your data. Passwords are hashed with bcrypt and never stored in plain text. All connections use HTTPS/TLS.',
   },
   {
+    q: 'Which currencies are supported?',
+    a: 'Crystal Invoice AI supports 10 currencies: USD ($), EUR (€), GBP (£), INR (₹), JPY (¥), CAD (CA$), AUD (A$), AED, SGD (S$), and CHF (Fr). Set your default once in Settings → Invoice Defaults and it updates instantly everywhere — invoice list, PDF downloads, client emails, dashboard stats, and the trash page. No manual editing needed.',
+  },
+  {
     q: 'How does AI generate invoices?',
     a: 'You describe your job in plain English — or speak it aloud using the microphone. Crystal Invoice AI sends that description to an Anthropic Claude model, which extracts the client details, line items, quantities, rates, tax, and discounts. The result pre-fills every field in the invoice form instantly. You can edit anything before saving.',
   },
