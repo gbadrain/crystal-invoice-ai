@@ -45,6 +45,7 @@ export function ClientInfo({ client, onChange }: ClientInfoProps) {
                 className={inputClass}
               />
             </div>
+            <p className="mt-1.5 text-xs text-slate-500">Required to send invoice by email</p>
           </div>
           <div>
             <label htmlFor="client-phone" className={labelClass}>Phone</label>
