@@ -232,6 +232,9 @@ All features below are implemented, tested, and running in production at [crysta
 - [x] SEO-optimized landing page — meta title/description, structured JSON-LD schema, 19 targeted keywords
 - [x] Currency showcase strip on landing page — all 10 supported currencies displayed prominently
 - [x] Multi-currency FAQ, feature card, and plan highlights on landing page
+- [x] Open Graph metadata — branded OG image (`/og-image.png`) for correct WhatsApp, Twitter, and social link previews
+- [x] Support email — `support@crystalinvoiceai.com` live, forwarded to owner inbox via ImprovMX
+- [x] Contact link in landing page footer → `support@crystalinvoiceai.com`
 
 ---
 
@@ -289,6 +292,9 @@ Using `echo "value" | vercel env add` appends a trailing newline to API keys. St
 
 ### Stripe Test → Live Mode Migration
 Customer IDs created in Stripe's test mode are siloed from live mode. When the application was switched to live keys, the database still held test-mode customer IDs. Fix: cleared `stripeCustomerId` and `stripeSubscriptionId` from affected user records so the checkout flow could create fresh live-mode customer IDs on the next real payment.
+
+### Next.js File-Convention OG Image Override
+Next.js App Router gives `opengraph-image.tsx` (file-convention metadata) higher priority than explicit `images` arrays in `layout.tsx`. An `opengraph-image.tsx` file silently overrode the explicitly declared OG image — the live page served a broken dynamic route URL instead of the intended static image. Fix: deleted `opengraph-image.tsx` entirely and served the branded OG image as a static file in `public/og-image.png`. Social preview confirmed via `curl` before testing on WhatsApp.
 
 ### CORS Across Two Origins
 The Express backend (Railway) needs to accept requests from the Next.js frontend (Vercel). With dynamic Vercel preview URLs, a static allowlist was insufficient. Solution: explicitly whitelist the production Vercel origin via `NEXT_PUBLIC_APP_URL` and allow all origins in development.
@@ -393,6 +399,17 @@ Stripe pays out to your linked bank account on a rolling schedule (typically 2-d
 
 ---
 
+### Handling Support Emails
+
+All emails sent to `support@crystalinvoiceai.com` are forwarded automatically to your personal inbox via [ImprovMX](https://app.improvmx.com).
+
+- **No separate inbox** — replies are managed directly from your Gmail
+- **To reply:** reply normally from Gmail; the customer sees a reply from your personal address
+- **To update forwarding** (e.g. change destination email): log in to [app.improvmx.com](https://app.improvmx.com) → Aliases → edit the `support` alias
+- **MX records** are set on Namecheap Advanced DNS — do not remove or change them or forwarding will break
+
+---
+
 ### Dashboards to Bookmark
 
 | Dashboard | URL | Purpose |
@@ -402,6 +419,7 @@ Stripe pays out to your linked bank account on a rolling schedule (typically 2-d
 | Neon | [console.neon.tech](https://console.neon.tech) | All users and invoice data |
 | Vercel | [vercel.com/dashboard](https://vercel.com/dashboard) | Frontend deployment and error logs |
 | Railway | [railway.app/dashboard](https://railway.app/dashboard) | PDF/AI server health and logs |
+| ImprovMX | [app.improvmx.com](https://app.improvmx.com) | Support email forwarding (`support@crystalinvoiceai.com`) |
 
 ---
 
