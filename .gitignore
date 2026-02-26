@@ -12,3 +12,16 @@ next-env.d.ts
 .DS_Store
 LOGO_ICON/
 VIDEO/
+
+# Large media & design files — never track in Git
+FINAL CRYSTAL INVOICE AI/
+videos/
+assets/
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.wav
+*.aiff
+*.psd
+*.xd
