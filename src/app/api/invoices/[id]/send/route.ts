@@ -35,7 +35,7 @@ export async function POST(
   if (!appUrl) {
     return NextResponse.json({ error: 'Server misconfiguration: NEXTAUTH_URL is not set.' }, { status: 500 })
   }
-  const from = process.env.RESEND_FROM ?? 'Crystal Invoice <noreply@crystalinvoice.com>'
+  const from = process.env.RESEND_FROM ?? 'Crystal Invoice AI <onboarding@resend.dev>'
 
   // Use a versioned public HTTPS URL for the logo.
   // Gmail proxies and caches images by URL — adding ?v=<timestamp> busts the cache
