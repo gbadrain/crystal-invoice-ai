@@ -12,6 +12,8 @@
 ![Vercel](https://img.shields.io/badge/Vercel-black?style=flat-square&logo=vercel)
 ![Railway](https://img.shields.io/badge/Railway-0B0D0E?style=flat-square&logo=railway)
 
+![Crystal Invoice AI Landing Page](docs/screenshots/01-landing.png)
+
 </div>
 
 ---
@@ -27,6 +29,7 @@
 - [What It Does](#what-it-does)
 - [Key Features](#key-features)
 - [How It Works](#how-it-works)
+- [Screenshots](#screenshots)
 - [Tech Stack](#tech-stack)
 - [Architecture](#architecture)
 - [Getting Started](#getting-started)
@@ -95,6 +98,57 @@ Step 3 — Deliver it
   Download a pixel-perfect PDF  →  one click
   Email it to the client        →  one button (PDF attached automatically)
 ```
+
+---
+
+## Screenshots
+
+### AI Invoice Generator
+> Describe the job in plain English — AI fills every field instantly.
+
+![AI Invoice Generator](docs/screenshots/02-ai-generator.png)
+
+---
+
+### Invoice Form — Filled and Ready
+> Every field editable. Line items, tax, discount, currency, client info.
+
+![Invoice Form](docs/screenshots/03-invoice-form.png)
+
+---
+
+### PDF Output
+> Pixel-perfect A4 PDF — consistent on every device and email client.
+
+![PDF Output](docs/screenshots/04-pdf-output.png)
+
+---
+
+### Dashboard
+> Revenue stats, outstanding totals, overdue count, and recent invoice list at a glance.
+
+![Dashboard](docs/screenshots/05-dashboard.png)
+
+---
+
+### Email Delivery
+> One button sends a styled HTML invoice with the PDF attached directly to the client.
+
+![Email Delivery](docs/screenshots/06-email.png)
+
+---
+
+### Multi-Currency Support
+> 10 currencies supported — switch once and it propagates everywhere.
+
+![Multi-Currency Support](docs/screenshots/07-currency.png)
+
+---
+
+### Invoice Defaults — Payment Terms & Footer
+> Set default payment terms (7 / 14 / 30 / 45 / 60 / 90 days or custom) and a reusable footer note once. All new invoices inherit them automatically.
+
+![Invoice Defaults](docs/screenshots/08-invoice-defaults.png)
 
 ---
 
