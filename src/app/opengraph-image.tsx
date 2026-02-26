@@ -10,56 +10,30 @@ export default function OGImage() {
       <div
         style={{
           display: 'flex',
-          width: '100%',
-          height: '100%',
+          width: '1200px',
+          height: '630px',
           backgroundColor: '#ffffff',
-          position: 'relative',
           fontFamily: 'system-ui, sans-serif',
         }}
       >
-        {/* Left blue accent bar */}
-        <div
-          style={{
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            width: 8,
-            height: '100%',
-            background: 'linear-gradient(180deg, #1D4ED8 0%, #60A5FA 100%)',
-          }}
-        />
-
-        {/* Right panel tinted background */}
-        <div
-          style={{
-            position: 'absolute',
-            right: 0,
-            top: 0,
-            width: '46%',
-            height: '100%',
-            background: 'linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%)',
-          }}
-        />
-
-        {/* Left content */}
+        {/* Left panel */}
         <div
           style={{
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
-            padding: '60px 50px 60px 80px',
-            width: '54%',
-            position: 'relative',
+            width: '620px',
+            padding: '60px 56px 60px 72px',
+            backgroundColor: '#ffffff',
           }}
         >
           {/* Logo row */}
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: 44 }}>
-            {/* Diamond shape via border trick */}
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: 40 }}>
             <div
               style={{
                 width: 44,
                 height: 44,
-                background: 'linear-gradient(135deg, #1D4ED8, #3B82F6)',
+                backgroundColor: '#1D4ED8',
                 borderRadius: 10,
                 display: 'flex',
                 alignItems: 'center',
@@ -67,21 +41,9 @@ export default function OGImage() {
                 marginRight: 14,
               }}
             >
-              {/* Inline diamond SVG */}
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                <path
-                  d="M12 2L22 9L12 22L2 9Z"
-                  fill="white"
-                  opacity="0.9"
-                />
-              </svg>
+              <span style={{ fontSize: 22, fontWeight: 900, color: '#ffffff' }}>C</span>
             </div>
-            <span style={{ fontSize: 21, fontWeight: 700, color: '#0F172A' }}>
+            <span style={{ fontSize: 20, fontWeight: 700, color: '#0F172A' }}>
               Crystal Invoice AI
             </span>
           </div>
@@ -89,27 +51,37 @@ export default function OGImage() {
           {/* Headline */}
           <div
             style={{
-              fontSize: 54,
+              display: 'flex',
+              flexDirection: 'column',
+              fontSize: 52,
               fontWeight: 800,
               color: '#0F172A',
               lineHeight: 1.12,
-              marginBottom: 24,
+              marginBottom: 28,
             }}
           >
-            Create invoices
-            <br />
-            <span style={{ color: '#1D4ED8' }}>instantly</span> with AI
+            <span>Create invoices</span>
+            <span>
+              <span style={{ color: '#1D4ED8' }}>instantly</span>
+              {' '}with AI
+            </span>
           </div>
 
-          {/* Sub-tagline */}
+          {/* Sub-tagline — using bullet character directly */}
           <div
             style={{
-              fontSize: 19,
+              display: 'flex',
+              fontSize: 18,
               color: '#64748B',
-              marginBottom: 40,
+              marginBottom: 44,
+              gap: 12,
             }}
           >
-            Multi-currency  &middot;  PDF export  &middot;  Email delivery
+            <span>Multi-currency</span>
+            <span style={{ color: '#CBD5E1' }}>|</span>
+            <span>PDF export</span>
+            <span style={{ color: '#CBD5E1' }}>|</span>
+            <span>Email delivery</span>
           </div>
 
           {/* Badge */}
@@ -118,30 +90,31 @@ export default function OGImage() {
               display: 'flex',
               alignItems: 'center',
               backgroundColor: '#EFF6FF',
-              border: '1.5px solid #BFDBFE',
               borderRadius: 100,
               padding: '10px 22px',
-              fontSize: 15,
+              fontSize: 14,
               color: '#1D4ED8',
               fontWeight: 700,
+              border: '1px solid #BFDBFE',
             }}
           >
-            Free to start &mdash; no credit card required
+            Free to start — no credit card required
           </div>
         </div>
 
-        {/* Right: Invoice mockup */}
+        {/* Right panel */}
         <div
           style={{
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            width: '46%',
-            padding: '40px 48px',
-            position: 'relative',
+            width: '580px',
+            backgroundColor: '#EFF6FF',
+            padding: '48px 44px',
           }}
         >
+          {/* Invoice card */}
           <div
             style={{
               display: 'flex',
@@ -150,34 +123,25 @@ export default function OGImage() {
               borderRadius: 16,
               padding: '28px',
               width: '100%',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.13)',
               border: '1px solid #E2E8F0',
             }}
           >
-            {/* Invoice header */}
+            {/* Header */}
             <div
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                alignItems: 'flex-start',
+                alignItems: 'center',
                 marginBottom: 20,
               }}
             >
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <div
-                  style={{
-                    fontSize: 10,
-                    color: '#94A3B8',
-                    fontWeight: 700,
-                    letterSpacing: 2,
-                    marginBottom: 4,
-                  }}
-                >
+                <span style={{ fontSize: 10, color: '#94A3B8', fontWeight: 700, letterSpacing: 2 }}>
                   INVOICE
-                </div>
-                <div style={{ fontSize: 17, fontWeight: 800, color: '#0F172A' }}>
+                </span>
+                <span style={{ fontSize: 17, fontWeight: 800, color: '#0F172A', marginTop: 4 }}>
                   #INV-2025-042
-                </div>
+                </span>
               </div>
               <div
                 style={{
@@ -196,6 +160,7 @@ export default function OGImage() {
             {/* Client */}
             <div
               style={{
+                display: 'flex',
                 fontSize: 12,
                 color: '#94A3B8',
                 marginBottom: 16,
@@ -203,8 +168,8 @@ export default function OGImage() {
                 borderBottom: '1px solid #F1F5F9',
               }}
             >
-              Billed to:{' '}
-              <span style={{ color: '#334155', fontWeight: 600 }}>Acme Corp</span>
+              <span>Billed to: </span>
+              <span style={{ color: '#334155', fontWeight: 600, marginLeft: 4 }}>Acme Corp</span>
             </div>
 
             {/* Line items */}
@@ -248,17 +213,16 @@ export default function OGImage() {
             {/* AI button */}
             <div
               style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
                 marginTop: 18,
                 backgroundColor: '#1D4ED8',
                 color: '#ffffff',
                 borderRadius: 10,
                 padding: '13px',
-                textAlign: 'center',
                 fontSize: 13,
                 fontWeight: 700,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
               }}
             >
               Generate with AI
