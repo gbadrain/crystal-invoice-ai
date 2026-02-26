@@ -503,6 +503,7 @@ export function LandingPage() {
                 <a href="#pricing" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Pricing</a>
                 <Link href="/terms" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Terms</Link>
                 <Link href="/privacy" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Privacy</Link>
+                <a href="mailto:support@crystalinvoiceai.com" className="hover:text-white/50 hover:translate-x-1 transition-all duration-200">Contact</a>
               </nav>
             </MotionDiv>
           </div>
