@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     url: APP_URL,
     siteName: 'Crystal Invoice AI',
-    images: [{ url: '/api/og', width: 1200, height: 630, alt: 'Crystal Invoice AI' }],
+    images: [{ url: '/og-image.png', width: 905, height: 603, alt: 'Crystal Invoice AI' }],
     type: 'website',
     locale: 'en_US',
   },
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: TITLE,
     description: DESCRIPTION,
-    images: ['/api/og'],
+    images: ['/og-image.png'],
   },
   alternates: {
     canonical: APP_URL,
@@ -77,7 +77,7 @@ export default function RootLayout({
       url: `${APP_URL}/faq`,
     },
     url: APP_URL,
-    image: `${APP_URL}/api/og`,
+    image: `${APP_URL}/og-image.png`,
     publisher: {
       '@type': 'Organization',
       name: 'Crystal Invoice AI',
