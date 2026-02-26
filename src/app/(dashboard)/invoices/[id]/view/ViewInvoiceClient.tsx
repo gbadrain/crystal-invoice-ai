@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import {
   ArrowLeft,
   Loader2,
@@ -11,27 +10,16 @@ import {
   Send,
   Edit,
   Check,
-  DollarSign,
 } from 'lucide-react'
 import type { Invoice } from '@/utils/invoice-types'
 import { PDFDownloadButton } from '@/components/invoice/PDFDownloadButton'
 import { StatusBadge } from '@/components/StatusBadge'
-import { cn } from '@/utils/cn'
 
 export function ViewInvoiceClient({ initialInvoice }: { initialInvoice: Invoice }) {
   const [invoice, setInvoice] = useState(initialInvoice)
   const [sendState, setSendState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
   const [sendError, setSendError] = useState<string | null>(null)
   const [isPaying, setIsPaying] = useState(false)
-  const [isAtLimit, setIsAtLimit] = useState(false)
-  const router = useRouter()
-
-  useEffect(() => {
-    fetch('/api/invoices/usage')
-      .then(r => r.ok ? r.json() : null)
-      .then(data => { if (data?.isAtLimit) setIsAtLimit(true) })
-      .catch(() => {})
-  }, [])
 
   const { _id: id, client, metadata, lineItems, summary, notes, currency = 'USD' } = invoice
   const fmt = (n: number) => {
@@ -95,17 +83,7 @@ export function ViewInvoiceClient({ initialInvoice }: { initialInvoice: Invoice 
           {sendError && (
             <span className="text-xs text-red-400">{sendError}</span>
           )}
-          {isAtLimit ? (
-            <div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-amber-500/10 border border-amber-500/20 text-amber-400 text-sm font-semibold cursor-not-allowed"
-              title="Upgrade to Pro to send invoices"
-            >
-              <Send className="w-4 h-4 opacity-50" />
-              <span>Send to Client</span>
-              <span className="text-xs bg-amber-500/20 px-1.5 py-0.5 rounded font-semibold">Pro</span>
-            </div>
-          ) : (
-            <button
+          <button
               onClick={handleSendToClient}
               disabled={sendState === 'sending' || sendState === 'sent'}
               className="inline-flex items-center justify-center rounded-md text-sm font-semibold py-2 px-4 bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-60 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
@@ -117,7 +95,6 @@ export function ViewInvoiceClient({ initialInvoice }: { initialInvoice: Invoice 
                 ? 'Sent'
                 : 'Send to Client'}
             </button>
-          )}
 
           {metadata.status === 'pending' && (
             <button
@@ -133,7 +110,7 @@ export function ViewInvoiceClient({ initialInvoice }: { initialInvoice: Invoice 
               Mark as Paid
             </button>
           )}
-          <PDFDownloadButton invoice={invoice} locked={isAtLimit} />
+          <PDFDownloadButton invoice={invoice} />
           <Link
             href={`/invoices/${id}/edit`}
             className="inline-flex items-center justify-center rounded-lg text-sm font-semibold py-2 px-4 bg-crystal-600 text-white hover:bg-crystal-500 shadow-lg shadow-crystal-600/20 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crystal-600 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
