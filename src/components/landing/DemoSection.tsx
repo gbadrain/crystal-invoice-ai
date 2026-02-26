@@ -18,7 +18,7 @@ import { motion } from 'framer-motion'
 //
 // Leave both empty to show the "coming soon" placeholder.
 const VIDEO_MP4 = ''
-const VIDEO_EMBED = ''
+const VIDEO_EMBED = 'https://www.youtube.com/embed/sIQbAT9z0hc?autoplay=1'
 // ──────────────────────────────────────────────────────────────────────────────
 
 export function DemoSection() {
