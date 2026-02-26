@@ -67,6 +67,8 @@ That sentence becomes a complete, professional, deliverable invoice.
 | 🤖 **AI Invoice Generation** | Describe the job in plain English — Crystal extracts client info, line items, rates, tax, and discounts instantly |
 | 🎙️ **Voice Input** | Tap the mic, speak your job description, watch the form fill itself — no typing required |
 | 🌍 **Multi-Currency Support** | 10 currencies: USD, EUR, GBP, INR, JPY, CAD, AUD, AED, SGD, CHF — one setting propagates everywhere |
+| ⏱️ **Default Payment Terms** | Set payment due days once (7 / 14 / 30 / 45 / 60 / 90 or custom) — all new invoices pre-fill the due date automatically |
+| 📝 **Default Invoice Footer** | Set a reusable footer note (e.g. bank details, thank-you text) that pre-fills every new invoice — editable per invoice |
 | 📄 **Professional PDF Export** | Pixel-perfect A4 PDF via headless Chrome (Puppeteer) — consistent on every device |
 | 📧 **Send to Client by Email** | One button emails a styled HTML invoice with the PDF attached; status auto-updates to pending |
 | 🏢 **Company Logo** | Upload once; embedded automatically in every PDF and every client email |
@@ -232,6 +234,7 @@ All features below are implemented, tested, and running in production at [crysta
 - [x] SEO-optimized landing page — meta title/description, structured JSON-LD schema, 19 targeted keywords
 - [x] Currency showcase strip on landing page — all 10 supported currencies displayed prominently
 - [x] Multi-currency FAQ, feature card, and plan highlights on landing page
+- [x] Invoice Defaults — set default currency, payment terms (7/14/30/45/60/90 days or custom), and footer note once; all new invoices inherit them automatically
 - [x] Open Graph metadata — branded OG image (`/og-image.png`) for correct WhatsApp, Twitter, and social link previews
 - [x] Support email — `support@crystalinvoiceai.com` live, forwarded to owner inbox via ImprovMX
 - [x] Contact link in landing page footer → `support@crystalinvoiceai.com`
