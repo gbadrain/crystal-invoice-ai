@@ -55,9 +55,8 @@ export default function BlogPostPage({ params }: Props) {
     description: post.excerpt,
     datePublished: post.date,
     author: {
-      '@type': 'Organization',
-      name: 'Crystal Invoice AI',
-      url: APP_URL,
+      '@type': 'Person',
+      name: 'Gurpreet Singh Badrain',
     },
     publisher: {
       '@type': 'Organization',
@@ -109,7 +108,10 @@ export default function BlogPostPage({ params }: Props) {
             <div className="flex items-center gap-4 pt-5 border-t border-white/[0.08]">
               <div className="flex items-center gap-2">
                 <Image src="/icon.png" alt="Crystal Invoice AI" width={28} height={28} className="rounded-lg" />
-                <span className="text-sm text-white/50">Crystal Invoice AI</span>
+                <div>
+                  <p className="text-sm text-white/70">Crystal Invoice AI</p>
+                  <p className="text-xs text-white/40">Gurpreet Singh Badrain</p>
+                </div>
               </div>
               <time className="text-sm text-white/30" dateTime={post.date}>
                 {post.date}
