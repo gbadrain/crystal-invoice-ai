@@ -79,6 +79,7 @@ That sentence becomes a complete, professional, deliverable invoice.
 | 🗑️ **Trash & Restore** | Soft-delete with full restore capability — nothing lost permanently unless explicitly confirmed |
 | 🔑 **Password Reset** | Self-service email token reset — no admin intervention needed |
 | 💳 **Stripe Subscription Billing** | Full lifecycle: upgrade → auto-charge → cancel → downgrade, all webhook-driven |
+| 📰 **Blog** | Editorial blog at `/blog` — 7 posts, category filter tabs, featured hero card, individual post pages with JSON-LD Article schema and SEO metadata |
 
 ---
 
@@ -164,6 +165,7 @@ Step 3 — Deliver it
 | Email | Resend (verified custom domain) | — |
 | AI Model | Anthropic Claude Haiku | — |
 | Styling | Tailwind CSS + Framer Motion | — |
+| Blog Fonts | Cormorant Garamond (headings) + DM Sans (body) via `next/font/google` | — |
 
 ---
 
@@ -292,6 +294,11 @@ All features below are implemented, tested, and running in production at [crysta
 - [x] Open Graph metadata — branded OG image (`/og-image.png`) for correct WhatsApp, Twitter, and social link previews
 - [x] Support email — `support@crystalinvoiceai.com` live, forwarded to owner inbox via ImprovMX
 - [x] Contact link in landing page footer → `support@crystalinvoiceai.com`
+- [x] **Blog system** — `/blog` index with category filter tabs (All, Cash Flow, Growth, Industry, Guides, Finance, How It Works), featured hero card, 3-column responsive grid
+- [x] **7 blog posts** — real content covering cash flow, invoicing strategy, AI in 2026, tax, and freelancer guides; authored by Gurpreet Singh Badrain
+- [x] **Blog post pages** — `/blog/[slug]` with `generateStaticParams`, `generateMetadata`, JSON-LD Article schema, gold editorial aesthetic (Cormorant Garamond + DM Sans fonts)
+- [x] **"From the Blog" landing section** — 3-card teaser before footer with gold accents, links to `/blog`
+- [x] `CLAUDE.md` — developer guide for Claude Code with architecture overview and dev commands
 
 ---
 

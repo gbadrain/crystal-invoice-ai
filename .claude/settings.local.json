@@ -14,7 +14,9 @@
       "Bash(npx prisma generate 2>&1 && npm run build 2>&1)",
       "Bash(export NVM_DIR=\"$HOME/.nvm\" && . \"$NVM_DIR/nvm.sh\" && nvm use v22.14.0 && node --version && npx prisma generate 2>&1 | tail -5 && npm run build 2>&1)",
       "Bash(PATH=\"$HOME/.nvm/versions/node/v22.14.0/bin:$PATH\" node --version && PATH=\"$HOME/.nvm/versions/node/v22.14.0/bin:$PATH\" npx prisma generate 2>&1 | tail -5 && PATH=\"$HOME/.nvm/versions/node/v22.14.0/bin:$PATH\" npm run build 2>&1)",
-      "Bash(/Users/GURU/.nvm/versions/node/v22.14.0/bin/node --version && /Users/GURU/.nvm/versions/node/v22.14.0/bin/node /Users/GURU/.nvm/versions/node/v22.14.0/bin/npx prisma generate 2>&1 | tail -5)"
+      "Bash(/Users/GURU/.nvm/versions/node/v22.14.0/bin/node --version && /Users/GURU/.nvm/versions/node/v22.14.0/bin/node /Users/GURU/.nvm/versions/node/v22.14.0/bin/npx prisma generate 2>&1 | tail -5)",
+      "Bash(git status && git fsck --full 2>&1 | head -20)",
+      "Bash(git gc --prune=now 2>&1 && git add \"src/app/blog/[slug]/page.tsx\" && git commit -m \"fix: match author name size and brightness to Crystal Invoice AI\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\" && git push)"
     ]
   }
 }
