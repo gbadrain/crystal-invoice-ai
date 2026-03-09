@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowRight } from 'lucide-react'
@@ -80,7 +81,7 @@ export default function BlogPostPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="min-h-screen px-6 py-16 max-w-2xl mx-auto">
+      <div className="min-h-screen px-6 py-16 max-w-4xl mx-auto">
         {/* Back link */}
         <Link
           href="/blog"
@@ -107,9 +108,7 @@ export default function BlogPostPage({ params }: Props) {
 
             <div className="flex items-center gap-4 pt-5 border-t border-white/[0.08]">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-full bg-gold/15 border border-gold/20 flex items-center justify-center">
-                  <span className="text-xs font-bold text-gold">C</span>
-                </div>
+                <Image src="/icon.png" alt="Crystal Invoice AI" width={28} height={28} className="rounded-lg" />
                 <span className="text-sm text-white/50">Crystal Invoice AI</span>
               </div>
               <time className="text-sm text-white/30" dateTime={post.date}>
@@ -151,9 +150,7 @@ export default function BlogPostPage({ params }: Props) {
 
         {/* CTA */}
         <div className="mt-14 rounded-2xl border border-gold/20 bg-[#13131c] p-8 text-center">
-          <div className="w-10 h-10 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center mx-auto mb-4">
-            <span className="text-lg font-bold text-gold font-cormorant">C</span>
-          </div>
+          <Image src="/icon.png" alt="Crystal Invoice AI" width={40} height={40} className="rounded-xl mx-auto mb-4" />
           <h2 className="font-cormorant text-2xl font-semibold text-white mb-2">
             Ready to try it yourself?
           </h2>

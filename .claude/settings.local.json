@@ -6,7 +6,15 @@
       "Bash(env:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(ls -la /Users/GURU/Documents/AI/crystal-invoice-ai/src/app/\\\\\\(dashboard\\\\\\)/ | head -20)",
+      "Bash(npm run lint 2>&1 | tail -20)",
+      "Bash(npx tsc --noEmit 2>&1 | head -40)",
+      "Bash(npm run build 2>&1)",
+      "Bash(npx prisma generate 2>&1 && npm run build 2>&1)",
+      "Bash(export NVM_DIR=\"$HOME/.nvm\" && . \"$NVM_DIR/nvm.sh\" && nvm use v22.14.0 && node --version && npx prisma generate 2>&1 | tail -5 && npm run build 2>&1)",
+      "Bash(PATH=\"$HOME/.nvm/versions/node/v22.14.0/bin:$PATH\" node --version && PATH=\"$HOME/.nvm/versions/node/v22.14.0/bin:$PATH\" npx prisma generate 2>&1 | tail -5 && PATH=\"$HOME/.nvm/versions/node/v22.14.0/bin:$PATH\" npm run build 2>&1)",
+      "Bash(/Users/GURU/.nvm/versions/node/v22.14.0/bin/node --version && /Users/GURU/.nvm/versions/node/v22.14.0/bin/node /Users/GURU/.nvm/versions/node/v22.14.0/bin/npx prisma generate 2>&1 | tail -5)"
     ]
   }
 }
