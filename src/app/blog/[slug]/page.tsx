@@ -110,7 +110,7 @@ export default function BlogPostPage({ params }: Props) {
                 <Image src="/icon.png" alt="Crystal Invoice AI" width={28} height={28} className="rounded-lg" />
                 <div>
                   <p className="text-sm text-white/70">Crystal Invoice AI</p>
-                  <p className="text-xs text-white/40">Gurpreet Singh Badrain</p>
+                  <p className="text-sm text-white/70 font-medium">Gurpreet Singh Badrain</p>
                 </div>
               </div>
               <time className="text-sm text-white/30" dateTime={post.date}>
