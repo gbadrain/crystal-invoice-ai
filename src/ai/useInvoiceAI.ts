@@ -37,7 +37,7 @@ export function useInvoiceAI(): UseInvoiceAIReturn {
           body: JSON.stringify({ text }),
         })
 
-        const body = await response.json()
+        const body = await response.json() as { error?: string; data?: unknown }
 
         if (!response.ok) {
           const message = body.error || `Request failed (${response.status})`

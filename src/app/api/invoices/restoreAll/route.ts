@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { type InvoiceStatus } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { getAuthUserId } from '../_helpers'
 
@@ -18,7 +19,7 @@ export async function POST() {
     }
 
     await prisma.$transaction(
-      trashed.map((inv) =>
+      trashed.map((inv: { id: string; originalStatus: InvoiceStatus | null }) =>
         prisma.invoice.update({
           where: { id: inv.id },
           data: {

@@ -20,6 +20,15 @@ const config: Config = {
           900: '#364fc7',
           950: '#2a3aaa',
         },
+        gold: {
+          DEFAULT: '#c49c50',
+          light: '#d4b870',
+          dark: '#a07830',
+        },
+      },
+      fontFamily: {
+        cormorant: ['var(--font-cormorant)', 'Georgia', 'serif'],
+        'dm-sans': ['var(--font-dm-sans)', 'Inter', 'sans-serif'],
       },
       backdropBlur: {
         xs: '2px',

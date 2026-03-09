@@ -12,6 +12,7 @@ import { PricingTableSection } from '@/components/landing/PricingTableSection'
 import { AboutSection } from '@/components/landing/AboutSection'
 import { MidCTASection } from '@/components/landing/MidCTASection'
 import { HowItWorksSection } from '@/components/landing/HowItWorksSection'
+import { BlogTeaser } from '@/components/landing/BlogTeaser'
 import { MotionDiv } from '@/components/MotionDiv'
 import { motion } from 'framer-motion'
 
@@ -479,6 +480,11 @@ export function LandingPage() {
       {/* About */}
       <div className="relative z-10">
         <AboutSection />
+      </div>
+
+      {/* Blog Teaser */}
+      <div className="relative z-10">
+        <BlogTeaser />
       </div>
 
       {/* Footer */}
